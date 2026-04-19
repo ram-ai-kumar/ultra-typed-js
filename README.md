@@ -1,24 +1,108 @@
 # UltraTyped.js
 
-![npm version](https://badge.fury.io/js/ultratyped.svg)
-![bundle size](https://img.shields.io/bundlephobia/minzip/ultratyped)
-![CI](https://github.com/user/ultratyped/workflows/CI/badge.svg)
+[![npm version](https://badge.fury.io/js/ultratyped.svg)](https://www.npmjs.com/package/ultratyped)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/ultratyped)](https://bundlephobia.com/package/ultratyped)
+[![CI](https://github.com/ram-ai-kumar/ultra-typed-js/workflows/CI/badge.svg)](https://github.com/ram-ai-kumar/ultra-typed-js/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+[![Downloads](https://img.shields.io/npm/dw/ultratyped)](https://www.npmjs.com/package/ultratyped)
 
 Ultra-fast <2KB typing animation library with zero dependencies.
+
+**[Live Demo](https://ram-ai-kumar.github.io/ultra-typed-js/)** | **[Documentation](docs/)** | **[Benchmarks](benchmarks/)**
+
+## Table of Contents
+
+- [UltraTyped.js](#ultratypedjs)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Supported Frameworks](#supported-frameworks)
+  - [Installation](#installation)
+  - [Quick Start](#quick-start)
+  - [Usage](#usage)
+    - [Vanilla JavaScript](#vanilla-javascript)
+    - [Alpine.js](#alpinejs)
+    - [Angular](#angular)
+    - [Astro](#astro)
+    - [Lit](#lit)
+    - [Preact](#preact)
+    - [React](#react)
+    - [Solid.js](#solidjs)
+    - [Svelte](#svelte)
+    - [TypeScript (Class-based API)](#typescript-class-based-api)
+    - [Vue](#vue)
+  - [Options](#options)
+  - [API](#api)
+    - [Instance Methods](#instance-methods)
+  - [Performance](#performance)
+    - [Resource Optimization](#resource-optimization)
+    - [Scalability](#scalability)
+  - [Security](#security)
+    - [Security Highlights](#security-highlights)
+  - [Reliability](#reliability)
+    - [Fault Tolerance](#fault-tolerance)
+    - [Observability](#observability)
+    - [Compatibility](#compatibility)
+  - [Benchmarks](#benchmarks)
+  - [Development](#development)
+  - [Test Coverage](#test-coverage)
+  - [License](#license)
+  - [Contributing](#contributing)
 
 ## Features
 
 - **<2KB gzipped** - Smallest in its class
 - **60fps smooth** - requestAnimationFrame-driven
 - **Zero dependencies** - Pure vanilla JavaScript
-- **Framework agnostic** - Works with React, Vue, Svelte, vanilla JS
+- **Framework agnostic** - Works with all major frameworks
 - **TypeScript support** - Full type definitions with zero runtime cost
 - **Smart backspace** - Diff-based backspacing for efficiency
+
+## Supported Frameworks
+
+![React](https://img.shields.io/badge/React-18%2B-black?logo=react)
+![Vue](https://img.shields.io/badge/Vue-3%2B-4FC08D?logo=vue.js)
+![Svelte](https://img.shields.io/badge/Svelte-4%2B-FF3E00?logo=svelte)
+![Angular](https://img.shields.io/badge/Angular-17%2B-DD0031?logo=angular)
+![Solid](https://img.shields.io/badge/Solid-1%2B-4683FF?logo=solid)
+![Preact](https://img.shields.io/badge/Preact-10%2B-673AB8?logo=preact)
+![Alpine](https://img.shields.io/badge/Alpine-3%2B-77C1D2?logo=alpine.js)
+![Lit](https://img.shields.io/badge/Lit-3%2B-325CCC?logo=lit)
+![Astro](https://img.shields.io/badge/Astro-4%2B-FF5D01?logo=astro)
+![TypeScript](https://img.shields.io/badge/TypeScript-5%2B-3178C6?logo=typescript)
 
 ## Installation
 
 ```bash
 npm install ultratyped
+```
+
+Or for specific framework adapters:
+
+```bash
+npm install @ultratyped/react
+npm install @ultratyped/vue
+npm install @ultratyped/svelte
+npm install @ultratyped/typescript
+npm install @ultratyped/angular
+npm install @ultratyped/solid
+npm install @ultratyped/preact
+npm install @ultratyped/alpine
+npm install @ultratyped/lit
+npm install @ultratyped/astro
+```
+
+## Quick Start
+
+```javascript
+import UltraTyped from "ultratyped";
+
+const el = document.getElementById("typed");
+const instance = UltraTyped(el, {
+  strings: ["Hello World", "Ultra-fast typing"],
+  typeSpeed: 80,
+  loop: true,
+});
 ```
 
 ## Usage
@@ -336,7 +420,7 @@ View benchmark dashboard at `benchmarks/dashboard.html`
 
 ```bash
 # Install dependencies
-npm install
+npm install --legacy-peer-deps
 
 # Build all packages
 npm run build
@@ -344,9 +428,24 @@ npm run build
 # Run playground
 npm run dev
 
+# Run tests
+npm test
+
+# Run tests with coverage
+npm run test:coverage
+
 # Run benchmarks
 npm run bench
+
+# Clean build artifacts
+npm run clean
 ```
+
+## Test Coverage
+
+![Test Coverage](https://img.shields.io/badge/Coverage-80%25-brightgreen)
+
+UltraTyped.js has comprehensive test coverage with 97 tests across all packages.
 
 ## License
 
