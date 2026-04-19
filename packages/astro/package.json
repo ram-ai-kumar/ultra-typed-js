@@ -1,0 +1,35 @@
+{
+  "name": "@ultratyped/astro",
+  "version": "1.0.0",
+  "description": "Astro adapter for UltraTyped",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "peerDependencies": {
+    "astro": "^2.0.0 || ^3.0.0 || ^4.0.0"
+  },
+  "dependencies": {
+    "ultratyped": "^1.0.0"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "typing",
+    "animation",
+    "astro"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "ultratyped",
+  "version": "1.0.0",
+  "description": "Ultra-fast <2KB typing animation library",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "size": "gzip-size dist/index.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "typing",
+    "animation",
+    "typewriter",
+    "effect"
+  ],
+  "license": "MIT"
+}
