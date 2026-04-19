@@ -9,17 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      
+          node-version: "20"
+
       - run: npm install
-      
+
       - run: npm run build
-      
+
       - run: npm run -w playground build
-      
+
+      - name: Copy benchmarks to playground dist
+        run: |
+          mkdir -p ./playground/dist/benchmarks
+          cp ./benchmarks/dashboard.html ./playground/dist/benchmarks/
+          cp ./benchmarks/compare.js ./playground/dist/benchmarks/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:

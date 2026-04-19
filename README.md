@@ -45,11 +45,13 @@ instance.stop();
 
 ```html
 <script>
-  import ultratyped from '@ultratyped/alpine';
+  import ultratyped from "@ultratyped/alpine";
   Alpine.plugin(ultratyped);
 </script>
 
-<div x-data="{ typed: { strings: ['Alpine App', 'Ultra-fast typing'], typeSpeed: 80, loop: true } }">
+<div
+  x-data="{ typed: { strings: ['Alpine App', 'Ultra-fast typing'], typeSpeed: 80, loop: true } }"
+>
   <span x-typed="typed"></span>
 </div>
 ```
@@ -57,22 +59,20 @@ instance.stop();
 ### Angular
 
 ```typescript
-import { Component } from '@angular/core';
-import { UltraTypedDirective } from '@ultratyped/angular';
+import { Component } from "@angular/core";
+import { UltraTypedDirective } from "@ultratyped/angular";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
   imports: [UltraTypedDirective],
-  template: `
-    <span [ultratyped]="options"></span>
-  `
+  template: ` <span [ultratyped]="options"></span> `,
 })
 export class AppComponent {
   options = {
-    strings: ['Angular App', 'Ultra-fast typing'],
+    strings: ["Angular App", "Ultra-fast typing"],
     typeSpeed: 80,
-    loop: true
+    loop: true,
   };
 }
 ```
@@ -97,19 +97,19 @@ const options = {
 ### Lit
 
 ```typescript
-import { LitElement, html } from 'lit';
-import { UltraTypedController } from '@ultratyped/lit';
+import { LitElement, html } from "lit";
+import { UltraTypedController } from "@ultratyped/lit";
 
-@customElement('my-component')
+@customElement("my-component")
 export class MyComponent extends LitElement {
   private typedController = new UltraTypedController(
     this,
-    this.shadowRoot.querySelector('span')!,
+    this.shadowRoot.querySelector("span")!,
     {
-      strings: ['Lit App', 'Ultra-fast typing'],
+      strings: ["Lit App", "Ultra-fast typing"],
       typeSpeed: 80,
-      loop: true
-    }
+      loop: true,
+    },
   );
 
   render() {
@@ -121,13 +121,13 @@ export class MyComponent extends LitElement {
 ### Preact
 
 ```jsx
-import { useUltraTyped } from '@ultratyped/preact';
+import { useUltraTyped } from "@ultratyped/preact";
 
 function App() {
   const ref = useUltraTyped({
-    strings: ['Preact App', 'Ultra-fast typing'],
+    strings: ["Preact App", "Ultra-fast typing"],
     typeSpeed: 80,
-    loop: true
+    loop: true,
   });
 
   return <span ref={ref} />;
@@ -153,14 +153,14 @@ function App() {
 ### Solid.js
 
 ```tsx
-import { createUltraTyped } from '@ultratyped/solid';
+import { createUltraTyped } from "@ultratyped/solid";
 
 function App() {
   let el: HTMLElement | undefined;
   createUltraTyped(el!, {
-    strings: ['Solid App', 'Ultra-fast typing'],
+    strings: ["Solid App", "Ultra-fast typing"],
     typeSpeed: 80,
-    loop: true
+    loop: true,
   });
 
   return <span ref={el} />;
@@ -187,20 +187,20 @@ ultratyped(el, {
 ### TypeScript (Class-based API)
 
 ```typescript
-import { UltraTypedTS, createUltraTyped } from '@ultratyped/typescript';
+import { UltraTypedTS, createUltraTyped } from "@ultratyped/typescript";
 
 // Using class
 const typed = new UltraTypedTS(el, {
-  strings: ['TypeScript App', 'Ultra-fast typing'],
+  strings: ["TypeScript App", "Ultra-fast typing"],
   typeSpeed: 80,
-  loop: true
+  loop: true,
 });
 
 // Using factory function
 const typed = createUltraTyped(el, {
-  strings: ['TypeScript App', 'Ultra-fast typing'],
+  strings: ["TypeScript App", "Ultra-fast typing"],
   typeSpeed: 80,
-  loop: true
+  loop: true,
 });
 
 // Control methods

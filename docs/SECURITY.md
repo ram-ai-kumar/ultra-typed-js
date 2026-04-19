@@ -40,18 +40,20 @@ UltraTyped.js is designed with security as a foundational principle. This docume
 ### XSS Prevention
 
 **Default Behavior:**
+
 ```javascript
 // Safe - uses textContent
-UltraTyped(el, { strings: ['<script>alert(1)</script>'] });
+UltraTyped(el, { strings: ["<script>alert(1)</script>"] });
 // Renders as literal text, not executed
 ```
 
 **HTML Opt-In (use with caution):**
+
 ```javascript
 // Requires explicit flag (not yet implemented, planned for v1.1)
-UltraTyped(el, { 
-  strings: ['<b>Bold</b>'],
-  dangerouslyUseHTML: true 
+UltraTyped(el, {
+  strings: ["<b>Bold</b>"],
+  dangerouslyUseHTML: true,
 });
 // Users must sanitize HTML strings externally
 ```
@@ -67,6 +69,7 @@ UltraTyped.js is CSP-compliant by design:
 - ✅ No `data:` or `javascript:` URLs
 
 **Recommended CSP Headers:**
+
 ```
 Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
 ```
@@ -75,12 +78,12 @@ Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; 
 
 UltraTyped.js follows Zero Trust principles:
 
-| Principle | Implementation |
-|-----------|----------------|
-| Verify Explicitly | Single-file codebase for easy audit |
-| Least Privilege | No network access, no file system access |
-| Assume Breach | Minimal attack surface, zero dependencies |
-| Micro-segmentation | Each instance isolated, no shared state |
+| Principle          | Implementation                            |
+| ------------------ | ----------------------------------------- |
+| Verify Explicitly  | Single-file codebase for easy audit       |
+| Least Privilege    | No network access, no file system access  |
+| Assume Breach      | Minimal attack surface, zero dependencies |
+| Micro-segmentation | Each instance isolated, no shared state   |
 
 ### Supply Chain Security
 
@@ -95,6 +98,7 @@ UltraTyped.js follows Zero Trust principles:
 ### Prompt Injection Resistance
 
 UltraTyped.js is inherently resistant to prompt injection attacks:
+
 - No natural language processing
 - No LLM integration
 - No prompt templates
@@ -170,6 +174,7 @@ UltraTyped(el, { strings: [sanitized] });
 ### HTML Content
 
 If using HTML content (when implemented):
+
 - Use a sanitization library (DOMPurify, sanitize-html)
 - Whitelist allowed tags and attributes
 - Avoid user-provided HTML in sensitive contexts
@@ -192,8 +197,10 @@ Configure CSP headers appropriately:
 ```javascript
 // In your server configuration
 app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', 
-    "default-src 'self'; script-src 'self' 'unsafe-inline'");
+  res.setHeader(
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-inline'",
+  );
   next();
 });
 ```
