@@ -8,17 +8,10 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 These are correctness and security issues found in the current codebase. Nothing else should be released or promoted until these are resolved.
 
-### Security Bugs
-
-- [x] **Fix XSS risk in core hot path**: Core unconditionally writes `el.innerHTML = buf` — contradicts the documented "textContent over innerHTML" claim and is a security risk for plain-text strings; switch to `el.textContent = buf` by default, only fall back to `innerHTML` when `contentType: 'html'` is explicitly set by the caller
-- [x] **Add `contentType` option** (`'text' | 'html'`, default `'text'`) to opt in to HTML rendering
-
 ### Correctness
 
-- [x] **Fix HTML backspace corruption**: `buf.slice(0, -1)` removes bytes from the accumulated string, not whole tokens — a tag like `<strong>` is 8 bytes and gets mangled character-by-character during backspace, producing invalid HTML mid-animation; backspace must pop full tokens from the token array and rebuild `buf` from the token slice
-- [x] **Fix `reset()` is a no-op after `stop()`**: `reset()` clears internal state variables but the `requestAnimationFrame` loop was already cancelled by `stop()` — the animation stays frozen; `reset()` must also restart the rAF loop
-- [x] **Implement Visibility API** (`document.visibilitychange`): README claims "Pauses when tab is hidden" but no listener exists; add it — pause rAF when `document.hidden`, resume on `visible`
-- [x] **Implement `prefers-reduced-motion`**: README claims graceful degradation but `window.matchMedia('(prefers-reduced-motion: reduce)')` is never checked; when enabled, skip the animation entirely and render the final string immediately
+- [ ] **Fix animation timing — characters never typed at normal frame rates**: `last = t` is updated unconditionally at the top of every `step()` call, so `dt` is always ~16 ms at 60 fps; `dt >= typeSpeed` is never true for any `typeSpeed > ~16`, meaning the animation is frozen for the default `typeSpeed: 50`; fix by only updating `last` when a character is actually consumed (typed or backspaced), not on every frame — `packages/core/src/index.js:112`
+- [ ] **Fix Visibility API restarts stopped/completed animations**: the `visibilitychange` listener calls inner `start()` unconditionally when the tab becomes visible, even if the caller previously invoked `stop()` or the non-loop animation already finished; add a `stopped` flag set by `stop()` and cleared by `start()`/`reset()`, and guard the resume path with `if (!stopped)` — `packages/core/src/index.js:80-88`
 
 ---
 
@@ -743,7 +736,7 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ### Priority 0 — Do Before Any Release or Promotion
 
-- **Bug Fixes**: XSS via `innerHTML`, HTML backspace corruption, broken `reset()`, Visibility API, `prefers-reduced-motion`
+- **Bug Fixes**: animation timing broken at 60 fps (`last` reset every frame), Visibility API unconditionally restarts stopped/completed animations
 
 ### High Priority (Do First)
 
@@ -779,11 +772,8 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ### Phase 0: Bug Fixes (1 week — non-negotiable before any other work ships)
 
-- Fix XSS / `innerHTML` → `textContent` + `contentType` option
-- Fix HTML backspace corruption
-- Fix `reset()` after `stop()`
-- Implement Visibility API
-- Implement `prefers-reduced-motion`
+- Fix animation timing (`last` must only update when a token is consumed, not every frame)
+- Fix Visibility API resume guard (`stopped` flag to prevent restarting halted instances)
 
 ### Phase 1: Typed.js Parity + Build Infrastructure (3-4 weeks)
 
