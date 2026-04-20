@@ -2,46 +2,81 @@
 
 This document outlines the comprehensive requirements to make UltraTyped.js a professional, production-ready package/library/framework for global use.
 
-## Status Overview
+---
 
-### Completed ✅
+## Priority 0: Bug Fixes (Ship Before Any Promotion)
 
-- Core library implementation (<2KB gzipped)
-- TypeScript definitions
-- Framework adapters (React, Vue, Svelte, TypeScript, Angular, Solid, Preact, Alpine, Lit, Astro)
-- Build system (Rollup + Terser)
-- CI/CD workflows (build, test, release, deploy)
-- GitHub Pages playground
-- Basic documentation (README, SECURITY.md, CHANGELOG.md)
-- Security documentation with modern AI-era considerations
+These are correctness and security issues found in the current codebase. Nothing else should be released or promoted until these are resolved.
 
-### Remaining Tasks 🚧
+### Security Bugs
+
+- [ ] **Fix XSS risk in core hot path**: Core unconditionally writes `el.innerHTML = buf` — contradicts the documented "textContent over innerHTML" claim and is a security risk for plain-text strings; switch to `el.textContent = buf` by default, only fall back to `innerHTML` when `contentType: 'html'` is explicitly set by the caller
+- [ ] **Add `contentType` option** (`'text' | 'html'`, default `'text'`) to opt in to HTML rendering
+
+### Correctness
+
+- [ ] **Fix HTML backspace corruption**: `buf.slice(0, -1)` removes bytes from the accumulated string, not whole tokens — a tag like `<strong>` is 8 bytes and gets mangled character-by-character during backspace, producing invalid HTML mid-animation; backspace must pop full tokens from the token array and rebuild `buf` from the token slice
+- [ ] **Fix `reset()` is a no-op after `stop()`**: `reset()` clears internal state variables but the `requestAnimationFrame` loop was already cancelled by `stop()` — the animation stays frozen; `reset()` must also restart the rAF loop
+- [ ] **Implement Visibility API** (`document.visibilitychange`): README claims "Pauses when tab is hidden" but no listener exists; add it — pause rAF when `document.hidden`, resume on `visible`
+- [ ] **Implement `prefers-reduced-motion`**: README claims graceful degradation but `window.matchMedia('(prefers-reduced-motion: reduce)')` is never checked; when enabled, skip the animation entirely and render the final string immediately
 
 ---
 
-## 1. Testing & Quality Assurance
+## Typed.js Parity & Migration
 
-### 1.1 Unit Testing
+This is the single biggest adoption driver. Typed.js has ~1.3M weekly downloads. Being a credible drop-in replacement with a migration story converts that install base.
 
-- [ ] Set up Vitest or Jest for unit testing
-- [ ] Write unit tests for core library
-  - Test all typing animations
-  - Test stop/reset functionality
-  - Test edge cases (empty strings, special characters)
-  - Test performance characteristics
-- [ ] Write unit tests for all framework adapters
-  - React adapter tests
-  - Vue adapter tests
-  - Svelte adapter tests
-  - Angular adapter tests
-  - Solid.js adapter tests
-  - Preact adapter tests
-  - Alpine.js adapter tests
-  - Lit adapter tests
-  - Astro adapter tests
-  - TypeScript adapter tests
+### Typed.js Compatibility Shim
 
-### 1.2 Integration Testing
+- [ ] Publish `@ultratyped/typed-compat` — mirrors the Typed.js v2 constructor API (`new Typed(el, opts)`) exactly, delegating to the UltraTyped core; zero behavior changes for existing Typed.js users
+- [ ] Map all Typed.js option names to UltraTyped equivalents (`typeSpeed`, `backSpeed`, `backDelay`, `loop`, `loopCount`, `showCursor`, `cursorChar`, `attr`, `smartBackspace`, `shuffle`, `fadeOut`, `fadeOutDelay`, `fadeOutClass`, `strings`, `stringsElement`, `startDelay`, `onBegin`, `onComplete`, `onStringTyped`, `preStringTyped`, `onLastStringBackspaced`, `onTypingPaused`, `onTypingResumed`, `onReset`, `onStop`, `onStart`, `onDestroy`)
+- [ ] Write migration guide from Typed.js v2 → UltraTyped (side-by-side code comparison, bundle size savings)
+- [ ] Add Typed.js feature comparison table to README (size, fps, deps, cursor, callbacks, SSR, accessibility)
+
+### Missing Core Options (parity gaps)
+
+- [ ] `showCursor: true` — render a blinking cursor `<span>` adjacent to the typed element (the most visually expected feature)
+- [ ] `cursorChar: '|'` — customizable cursor character
+- [ ] `autoInsertCss: true` — auto-inject `@keyframes blink` CSS once per page; no manual stylesheet needed
+- [ ] `startDelay: 0` — milliseconds to wait before the very first character is typed
+- [ ] `loopCount: Infinity` — loop N times then stop (currently only boolean `loop`)
+- [ ] `shuffle: false` — randomize string order on each loop
+- [ ] `fadeOut: false` — fade the element out instead of backspacing
+- [ ] `fadeOutDelay: 500` — delay in ms before fade starts
+- [ ] `fadeOutClass: 'typed-fade-out'` — CSS class applied during fade
+- [ ] `attr: null` — type into an element attribute (e.g. `placeholder`, `value`, `title`) instead of text content
+- [ ] `smartBackspace: true` — expose as a toggleable option (currently always on, undocumented)
+- [ ] `stringsElement: null` — read strings from a DOM element's children instead of `strings` array
+- [ ] `typingVariance: 0` — add ±N ms random jitter per character for a human-like feel
+- [ ] `bindInputFocusEvents: false` — pause typing when a nearby `<input>` or `<textarea>` gains focus
+
+### Missing Core Callbacks
+
+- [ ] `onBegin(self)` — fires once before the first character is typed
+- [ ] `onComplete(self)` — fires when all strings have been typed (end of final loop)
+- [ ] `preStringTyped(arrayPos, self)` — fires before each string begins typing
+- [ ] `onStringTyped(arrayPos, self)` — fires after each string is fully typed
+- [ ] `onLastStringBackspaced(self)` — fires when the last string has been fully erased
+- [ ] `onTypingPaused(arrayPos, self)` — fires when animation pauses (back-delay period)
+- [ ] `onTypingResumed(arrayPos, self)` — fires when animation resumes from pause
+- [ ] `onReset(self)` — fires on `reset()`
+- [ ] `onStop(arrayPos, self)` — fires on `stop()`
+- [ ] `onStart(arrayPos, self)` — fires on `start()`
+- [ ] `onDestroy(self)` — fires on `destroy()`
+
+### Missing Core Instance Methods
+
+- [ ] `pause()` — pause animation without losing current state
+- [ ] `resume()` — resume from exactly where `pause()` stopped
+- [ ] `destroy()` — stop, remove cursor element, clear text content, null all refs (currently only on TS class adapter, not core)
+- [ ] `start()` — (re)start animation after a manual `stop()`; `reset()` should not be required to restart
+- [ ] `toggle()` — convenience: pause if running, resume if paused
+
+---
+
+## Testing & Quality Assurance
+
+### Integration Testing
 
 - [ ] Set up Playwright for E2E testing
 - [ ] Test framework integrations in isolation
@@ -52,14 +87,14 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
   - Edge (latest 2 versions)
   - Mobile browsers (iOS Safari, Chrome Mobile)
 
-### 1.3 Test Coverage
+### Test Coverage
 
 - [ ] Set up Codecov or Coveralls
 - [ ] Achieve 80%+ code coverage
 - [ ] Add coverage reports to CI
 - [ ] Enforce coverage thresholds in CI
 
-### 1.4 Performance Testing
+### Performance Testing
 
 - [ ] Automated performance benchmarks in CI
 - [ ] Regression testing for bundle size
@@ -68,9 +103,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 2. Documentation
+## Documentation
 
-### 2.1 API Documentation
+### API Documentation
 
 - [ ] Generate API docs with TypeDoc or JSDoc
 - [ ] Host API documentation (GitHub Pages or dedicated docs site)
@@ -78,30 +113,35 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Document all options with default values
 - [ ] Document all events/callbacks
 
-### 2.2 User Guides
+### User Guides
 
-- [ ] Migration guide from other typing libraries
+- [ ] **Migration guide from Typed.js** (highest SEO and conversion value — target "typed.js alternative" searches)
+- [ ] Migration guide from typewriter-effect
 - [ ] Troubleshooting guide
 - [ ] Best practices guide
 - [ ] Performance optimization guide
 - [ ] Security best practices guide
 
-### 2.3 Examples Gallery
+### Examples Gallery
 
 - [ ] Create examples for each framework
 - [ ] Interactive examples playground
 - [ ] Code snippets for common use cases
 - [ ] Advanced usage examples
 - [ ] Integration examples with popular tools
+- [ ] **StackBlitz live examples** embedded in README for every framework (lowers friction for first-time evaluators)
+- [ ] **CodeSandbox templates** for React, Vue, Svelte
+- [ ] Typed.js vs UltraTyped side-by-side benchmark page (fps, bundle size, memory)
+- [ ] `ARCHITECTURE.md` explaining the rAF loop, tokenizer, and diff algorithm (required for first-time contributors)
 
-### 2.4 Video Tutorials
+### Video Tutorials
 
 - [ ] Quick start video (5-10 min)
 - [ ] Framework-specific tutorials
 - [ ] Advanced configuration tutorial
 - [ ] Performance optimization tutorial
 
-### 2.5 Internationalization (i18n)
+### Internationalization (i18n)
 
 - [ ] Translate README to major languages
   - Spanish
@@ -116,9 +156,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 3. Developer Experience
+## Developer Experience
 
-### 3.1 Code Quality Tools
+### Code Quality Tools
 
 - [ ] Set up ESLint with comprehensive rules
   - JavaScript/TypeScript rules
@@ -130,7 +170,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add lint-staged for staged file linting
 - [ ] Configure commitlint for commit message linting
 
-### 3.2 Contribution Guidelines
+### Contribution Guidelines
 
 - [ ] Create CONTRIBUTING.md
   - Development setup instructions
@@ -147,7 +187,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add GitHub issue forms
 - [ ] Add GitHub PR templates
 
-### 3.3 Development Tools
+### Development Tools
 
 - [ ] Configure VS Code workspace settings
 - [ ] Add recommended VS Code extensions
@@ -155,7 +195,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add debug configurations for VS Code
 - [ ] Set up local development scripts
 
-### 3.4 Release Automation
+### Release Automation
 
 - [ ] Set up semantic-release
 - [ ] Automate CHANGELOG generation
@@ -165,9 +205,43 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 4. Security
+## Build Infrastructure
 
-### 4.1 Dependency Management
+These gaps block key distribution scenarios (CDN users, package consumers) and are prerequisites for a v1.1 release.
+
+### IIFE/UMD Bundle
+
+- [ ] **Add IIFE build output** to core Rollup config — required for `<script src="...">` CDN usage; without it, non-bundler users (WordPress, plain HTML sites) cannot use the library
+- [ ] Expose `window.UltraTyped` global in IIFE build
+- [ ] Add CDN `<script>` usage examples to README once IIFE build exists
+
+### Package Quality Checks
+
+- [ ] **Add `publint`** to CI — validates that `package.json` `exports`, `main`, `module`, and `types` fields actually resolve to the declared files before publish
+- [ ] **Add `are-the-types-wrong`** check — validates TypeScript declaration files are correct for all module formats (ESM/CJS)
+- [ ] **Add `size-limit`** — enforce hard bundle-size ceiling in CI (fail if core exceeds 2KB gzipped); currently only a badge claim with no enforcement
+
+### Monorepo Versioning
+
+- [ ] **Migrate to Changesets** — replaces single semantic-release with per-package independent versioning; adapters can release at different cadences than core
+- [ ] Configure `@changesets/action` in CI for automated publish on merge
+
+### Build Tooling
+
+- [ ] **Evaluate `tsup` or `pkgroll`** as a simpler alternative to 10 separate Rollup configs — each adapter currently has its own `rollup.config.js`; a shared config or zero-config tool reduces maintenance surface significantly
+
+### npm Discoverability
+
+- [ ] **Expand keywords** in `packages/core/package.json` to include: `"typed.js"`, `"typewriter-effect"`, `"text animation"`, `"cursor"`, `"animated text"`, `"hero text"`, `"typing effect"`, `"landing page"`, `"react"`, `"vue"`, `"svelte"`, `"angular"` — these mirror search terms users actually type on npm
+- [ ] Add `"repository"`, `"homepage"`, and `"bugs"` fields to all `package.json` files
+- [ ] Update core `description` to mention "drop-in replacement for Typed.js" and "smallest in class"
+- [ ] Add `"funding"` field to `package.json` (GitHub Sponsors) once sponsorship is set up
+
+---
+
+## Security
+
+### Dependency Management
 
 - [ ] Enable Dependabot for dependency updates
   - Security alerts
@@ -177,7 +251,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Configure automated security updates
 - [ ] Schedule weekly dependency audits
 
-### 4.2 Security Scanning
+### Security Scanning
 
 - [ ] Set up Snyk for security scanning
 - [ ] Integrate Snyk with CI/CD
@@ -186,14 +260,14 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Configure npm audit in CI
 - [ ] Add OWASP dependency check
 
-### 4.3 Security Audits
+### Security Audits
 
 - [ ] Conduct external security audit
 - [ ] Penetration testing
 - [ ] Vulnerability assessment
 - [ ] Third-party security review
 
-### 4.4 Supply Chain Security
+### Supply Chain Security
 
 - [ ] Generate SBOM (Software Bill of Materials)
 - [ ] Sign npm packages with provenance
@@ -201,7 +275,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Set up package verification
 - [ ] Implement supply chain integrity checks
 
-### 4.5 Security Documentation
+### Security Documentation
 
 - [ ] Expand SECURITY.md with more details
 - [ ] Add security policy
@@ -211,9 +285,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 5. Distribution
+## Distribution
 
-### 5.1 CDN Distribution
+### CDN Distribution
 
 - [ ] Set up jsDelivr CDN
   - Configure jsDelivr for all packages
@@ -224,14 +298,14 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add CDN usage examples in docs
 - [ ] Configure CDN caching headers
 
-### 5.2 Package Verification
+### Package Verification
 
 - [ ] Add package integrity verification
 - [ ] Configure npm provenance
 - [ ] Add package signing
 - [ ] Document verification process
 
-### 5.3 Multiple Registry Support
+### Multiple Registry Support
 
 - [ ] Test with npm
 - [ ] Test with yarn
@@ -239,7 +313,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Test with bun
 - [ ] Add installation docs for each
 
-### 5.4 Package Optimization
+### Package Optimization
 
 - [ ] Optimize bundle sizes further
 - [ ] Add tree-shaking support
@@ -249,9 +323,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 6. Performance & Reliability
+## Performance & Reliability
 
-### 6.1 Performance Monitoring
+### Performance Monitoring
 
 - [ ] Set up Bundlephobia integration
 - [ ] Add bundle size badges
@@ -259,7 +333,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add size limit checks
 - [ ] Configure size limits in CI
 
-### 6.2 Performance Benchmarks
+### Performance Benchmarks
 
 - [ ] Create automated benchmark dashboard
 - [ ] Compare with competitors
@@ -267,7 +341,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add performance regression tests
 - [ ] Publish benchmark results
 
-### 6.3 Error Tracking
+### Error Tracking
 
 - [ ] Integrate Sentry for error tracking
   - Set up Sentry project
@@ -277,7 +351,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add error reporting in adapters
 - [ ] Document error handling
 
-### 6.4 Reliability
+### Reliability
 
 - [ ] Add graceful degradation
 - [ ] Add fallback mechanisms
@@ -287,11 +361,13 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 7. Accessibility
+## Accessibility
 
-### 7.1 ARIA Support
+### ARIA Support
 
-- [ ] Add ARIA live regions
+- [ ] **Auto-add `role="status"` and `aria-live="polite"`** to the typed element at init — enables screen readers to announce each completed string without requiring manual markup from the caller
+- [ ] **Auto-add `role="presentation"` to cursor `<span>`** so screen readers skip the blinking cursor character
+- [ ] Add configurable `ariaLabel` option for a persistent accessible label (e.g. `"Animated headline"`) that screen readers read instead of the live animation
 - [ ] Add ARIA labels
 - [ ] Add ARIA descriptions
 - [ ] Test with screen readers
@@ -300,29 +376,29 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
   - VoiceOver
   - TalkBack
 
-### 7.2 Keyboard Navigation
+### Keyboard Navigation
 
 - [ ] Ensure keyboard accessibility
 - [ ] Add keyboard shortcuts
 - [ ] Test keyboard navigation
 - [ ] Document keyboard controls
 
-### 7.3 Screen Reader Compatibility
+### Screen Reader Compatibility
 
 - [ ] Test with all major screen readers
 - [ ] Add screen reader announcements
 - [ ] Optimize for screen reader performance
 - [ ] Document screen reader behavior
 
-### 7.4 WCAG Compliance
+### WCAG Compliance
 
 - [ ] WCAG 2.1 Level AA compliance
-- [ ] WCAG 2.2 compliance (when available)
+- [ ] **WCAG 2.2 Level AA compliance** (published 2023, now the current standard — not "when available")
 - [ ] Accessibility audit
 - [ ] Accessibility statement
 - [ ] VPAT documentation
 
-### 7.5 Visual Accessibility
+### Visual Accessibility
 
 - [ ] Support for reduced motion preferences
 - [ ] High contrast mode support
@@ -331,23 +407,23 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 8. Internationalization (i18n)
+## Internationalization (i18n)
 
-### 8.1 RTL Support
+### RTL Support
 
 - [ ] Add right-to-left (RTL) language support
 - [ ] Test RTL layout
 - [ ] Add RTL documentation
 - [ ] Add RTL examples
 
-### 8.2 Localization
+### Localization
 
 - [ ] Support for international characters
 - [ ] Unicode support
 - [ ] Emoji support
 - [ ] Multi-byte character handling
 
-### 8.3 Time Zone Support
+### Time Zone Support
 
 - [ ] Time zone aware typing (if applicable)
 - [ ] Date/time localization
@@ -355,9 +431,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 9. Community & Support
+## Community & Support
 
-### 9.1 Communication Channels
+### Communication Channels
 
 - [ ] Set up Discord server
   - General discussion
@@ -369,7 +445,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Configure GitHub Discussions categories
 - [ ] Set up mailing list
 
-### 9.2 Support Channels
+### Support Channels
 
 - [ ] Create Stack Overflow tag (ultratyped)
 - [ ] Add Stack Overflow link to docs
@@ -377,7 +453,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Set up response time SLAs
 - [ ] Create support guidelines
 
-### 9.3 Community Building
+### Community Building
 
 - [ ] Create contributor recognition program
 - [ ] Set up contributor leaderboard
@@ -385,7 +461,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Organize community events
 - [ ] Create community showcase
 
-### 9.4 Roadmap
+### Roadmap
 
 - [ ] Create public roadmap
 - [ ] Use GitHub Projects for roadmap
@@ -393,7 +469,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Regular roadmap updates
 - [ ] Community voting on features
 
-### 9.5 Changelog Automation
+### Changelog Automation
 
 - [ ] Set up automated changelog
 - [ ] Configure conventional commits
@@ -403,9 +479,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 10. Ecosystem
+## Ecosystem
 
-### 10.1 Plugin System
+### Plugin System
 
 - [ ] Design plugin architecture
 - [ ] Create plugin API
@@ -413,7 +489,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Create example plugins
 - [ ] Set up plugin registry
 
-### 10.2 Theme Support
+### Theme Support
 
 - [ ] Add theming support
 - [ ] Create default themes
@@ -421,7 +497,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Theme marketplace (future)
 - [ ] Community themes
 
-### 10.3 Presets & Templates
+### Presets & Templates
 
 - [ ] Create common presets
 - [ ] Add starter templates
@@ -429,10 +505,10 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Use case-specific templates
 - [ ] Template gallery
 
-### 10.4 Integrations
+### Integrations
 
-- [ ] Next.js integration
-- [ ] Nuxt.js integration
+- [ ] **Next.js `<UltraTyped>` component** — `'use client'` directive, SSR-safe (no `window` access on server), exported from `@ultratyped/react/next`; the hook alone doesn't work in Next.js App Router without this wrapper
+- [ ] **Nuxt composable** — `useUltraTyped` with auto `onBeforeUnmount` cleanup exported from `@ultratyped/vue/nuxt`
 - [ ] SvelteKit integration
 - [ ] Remix integration
 - [ ] Gatsby integration
@@ -441,7 +517,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Rollup plugin
 - [ ] esbuild plugin
 
-### 10.5 Tools
+### Tools
 
 - [ ] CLI tool for scaffolding
 - [ ] Code generators
@@ -451,9 +527,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 11. Marketing & Promotion
+## Marketing & Promotion
 
-### 11.1 Website
+### Website
 
 - [ ] Professional landing page
 - [ ] Interactive demos
@@ -463,7 +539,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Blog section
 - [ ] Newsletter signup
 
-### 11.2 Social Media
+### Social Media
 
 - [ ] Twitter/X account
 - [ ] LinkedIn page
@@ -472,7 +548,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Hacker News posts
 - [ ] Dev.to articles
 
-### 11.3 Content Marketing
+### Content Marketing
 
 - [ ] Technical blog posts
 - [ ] Tutorial videos
@@ -480,7 +556,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Podcast appearances
 - [ ] Guest articles
 
-### 11.4 SEO
+### SEO
 
 - [ ] SEO optimization for website
 - [ ] Open Graph tags
@@ -491,9 +567,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 12. Legal & Compliance
+## Legal & Compliance
 
-### 12.1 Licensing
+### Licensing
 
 - [ ] Review license choice (MIT)
 - [ ] Add LICENSE file to all packages
@@ -501,7 +577,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Add third-party licenses
 - [ ] License compliance check
 
-### 12.2 Privacy
+### Privacy
 
 - [ ] Privacy policy
 - [ ] Data handling documentation
@@ -509,14 +585,14 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] CCPA compliance
 - [ ] Cookie policy
 
-### 12.3 Terms of Service
+### Terms of Service
 
 - [ ] Terms of service for website
 - [ ] Terms for API usage
 - [ ] Terms for community guidelines
 - [ ] Terms for contribution
 
-### 12.4 Trademarks
+### Trademarks
 
 - [ ] Trademark registration
 - [ ] Trademark usage guidelines
@@ -525,9 +601,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 13. Infrastructure
+## Infrastructure
 
-### 13.1 Hosting
+### Hosting
 
 - [ ] Professional domain name
 - [ ] SSL/TLS configuration
@@ -536,7 +612,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Backup strategy
 - [ ] Disaster recovery plan
 
-### 13.2 Monitoring
+### Monitoring
 
 - [ ] Uptime monitoring
 - [ ] Performance monitoring
@@ -545,7 +621,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] SEO monitoring
 - [ ] Security monitoring
 
-### 13.3 Analytics
+### Analytics
 
 - [ ] Set up Google Analytics
 - [ ] Set up privacy-friendly analytics (Plausible)
@@ -556,9 +632,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 14. Quality Metrics
+## Quality Metrics
 
-### 14.1 Code Quality
+### Code Quality
 
 - [ ] Maintainability Index
 - [ ] Code complexity metrics
@@ -566,7 +642,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Code review coverage
 - [ ] Test coverage metrics
 
-### 14.2 User Satisfaction
+### User Satisfaction
 
 - [ ] NPS (Net Promoter Score)
 - [ ] User surveys
@@ -574,7 +650,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Issue response time
 - [ ] Issue resolution time
 
-### 14.3 Adoption Metrics
+### Adoption Metrics
 
 - [ ] npm download counts
 - [ ] GitHub stars
@@ -585,9 +661,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 15. Advanced Features
+## Advanced Features
 
-### 15.1 Animation Enhancements
+### Animation Enhancements
 
 - [ ] Custom easing functions
 - [ ] Animation presets
@@ -597,7 +673,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Blinking cursor support
 - [ ] Multiple cursor styles
 
-### 15.2 Advanced Typing Effects
+### Advanced Typing Effects
 
 - [ ] Typing sounds
 - [ ] Typing delays between words
@@ -605,17 +681,25 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] HTML content typing
 - [ ] Markdown support
 - [ ] Syntax highlighting support
+- [ ] **Per-string configuration** — allow strings array to accept objects `{text, typeSpeed, backSpeed, delay}` so each string can have its own timing
+- [ ] **Reveal mode** — word-by-word or line-by-line reveal as an alternative to character-by-character typing; useful for subtitle-style animations
+- [ ] **Teletype / append-only mode** — no backspacing; each string appends on a new line; common for terminal/log UIs
 
-### 15.3 Performance Enhancements
+### New Distribution Formats
+
+- [ ] **`<ultra-typed>` Web Component** — zero-framework custom element usable in plain HTML: `<ultra-typed strings="Hello,World" speed="80"></ultra-typed>`; broadens the audience to non-framework users significantly
+- [ ] **`<UltraTyped>` React component** (not just a hook) — enables declarative JSX: `<UltraTyped strings={[...]} speed={80} />`; the hook-only API requires users to manage refs manually
+
+### Performance Enhancements
 
 - [ ] Web Worker support
 - [ ] Offscreen canvas
 - [ ] GPU acceleration
+- [ ] **Intersection Observer mode** — `startWhenVisible: true` option delays animation until the element scrolls into view; prevents wasted cycles on hero sections that are below the fold on mobile
 - [ ] Lazy loading
-- [ ] Intersection Observer integration
 - [ ] RequestIdleCallback support
 
-### 15.4 Accessibility Enhancements
+### Accessibility Enhancements
 
 - [ ] Reduced motion support
 - [ ] High contrast mode
@@ -625,9 +709,9 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## 16. Maintenance & Sustainability
+## Maintenance & Sustainability
 
-### 16.1 Maintenance Plan
+### Maintenance Plan
 
 - [ ] Regular dependency updates
 - [ ] Monthly security audits
@@ -636,7 +720,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Deprecation policy
 - [ ] Support policy (version support timeline)
 
-### 16.2 Funding
+### Funding
 
 - [ ] Sponsorship setup (GitHub Sponsors)
 - [ ] Open Collective setup
@@ -645,7 +729,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 - [ ] Consulting services
 - [ ] Training and workshops
 
-### 16.3 Governance
+### Governance
 
 - [ ] Steering committee
 - [ ] Governance model
@@ -657,44 +741,72 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ## Priority Matrix
 
+### Priority 0 — Do Before Any Release or Promotion
+
+- **Bug Fixes**: XSS via `innerHTML`, HTML backspace corruption, broken `reset()`, Visibility API, `prefers-reduced-motion`
+
 ### High Priority (Do First)
 
-1. Testing & Quality Assurance
-2. Security (Dependabot, Snyk, CodeQL)
-3. Documentation (API docs, guides)
-4. Developer Experience (ESLint, Prettier, Husky)
-5. Distribution (CDN, package verification)
+- **Typed.js Parity**: cursor, all callbacks, all missing options, `@ultratyped/typed-compat` shim, migration guide — this is the primary download driver
+- **Build Infrastructure**: IIFE bundle (blocks CDN users), `publint`, `size-limit`, npm keywords, `repository`/`homepage` fields
+- Testing & Quality Assurance
+- Security (Dependabot, Snyk, CodeQL)
+- Documentation (API docs, Typed.js migration guide, StackBlitz examples)
+- Developer Experience (ESLint, Prettier, Husky)
+- Distribution (CDN, package verification)
 
 ### Medium Priority (Do Next)
 
-1. Accessibility (ARIA, keyboard navigation)
-2. Performance Monitoring (Bundlephobia, benchmarks)
-3. Community (Discord, Discussions)
-4. Internationalization (RTL, i18n)
-5. Ecosystem (plugins, themes)
+- Accessibility (ARIA auto-injection, keyboard navigation, WCAG 2.2)
+- Next.js / Nuxt.js SSR-safe components
+- `<ultra-typed>` Web Component + `<UltraTyped>` React component
+- Performance Monitoring (Bundlephobia, benchmarks, Typed.js comparison page)
+- Community (Discord, Discussions)
+- Internationalization (RTL, i18n)
+- Ecosystem (plugins, themes)
 
 ### Low Priority (Do Later)
 
-1. Marketing & Promotion
-2. Advanced Features
-3. Video Tutorials
-4. Multi-language documentation
-5. Funding & Governance
+- Marketing & Promotion
+- Advanced Features (per-string config, reveal mode, teletype, Intersection Observer)
+- Video Tutorials
+- Multi-language documentation
+- Funding & Governance
 
 ---
 
 ## Estimated Timeline
 
-### Phase 1: Foundation (2-3 weeks)
+### Phase 0: Bug Fixes (1 week — non-negotiable before any other work ships)
 
-- Testing setup
-- Security scanning
-- Developer experience tools
+- Fix XSS / `innerHTML` → `textContent` + `contentType` option
+- Fix HTML backspace corruption
+- Fix `reset()` after `stop()`
+- Implement Visibility API
+- Implement `prefers-reduced-motion`
+
+### Phase 1: Typed.js Parity + Build Infrastructure (3-4 weeks)
+
+- Cursor feature (`showCursor`, `cursorChar`, `autoInsertCss`)
+- All missing options (`startDelay`, `loopCount`, `shuffle`, `fadeOut`, `attr`, `typingVariance`, `bindInputFocusEvents`)
+- All lifecycle callbacks
+- `pause()` / `resume()` / `destroy()` / `start()` on core instance
+- `@ultratyped/typed-compat` shim + migration guide
+- IIFE/UMD build
+- `publint` + `size-limit` + `are-the-types-wrong` in CI
+- npm keywords + `repository`/`homepage` fields
+
+### Phase 2: Foundation (2-3 weeks)
+
+- Testing setup (Playwright E2E)
+- Security scanning (Snyk, CodeQL)
+- Developer experience tools (ESLint, Prettier, Husky, commitlint)
 - Basic documentation improvements
+- Changesets monorepo versioning
 
-### Phase 2: Distribution & Performance (1-2 weeks)
+### Phase 3: Distribution & Performance (1-2 weeks)
 
-- CDN setup
+- CDN setup (jsDelivr, unpkg)
 - Performance monitoring
 - Package verification
 - Bundle optimization
