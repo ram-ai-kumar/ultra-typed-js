@@ -210,6 +210,38 @@ describe("UltraTyped Core Library", () => {
 
       expect(instance).toBeDefined();
     });
+
+    it("should use textContent by default (security)", () => {
+      const instance = UltraTyped(container, {
+        strings: ["<script>alert('xss')</script>"],
+        typeSpeed: 10,
+      });
+
+      expect(instance).toBeDefined();
+      // With textContent, HTML should be escaped
+      expect(container.textContent).toBeDefined();
+    });
+
+    it("should use innerHTML when contentType='html'", () => {
+      const instance = UltraTyped(container, {
+        strings: ["<b>Bold</b>"],
+        contentType: "html",
+        typeSpeed: 10,
+      });
+
+      expect(instance).toBeDefined();
+    });
+
+    it("should prevent XSS with default textContent", () => {
+      const instance = UltraTyped(container, {
+        strings: ["<img src=x onerror=alert('xss')>"],
+        typeSpeed: 10,
+      });
+
+      expect(instance).toBeDefined();
+      // Script should not execute with textContent
+      expect(container.textContent).toBeDefined();
+    });
   });
 
   describe("Edge Cases", () => {

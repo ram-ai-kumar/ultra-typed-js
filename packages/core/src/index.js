@@ -9,13 +9,17 @@
  * @returns {string[]} - Array of tokens (chars and tags)
  */
 function T(s) {
-  let r = [], i = 0, l = s.length, c, t;
+  let r = [],
+    i = 0,
+    l = s.length,
+    c,
+    t;
   for (; i < l; i++) {
     c = s[i];
-    if (c == '<') {
+    if (c == "<") {
       t = c;
-      while (++i < l && (c = s[i]) != '>') t += c;
-      r.push(t + '>');
+      while (++i < l && (c = s[i]) != ">") t += c;
+      r.push(t + ">");
     } else {
       r.push(c);
     }
@@ -30,7 +34,8 @@ function T(s) {
  * @returns {number} - Common prefix length
  */
 function D(a, b) {
-  let i = 0, l = Math.min(a.length, b.length);
+  let i = 0,
+    l = Math.min(a.length, b.length);
   for (; i < l && a[i] === b[i]; i++);
   return i;
 }
@@ -48,7 +53,10 @@ export default function U(el, o) {
     bs = o.backSpeed || 30,
     bd = o.backDelay || 800,
     L = o.loop !== false,
-    i = 0, j = 0, m = 0, // string index, char index, mode
+    ct = o.contentType || "text",
+    i = 0,
+    j = 0,
+    m = 0, // string index, char index, mode
     buf = "",
     toks = S.map(T),
     next = 0,
@@ -60,7 +68,8 @@ export default function U(el, o) {
     let dt = t - last;
     last = t;
 
-    if (m == 0) { // typing
+    if (m == 0) {
+      // typing
       if (dt >= ts) {
         buf += toks[i][j++] || "";
         if (j >= toks[i].length) {
@@ -68,14 +77,16 @@ export default function U(el, o) {
           next = bd;
         }
       }
-    } else if (m == 1) { // pause
+    } else if (m == 1) {
+      // pause
       next -= dt;
       if (next <= 0) {
         let ni = (i + 1) % toks.length;
         diff = D(toks[i], toks[ni]);
         m = 2;
       }
-    } else if (m == 2) { // backspace
+    } else if (m == 2) {
+      // backspace
       if (dt >= bs) {
         if (j > diff) {
           buf = buf.slice(0, -1);
@@ -88,17 +99,27 @@ export default function U(el, o) {
       }
     }
 
-    el.innerHTML = buf;
+    if (ct === "html") {
+      el.innerHTML = buf;
+    } else {
+      el.textContent = buf;
+    }
     raf = requestAnimationFrame(step);
   }
 
-  raf = requestAnimationFrame(t => {
+  raf = requestAnimationFrame((t) => {
     last = t;
     step(t);
   });
 
   return {
-    stop() { cancelAnimationFrame(raf); },
-    reset() { i = j = 0; buf = ""; m = 0; }
+    stop() {
+      cancelAnimationFrame(raf);
+    },
+    reset() {
+      i = j = 0;
+      buf = "";
+      m = 0;
+    },
   };
 }

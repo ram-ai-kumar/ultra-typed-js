@@ -10,8 +10,8 @@ These are correctness and security issues found in the current codebase. Nothing
 
 ### Security Bugs
 
-- [ ] **Fix XSS risk in core hot path**: Core unconditionally writes `el.innerHTML = buf` — contradicts the documented "textContent over innerHTML" claim and is a security risk for plain-text strings; switch to `el.textContent = buf` by default, only fall back to `innerHTML` when `contentType: 'html'` is explicitly set by the caller
-- [ ] **Add `contentType` option** (`'text' | 'html'`, default `'text'`) to opt in to HTML rendering
+- [x] **Fix XSS risk in core hot path**: Core unconditionally writes `el.innerHTML = buf` — contradicts the documented "textContent over innerHTML" claim and is a security risk for plain-text strings; switch to `el.textContent = buf` by default, only fall back to `innerHTML` when `contentType: 'html'` is explicitly set by the caller
+- [x] **Add `contentType` option** (`'text' | 'html'`, default `'text'`) to opt in to HTML rendering
 
 ### Correctness
 

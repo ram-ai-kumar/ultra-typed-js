@@ -14,6 +14,8 @@ export interface UltraTypedOptions {
   backDelay?: number;
   /** Whether to loop through strings (default: true) */
   loop?: boolean;
+  /** Content type: 'text' (default, uses textContent) or 'html' (uses innerHTML) */
+  contentType?: "text" | "html";
 }
 
 export interface UltraTypedInstance {
@@ -31,5 +33,5 @@ export interface UltraTypedInstance {
  */
 export default function UltraTyped(
   el: HTMLElement,
-  options?: UltraTypedOptions
+  options?: UltraTypedOptions,
 ): UltraTypedInstance;
