@@ -439,7 +439,7 @@ View benchmark dashboard at `benchmarks/dashboard.html`
 
 ```bash
 # Install dependencies
-npm install --legacy-peer-deps
+npm install
 
 # Build all packages
 npm run build
