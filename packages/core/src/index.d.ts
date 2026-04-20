@@ -21,6 +21,8 @@ export interface UltraTypedOptions {
 export interface UltraTypedInstance {
   /** Stop the animation */
   stop(): void;
+  /** Start or restart the animation */
+  start(): void;
   /** Reset to initial state */
   reset(): void;
 }

@@ -15,10 +15,10 @@ These are correctness and security issues found in the current codebase. Nothing
 
 ### Correctness
 
-- [ ] **Fix HTML backspace corruption**: `buf.slice(0, -1)` removes bytes from the accumulated string, not whole tokens — a tag like `<strong>` is 8 bytes and gets mangled character-by-character during backspace, producing invalid HTML mid-animation; backspace must pop full tokens from the token array and rebuild `buf` from the token slice
-- [ ] **Fix `reset()` is a no-op after `stop()`**: `reset()` clears internal state variables but the `requestAnimationFrame` loop was already cancelled by `stop()` — the animation stays frozen; `reset()` must also restart the rAF loop
-- [ ] **Implement Visibility API** (`document.visibilitychange`): README claims "Pauses when tab is hidden" but no listener exists; add it — pause rAF when `document.hidden`, resume on `visible`
-- [ ] **Implement `prefers-reduced-motion`**: README claims graceful degradation but `window.matchMedia('(prefers-reduced-motion: reduce)')` is never checked; when enabled, skip the animation entirely and render the final string immediately
+- [x] **Fix HTML backspace corruption**: `buf.slice(0, -1)` removes bytes from the accumulated string, not whole tokens — a tag like `<strong>` is 8 bytes and gets mangled character-by-character during backspace, producing invalid HTML mid-animation; backspace must pop full tokens from the token array and rebuild `buf` from the token slice
+- [x] **Fix `reset()` is a no-op after `stop()`**: `reset()` clears internal state variables but the `requestAnimationFrame` loop was already cancelled by `stop()` — the animation stays frozen; `reset()` must also restart the rAF loop
+- [x] **Implement Visibility API** (`document.visibilitychange`): README claims "Pauses when tab is hidden" but no listener exists; add it — pause rAF when `document.hidden`, resume on `visible`
+- [x] **Implement `prefers-reduced-motion`**: README claims graceful degradation but `window.matchMedia('(prefers-reduced-motion: reduce)')` is never checked; when enabled, skip the animation entirely and render the final string immediately
 
 ---
 

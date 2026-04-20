@@ -141,6 +141,27 @@ describe("UltraTyped Core Library", () => {
     });
   });
 
+  describe("Start Method", () => {
+    it("should start the animation", () => {
+      const instance = UltraTyped(container, {
+        strings: ["Hello World"],
+        typeSpeed: 10,
+      });
+
+      expect(() => instance.start()).not.toThrow();
+    });
+
+    it("should restart after stop", () => {
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.stop();
+      expect(() => instance.start()).not.toThrow();
+    });
+  });
+
   describe("Reset Method", () => {
     it("should reset the animation state", () => {
       const instance = UltraTyped(container, {
@@ -162,6 +183,16 @@ describe("UltraTyped Core Library", () => {
         instance.reset();
         instance.reset();
       }).not.toThrow();
+    });
+
+    it("should restart animation after stop", () => {
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.stop();
+      expect(() => instance.reset()).not.toThrow();
     });
   });
 

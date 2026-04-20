@@ -57,21 +57,64 @@ export default function U(el, o) {
     i = 0,
     j = 0,
     m = 0, // string index, char index, mode
-    buf = "",
+    bufTokens = [], // track buffer as tokens instead of string
     toks = S.map(T),
     next = 0,
     raf,
     last = 0,
     diff = 0;
 
+  function rebuildBuf() {
+    return bufTokens.join("");
+  }
+
+  function start() {
+    raf = requestAnimationFrame((t) => {
+      last = t;
+      step(t);
+    });
+  }
+
+  // Visibility API - pause when tab hidden, resume when visible
+  let isPaused = false;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      isPaused = true;
+      cancelAnimationFrame(raf);
+    } else {
+      isPaused = false;
+      last = performance.now();
+      start();
+    }
+  });
+
+  // prefers-reduced-motion support - skip animation and render final string immediately
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  if (prefersReducedMotion && S.length > 0) {
+    const finalString = S[S.length - 1];
+    if (ct === "html") {
+      el.innerHTML = finalString;
+    } else {
+      el.textContent = finalString;
+    }
+    return {
+      stop() {},
+      start() {},
+      reset() {},
+    };
+  }
+
   function step(t) {
+    if (isPaused) return;
     let dt = t - last;
     last = t;
 
     if (m == 0) {
       // typing
       if (dt >= ts) {
-        buf += toks[i][j++] || "";
+        bufTokens.push(toks[i][j++] || "");
         if (j >= toks[i].length) {
           m = 1;
           next = bd;
@@ -89,7 +132,7 @@ export default function U(el, o) {
       // backspace
       if (dt >= bs) {
         if (j > diff) {
-          buf = buf.slice(0, -1);
+          bufTokens.pop(); // pop full token instead of byte
           j--;
         } else {
           i = (i + 1) % toks.length;
@@ -99,6 +142,7 @@ export default function U(el, o) {
       }
     }
 
+    const buf = rebuildBuf();
     if (ct === "html") {
       el.innerHTML = buf;
     } else {
@@ -107,19 +151,22 @@ export default function U(el, o) {
     raf = requestAnimationFrame(step);
   }
 
-  raf = requestAnimationFrame((t) => {
-    last = t;
-    step(t);
-  });
+  start();
 
   return {
     stop() {
       cancelAnimationFrame(raf);
     },
+    start() {
+      cancelAnimationFrame(raf);
+      start();
+    },
     reset() {
       i = j = 0;
-      buf = "";
+      bufTokens = [];
       m = 0;
+      cancelAnimationFrame(raf);
+      start();
     },
   };
 }
