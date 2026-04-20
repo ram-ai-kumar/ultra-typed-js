@@ -2,9 +2,12 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
+    "rootDir": "./src",
     "strict": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
     "target": "esnext"
   },
   "include": ["src/index.ts"]

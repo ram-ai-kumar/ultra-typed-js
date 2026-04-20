@@ -8,7 +8,7 @@
     "playground"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build -w packages/core && npm run build -w packages/alpine -w packages/angular -w packages/astro -w packages/lit -w packages/preact -w packages/react -w packages/solid -w packages/svelte -w packages/typescript -w packages/vue && npm run build -w playground",
     "dev": "npm run dev --workspace=playground",
     "bench": "node benchmarks/compare.js",
     "clean": "rm -rf packages/*/dist playground/dist",
@@ -17,11 +17,11 @@
     "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
+    "@angular/core": "^18.0.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.1.0",
-    "@testing-library/react-hooks": "^8.0.1",
     "@vitest/ui": "^2.1.8",
     "@vue/test-utils": "^2.4.6",
     "gzip-size": "^7.0.0",
