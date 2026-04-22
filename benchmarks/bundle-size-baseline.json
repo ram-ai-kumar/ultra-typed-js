@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "updatedAt": "2026-04-22T22:09:49.276Z",
+  "packages": {
+    "core": {
+      "raw": 4340,
+      "gzip": 1955
+    },
+    "react": {
+      "raw": 218,
+      "gzip": 174
+    },
+    "vue": {
+      "raw": 220,
+      "gzip": 177
+    },
+    "svelte": {
+      "raw": 110,
+      "gzip": 109
+    },
+    "angular": {
+      "raw": 913,
+      "gzip": 503
+    },
+    "preact": {
+      "raw": 221,
+      "gzip": 177
+    },
+    "solid": {
+      "raw": 180,
+      "gzip": 156
+    },
+    "lit": {
+      "raw": 448,
+      "gzip": 244
+    },
+    "alpine": {
+      "raw": 335,
+      "gzip": 220
+    },
+    "astro": {
+      "raw": 86,
+      "gzip": 96
+    },
+    "typescript": {
+      "raw": 500,
+      "gzip": 252
+    }
+  }
+}

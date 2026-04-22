@@ -20,8 +20,13 @@ jobs:
 
       - run: npm run build
 
-      - name: Verify bundle size
-        run: npm run bench
+      # Upload built dist artifacts so the bundle-size job doesn't need to rebuild
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-artifacts
+          path: packages/*/dist/
+          retention-days: 1
 
   test:
     runs-on: ubuntu-latest
@@ -41,4 +46,35 @@ jobs:
         with:
           files: ./coverage/coverage-final.json
           flags: unittests
-          name: codecov-umbrella-w packages/core size
+          name: codecov-umbrella
+
+  bundle-size:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm install
+
+      # Restore pre-built dists from the build job (avoids a full rebuild)
+      - name: Download dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-artifacts
+          path: packages/
+
+      # Gate 1 — Hard ceiling: each package must stay under its declared gzip limit.
+      # Fails immediately if any bundle is too large. Config lives in .size-limit.json.
+      - name: Check hard gzip limits (size-limit)
+        run: npm run size:check
+
+      # Gate 2 — Regression guard: compares measured sizes against the committed
+      # baseline (benchmarks/bundle-size-baseline.json). Fails if any package grew
+      # more than 5% since the last accepted baseline commit.
+      # Pass --ci for compact log output; no ANSI colours in GitHub logs.
+      - name: Report bundle size delta vs baseline
+        run: npm run size:report -- --ci

@@ -1,0 +1,73 @@
+[
+  {
+    "name": "ultratyped (core)",
+    "path": "packages/core/dist/index.mjs",
+    "limit": "2.5 KB"
+  },
+  {
+    "name": "@ultratyped/react",
+    "path": "packages/react/dist/index.mjs",
+    "limit": "800 B",
+    "ignore": ["react", "react-dom", "ultratyped"]
+  },
+  {
+    "name": "@ultratyped/vue",
+    "path": "packages/vue/dist/index.mjs",
+    "limit": "800 B",
+    "ignore": ["vue", "ultratyped"]
+  },
+  {
+    "name": "@ultratyped/svelte",
+    "path": "packages/svelte/dist/index.mjs",
+    "limit": "800 B",
+    "ignore": ["ultratyped"]
+  },
+  {
+    "name": "@ultratyped/angular",
+    "path": "packages/angular/dist/index.mjs",
+    "limit": "1 KB",
+    "ignore": [
+      "@angular/core",
+      "@angular/common",
+      "rxjs",
+      "rxjs/operators",
+      "ultratyped"
+    ]
+  },
+  {
+    "name": "@ultratyped/preact",
+    "path": "packages/preact/dist/index.mjs",
+    "limit": "600 B",
+    "ignore": ["preact", "ultratyped"]
+  },
+  {
+    "name": "@ultratyped/solid",
+    "path": "packages/solid/dist/index.mjs",
+    "limit": "600 B",
+    "ignore": ["solid-js", "ultratyped"]
+  },
+  {
+    "name": "@ultratyped/lit",
+    "path": "packages/lit/dist/index.mjs",
+    "limit": "600 B",
+    "ignore": ["lit", "ultratyped"]
+  },
+  {
+    "name": "@ultratyped/alpine",
+    "path": "packages/alpine/dist/index.mjs",
+    "limit": "600 B",
+    "ignore": ["ultratyped"]
+  },
+  {
+    "name": "@ultratyped/astro",
+    "path": "packages/astro/dist/index.mjs",
+    "limit": "600 B",
+    "ignore": ["ultratyped"]
+  },
+  {
+    "name": "@ultratyped/typescript",
+    "path": "packages/typescript/dist/index.mjs",
+    "limit": "2 KB",
+    "ignore": ["ultratyped"]
+  }
+]
