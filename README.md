@@ -46,6 +46,9 @@ Ultra-fast <2KB typing animation library with zero dependencies.
     - [⚠️ Security Warning: HTML Content Type](#️-security-warning-html-content-type)
     - [Compliance Frameworks](#compliance-frameworks)
     - [Security Documentation](#security-documentation)
+  - [Testing](#testing)
+    - [Unit Tests](#unit-tests)
+    - [Cross-Browser E2E Tests](#cross-browser-e2e-tests)
   - [Reliability](#reliability)
     - [Fault Tolerance](#fault-tolerance)
     - [Observability](#observability)
@@ -539,6 +542,50 @@ const typed = UltraTyped("#element", {
 - [Security Policy](docs/SECURITY.md) - Threat model, best practices, vulnerability reporting
 - [Compliance](docs/COMPLIANCE.md) - Detailed compliance mapping and audit readiness
 - [Performance](docs/PERFORMANCE.md) - Performance characteristics and benchmarks
+
+## Testing
+
+### Unit Tests
+
+UltraTyped.js has comprehensive unit test coverage with 182 tests across all packages:
+
+- **Core Library**: 112 tests covering initialization, typing animation, options, instance methods, edge cases
+- **Security Tests**: XSS prevention (script tags, img onerror, iframe, SVG, data URI), CSP nonce support, input validation
+- **Negative Tests**: Invalid inputs (null, undefined, non-array strings), extreme values (1M character strings, 1000-item arrays)
+- **Exception Tests**: Multiple destroy/stop/reset calls, callbacks that throw errors, non-function callbacks
+- **Memory Leak Tests**: Event listener cleanup, cursor element cleanup, style element handling
+- **Framework Adapters**: 70 tests across React, Vue, Svelte, Angular, Astro, Preact, Lit, Solid, TypeScript
+
+Run unit tests:
+```bash
+npm test
+npm run test:coverage
+npm run test:ui
+```
+
+### Cross-Browser E2E Tests
+
+UltraTyped.js uses Playwright for cross-browser compatibility testing across:
+
+- **Desktop Browsers**: Chrome/Chromium, Firefox, Safari/WebKit, Edge (via Chromium)
+- **Mobile Browsers**: Mobile Chrome (Pixel 5), Mobile Safari (iPhone 12)
+
+All 6 E2E tests pass on all browsers:
+- ✓ should render typing animation
+- ✓ should show cursor when showCursor is true
+- ✓ should handle multiple strings
+- ✓ should handle window visibility changes
+- ✓ should handle rapid stop/start calls
+- ✓ should handle reset functionality
+
+Run E2E tests:
+```bash
+npm run test:e2e              # Run all browsers
+npx playwright test --project=chromium   # Chrome/Edge only
+npx playwright test --project=firefox     # Firefox only
+npx playwright test --project=webkit      # Safari only
+npm run test:e2e:ui          # Run with Playwright UI
+```
 
 ## Reliability
 
