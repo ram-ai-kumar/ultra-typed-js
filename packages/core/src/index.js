@@ -77,6 +77,7 @@ export default function U(el, o) {
 
   // Visibility API - pause when tab hidden, resume when visible
   let isPaused = false;
+  let stopped = false;
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
       isPaused = true;
@@ -84,7 +85,7 @@ export default function U(el, o) {
     } else {
       isPaused = false;
       last = performance.now();
-      start();
+      if (!stopped) start();
     }
   });
 
@@ -109,12 +110,12 @@ export default function U(el, o) {
   function step(t) {
     if (isPaused) return;
     let dt = t - last;
-    last = t;
 
     if (m == 0) {
       // typing
       if (dt >= ts) {
         bufTokens.push(toks[i][j++] || "");
+        last = t;
         if (j >= toks[i].length) {
           m = 1;
           next = bd;
@@ -134,6 +135,7 @@ export default function U(el, o) {
         if (j > diff) {
           bufTokens.pop(); // pop full token instead of byte
           j--;
+          last = t;
         } else {
           i = (i + 1) % toks.length;
           if (!L && i == 0) return;
@@ -155,13 +157,16 @@ export default function U(el, o) {
 
   return {
     stop() {
+      stopped = true;
       cancelAnimationFrame(raf);
     },
     start() {
+      stopped = false;
       cancelAnimationFrame(raf);
       start();
     },
     reset() {
+      stopped = false;
       i = j = 0;
       bufTokens = [];
       m = 0;
