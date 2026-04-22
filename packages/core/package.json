@@ -13,7 +13,6 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "sideEffects": false,
   "scripts": {
     "build": "rollup -c && tsc --emitDeclarationOnly",
     "size": "gzip-size dist/index.mjs"

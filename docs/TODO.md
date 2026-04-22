@@ -4,68 +4,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## Priority 0: Bug Fixes (Ship Before Any Promotion)
-
-These are correctness and security issues found in the current codebase. Nothing else should be released or promoted until these are resolved.
-
-### Correctness
-
-- [ ] **Fix animation timing — characters never typed at normal frame rates**: `last = t` is updated unconditionally at the top of every `step()` call, so `dt` is always ~16 ms at 60 fps; `dt >= typeSpeed` is never true for any `typeSpeed > ~16`, meaning the animation is frozen for the default `typeSpeed: 50`; fix by only updating `last` when a character is actually consumed (typed or backspaced), not on every frame — `packages/core/src/index.js:112`
-- [ ] **Fix Visibility API restarts stopped/completed animations**: the `visibilitychange` listener calls inner `start()` unconditionally when the tab becomes visible, even if the caller previously invoked `stop()` or the non-loop animation already finished; add a `stopped` flag set by `stop()` and cleared by `start()`/`reset()`, and guard the resume path with `if (!stopped)` — `packages/core/src/index.js:80-88`
-
----
-
-## Typed.js Parity & Migration
-
-This is the single biggest adoption driver. Typed.js has ~1.3M weekly downloads. Being a credible drop-in replacement with a migration story converts that install base.
-
-### Typed.js Compatibility Shim
-
-- [ ] Publish `@ultratyped/typed-compat` — mirrors the Typed.js v2 constructor API (`new Typed(el, opts)`) exactly, delegating to the UltraTyped core; zero behavior changes for existing Typed.js users
-- [ ] Map all Typed.js option names to UltraTyped equivalents (`typeSpeed`, `backSpeed`, `backDelay`, `loop`, `loopCount`, `showCursor`, `cursorChar`, `attr`, `smartBackspace`, `shuffle`, `fadeOut`, `fadeOutDelay`, `fadeOutClass`, `strings`, `stringsElement`, `startDelay`, `onBegin`, `onComplete`, `onStringTyped`, `preStringTyped`, `onLastStringBackspaced`, `onTypingPaused`, `onTypingResumed`, `onReset`, `onStop`, `onStart`, `onDestroy`)
-- [ ] Write migration guide from Typed.js v2 → UltraTyped (side-by-side code comparison, bundle size savings)
-- [ ] Add Typed.js feature comparison table to README (size, fps, deps, cursor, callbacks, SSR, accessibility)
-
-### Missing Core Options (parity gaps)
-
-- [ ] `showCursor: true` — render a blinking cursor `<span>` adjacent to the typed element (the most visually expected feature)
-- [ ] `cursorChar: '|'` — customizable cursor character
-- [ ] `autoInsertCss: true` — auto-inject `@keyframes blink` CSS once per page; no manual stylesheet needed
-- [ ] `startDelay: 0` — milliseconds to wait before the very first character is typed
-- [ ] `loopCount: Infinity` — loop N times then stop (currently only boolean `loop`)
-- [ ] `shuffle: false` — randomize string order on each loop
-- [ ] `fadeOut: false` — fade the element out instead of backspacing
-- [ ] `fadeOutDelay: 500` — delay in ms before fade starts
-- [ ] `fadeOutClass: 'typed-fade-out'` — CSS class applied during fade
-- [ ] `attr: null` — type into an element attribute (e.g. `placeholder`, `value`, `title`) instead of text content
-- [ ] `smartBackspace: true` — expose as a toggleable option (currently always on, undocumented)
-- [ ] `stringsElement: null` — read strings from a DOM element's children instead of `strings` array
-- [ ] `typingVariance: 0` — add ±N ms random jitter per character for a human-like feel
-- [ ] `bindInputFocusEvents: false` — pause typing when a nearby `<input>` or `<textarea>` gains focus
-
-### Missing Core Callbacks
-
-- [ ] `onBegin(self)` — fires once before the first character is typed
-- [ ] `onComplete(self)` — fires when all strings have been typed (end of final loop)
-- [ ] `preStringTyped(arrayPos, self)` — fires before each string begins typing
-- [ ] `onStringTyped(arrayPos, self)` — fires after each string is fully typed
-- [ ] `onLastStringBackspaced(self)` — fires when the last string has been fully erased
-- [ ] `onTypingPaused(arrayPos, self)` — fires when animation pauses (back-delay period)
-- [ ] `onTypingResumed(arrayPos, self)` — fires when animation resumes from pause
-- [ ] `onReset(self)` — fires on `reset()`
-- [ ] `onStop(arrayPos, self)` — fires on `stop()`
-- [ ] `onStart(arrayPos, self)` — fires on `start()`
-- [ ] `onDestroy(self)` — fires on `destroy()`
-
-### Missing Core Instance Methods
-
-- [ ] `pause()` — pause animation without losing current state
-- [ ] `resume()` — resume from exactly where `pause()` stopped
-- [ ] `destroy()` — stop, remove cursor element, clear text content, null all refs (currently only on TS class adapter, not core)
-- [ ] `start()` — (re)start animation after a manual `stop()`; `reset()` should not be required to restart
-- [ ] `toggle()` — convenience: pause if running, resume if paused
-
----
+## Remaining Work
 
 ## Testing & Quality Assurance
 
@@ -736,7 +675,9 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ### Priority 0 — Do Before Any Release or Promotion
 
-- **Bug Fixes**: animation timing broken at 60 fps (`last` reset every frame), Visibility API unconditionally restarts stopped/completed animations
+- **Correctness**: `backDelay` expires quadratically fast (quadratic countdown bug in `m=1`); `visibilitychange` listener never removed on `destroy()` (memory leak in SPAs); `el.parentNode` null crash with detached DOM; React adapter stale closure silently ignores prop updates; TypeScript interface covers only 20% of the API surface
+- **Security**: `contentType: 'html'` is an unsanitized XSS sink with no warning; `autoInsertCss` injects `<style>` without CSP nonce; `"sideEffects": false` in core is incorrect and risks tree-shaking erasure
+- **Performance**: unconditional DOM write (`innerHTML`/`textContent`) every rAF frame including during pause phase causes ~50 redundant layout recalculations per back-delay
 
 ### High Priority (Do First)
 
@@ -770,10 +711,19 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ## Estimated Timeline
 
-### Phase 0: Bug Fixes (1 week — non-negotiable before any other work ships)
+### Phase 0: Critical Fixes (1-2 weeks — non-negotiable before any other work ships)
 
-- Fix animation timing (`last` must only update when a token is consumed, not every frame)
-- Fix Visibility API resume guard (`stopped` flag to prevent restarting halted instances)
+- ~~Fix animation timing~~ ✓ (`last` only updates when a token is consumed)
+- ~~Fix Visibility API resume guard~~ ✓ (`stopped` flag guards the resume path)
+- Fix `backDelay` quadratic countdown bug (`pauseStart` timestamp approach)
+- Fix `visibilitychange` memory leak (store handler ref, remove in `destroy()`)
+- Fix `el.parentNode` null crash (guard before cursor insertion)
+- Fix React adapter stale closure (add options to `useEffect` deps)
+- Fix TypeScript interface to cover full API surface
+- Fix `contentType: 'html'` XSS — add sanitize option + prominent warning
+- Fix `autoInsertCss` CSP incompatibility (expose `nonce` option)
+- Fix `"sideEffects": false` in core `package.json`
+- Fix redundant DOM writes during pause phase (cache `prevBuf`)
 
 ### Phase 1: Typed.js Parity + Build Infrastructure (3-4 weeks)
 
@@ -835,7 +785,7 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - [GitHub Actions Documentation](https://docs.github.com/actions)
 - [Web.dev Best Practices](https://web.dev/)
 
-### Security
+### Security References
 
 - [OWASP Guidelines](https://owasp.org/)
 - [npm Security](https://docs.npmjs.com/about-auditing-packages)
@@ -847,7 +797,7 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - [ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
 - [WebAIM Guidelines](https://webaim.org/)
 
-### Performance
+### Performance References
 
 - [Web.dev Performance](https://web.dev/performance/)
 - [MDN Performance](https://developer.mozilla.org/en-US/docs/Web/Performance)

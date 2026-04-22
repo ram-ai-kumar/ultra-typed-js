@@ -16,6 +16,9 @@ Ultra-fast <2KB typing animation library with zero dependencies.
 - [UltraTyped.js](#ultratypedjs)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
+  - [Typed.js Compatibility](#typedjs-compatibility)
+    - [Feature Comparison](#feature-comparison)
+    - [Migration Options](#migration-options)
   - [Supported Frameworks](#supported-frameworks)
   - [Installation](#installation)
   - [Quick Start](#quick-start)
@@ -32,13 +35,15 @@ Ultra-fast <2KB typing animation library with zero dependencies.
     - [TypeScript (Class-based API)](#typescript-class-based-api)
     - [Vue](#vue)
   - [Options](#options)
+    - [Callbacks](#callbacks)
   - [API](#api)
     - [Instance Methods](#instance-methods)
   - [Performance](#performance)
     - [Resource Optimization](#resource-optimization)
     - [Scalability](#scalability)
-  - [Security & Compliance](#security--compliance)
+  - [Security \& Compliance](#security--compliance)
     - [Security Posture](#security-posture)
+    - [⚠️ Security Warning: HTML Content Type](#️-security-warning-html-content-type)
     - [Compliance Frameworks](#compliance-frameworks)
     - [Security Documentation](#security-documentation)
   - [Reliability](#reliability)
@@ -61,6 +66,68 @@ Ultra-fast <2KB typing animation library with zero dependencies.
 - **Smart backspace** - Diff-based backspacing for efficiency
 - **Security-first** - XSS prevention, CSP compliant, zero trust architecture
 - **Production-ready** - CI/CD workflows, automated testing, comprehensive documentation
+
+## Typed.js Compatibility
+
+UltraTyped.js is a drop-in replacement for Typed.js v2 with 100% feature parity and significantly smaller bundle size.
+
+### Feature Comparison
+
+| Feature                | Typed.js v2 | UltraTyped.js | typed-compat |
+| ---------------------- | ----------- | ------------- | ------------ |
+| **Bundle Size**        | ~13KB       | ~2KB          | ~2.5KB       |
+| **Dependencies**       | 0           | 0             | 0            |
+| **Cursor**             | ✅           | ✅             | ✅            |
+| **Smart Backspace**    | ✅           | ✅             | ✅            |
+| **Loop**               | ✅           | ✅             | ✅            |
+| **Loop Count**         | ✅           | ✅             | ✅            |
+| **Shuffle**            | ✅           | ✅             | ✅            |
+| **Fade Out**           | ✅           | ✅             | ✅            |
+| **HTML Content**       | ✅           | ✅             | ✅            |
+| **Attribute Typing**   | ✅           | ✅             | ✅            |
+| **Typing Variance**    | ✅           | ✅             | ✅            |
+| **Input Focus Events** | ✅           | ✅             | ✅            |
+| **All Callbacks**      | ✅           | ✅             | ✅            |
+| **Instance Methods**   | ✅           | ✅             | ✅            |
+| **SSR Support**        | ❌           | ✅             | ✅            |
+| **TypeScript**         | ❌           | ✅             | ✅            |
+| **Framework Adapters** | Limited     | Full          | Full         |
+
+### Migration Options
+
+**Option 1: Use typed-compat (Zero code changes)**
+
+```bash
+npm install @ultratyped/typed-compat @ultratyped/core
+```
+
+```javascript
+// Before
+import Typed from "typed.js";
+const typed = new Typed("#element", { strings: ["Hello"] });
+
+// After - just change the import
+import Typed from "@ultratyped/typed-compat";
+const typed = new Typed("#element", { strings: ["Hello"] });
+```
+
+**Option 2: Migrate to UltraTyped.js directly**
+
+```bash
+npm install @ultratyped/core
+```
+
+```javascript
+// Before
+import Typed from "typed.js";
+const typed = new Typed("#element", { strings: ["Hello"] });
+
+// After - use function instead of class
+import UltraTyped from "@ultratyped/core";
+const typed = UltraTyped("#element", { strings: ["Hello"] });
+```
+
+For detailed migration instructions, see the [Migration Guide](docs/MIGRATION.md).
 
 ## Supported Frameworks
 
@@ -319,20 +386,57 @@ const el = useUltraTyped({
 
 ## Options
 
-| Option      | Type       | Default  | Description                              |
-| ----------- | ---------- | -------- | ---------------------------------------- |
-| `strings`   | `string[]` | required | Array of strings to type                 |
-| `typeSpeed` | `number`   | `50`     | Milliseconds per character typed         |
-| `backSpeed` | `number`   | `30`     | Milliseconds per character backspaced    |
-| `backDelay` | `number`   | `800`    | Milliseconds to pause before backspacing |
-| `loop`      | `boolean`  | `true`   | Whether to loop through strings          |
+| Option                 | Type                    | Default            | Description                                    |
+| ---------------------- | ----------------------- | ------------------ | ---------------------------------------------- |
+| `strings`              | `string[]`              | required           | Array of strings to type                       |
+| `stringsElement`       | `string \| HTMLElement` | `null`             | CSS selector or element to read strings from   |
+| `typeSpeed`            | `number`                | `50`               | Milliseconds per character typed               |
+| `backSpeed`            | `number`                | `30`               | Milliseconds per character backspaced          |
+| `backDelay`            | `number`                | `800`              | Milliseconds to pause before backspacing       |
+| `loop`                 | `boolean`               | `true`             | Whether to loop through strings                |
+| `loopCount`            | `number`                | `Infinity`         | Number of loops before stopping                |
+| `shuffle`              | `boolean`               | `false`            | Randomize string order on each loop            |
+| `contentType`          | `'text' \| 'html'`      | `'text'`           | Content type (text or HTML)                    |
+| `attr`                 | `string`                | `null`             | Type into element attribute instead of text    |
+| `smartBackspace`       | `boolean`               | `true`             | Smart backspace (only backspace differences)   |
+| `showCursor`           | `boolean`               | `true`             | Show blinking cursor                           |
+| `cursorChar`           | `string`                | `'\|'`             | Cursor character                               |
+| `autoInsertCss`        | `boolean`               | `true`             | Auto-inject CSS for cursor animation           |
+| `startDelay`           | `number`                | `0`                | Delay before first character typed             |
+| `fadeOut`              | `boolean`               | `false`            | Fade out instead of backspacing                |
+| `fadeOutDelay`         | `number`                | `500`              | Delay before fade starts                       |
+| `fadeOutClass`         | `string`                | `'typed-fade-out'` | CSS class applied during fade                  |
+| `typingVariance`       | `number`                | `0`                | Random jitter per character (human-like feel)  |
+| `bindInputFocusEvents` | `boolean`               | `false`            | Pause typing when input/textarea gains focus   |
+| `nonce`                | `string`                | `null`             | Nonce for CSP compatibility with autoInsertCss |
+
+### Callbacks
+
+| Callback                 | Signature                  | Description                            |
+| ------------------------ | -------------------------- | -------------------------------------- |
+| `onBegin`                | `(self) => void`           | Fires before first character typed     |
+| `onComplete`             | `(self) => void`           | Fires when animation completes         |
+| `preStringTyped`         | `(arrayPos, self) => void` | Fires before each string begins        |
+| `onStringTyped`          | `(arrayPos, self) => void` | Fires after each string is fully typed |
+| `onLastStringBackspaced` | `(self) => void`           | Fires when last string is fully erased |
+| `onTypingPaused`         | `(arrayPos, self) => void` | Fires when animation pauses            |
+| `onTypingResumed`        | `(arrayPos, self) => void` | Fires when animation resumes           |
+| `onReset`                | `(self) => void`           | Fires on reset()                       |
+| `onStop`                 | `(arrayPos, self) => void` | Fires on stop()                        |
+| `onStart`                | `(arrayPos, self) => void` | Fires on start()                       |
+| `onDestroy`              | `(self) => void`           | Fires on destroy()                     |
 
 ## API
 
 ### Instance Methods
 
 - `stop()` - Stop the animation
+- `start()` - Start or restart the animation
 - `reset()` - Reset to initial state
+- `pause()` - Pause animation without losing state
+- `resume()` - Resume from pause
+- `destroy()` - Stop and clean up (remove cursor, clear content)
+- `toggle()` - Toggle between pause and resume
 
 ## Performance
 
@@ -385,6 +489,42 @@ UltraTyped.js is designed with security as a foundational principle. Our CISO-re
 - **AI/LLM Safe** - No prompt injection vectors, no data collection
 - **Supply Chain Secure** - SBOM-ready, zero transitive dependencies
 - **Penetration Test Ready** - Clear boundaries, no hidden state, reproducible behavior
+
+### ⚠️ Security Warning: HTML Content Type
+
+**When using `contentType: 'html'`, the library injects content via `innerHTML` without sanitization.**
+
+**NEVER use this option with untrusted input**, including:
+
+- Content from CMS (WordPress, Contentful, etc.)
+- API responses from external services
+- User-generated content
+- URL query parameters
+- Database queries
+
+**Only use `contentType: 'html'` with trusted, developer-controlled HTML content.**
+
+For untrusted input, always use the default `contentType: 'text'` which safely uses `textContent`.
+
+```javascript
+// ❌ UNSAFE - Never do this with untrusted input
+const typed = UltraTyped("#element", {
+  strings: [userGeneratedContent], // XSS risk!
+  contentType: "html",
+});
+
+// ✅ SAFE - Use text mode for untrusted input
+const typed = UltraTyped("#element", {
+  strings: [userGeneratedContent], // Safe
+  contentType: "text", // or omit (default)
+});
+
+// ✅ SAFE - HTML mode with trusted content only
+const typed = UltraTyped("#element", {
+  strings: ['<span class="highlight">Hello</span>'], // Developer-controlled
+  contentType: "html",
+});
+```
 
 ### Compliance Frameworks
 

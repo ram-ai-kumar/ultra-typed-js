@@ -8,8 +8,8 @@ export function useUltraTyped(options: UltraTypedOptions) {
   useEffect(() => {
     if (!ref.current) return;
     const instance = UltraTyped(ref.current, options);
-    return () => instance.stop();
-  }, []);
+    return () => instance.destroy();
+  }, [options]);
 
   return ref;
 }

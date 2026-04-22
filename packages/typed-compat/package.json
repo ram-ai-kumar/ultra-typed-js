@@ -1,0 +1,49 @@
+{
+  "name": "@ultratyped/typed-compat",
+  "version": "0.1.0",
+  "description": "Typed.js v2 compatibility shim for UltraTyped.js - drop-in replacement with zero behavior changes",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "typed.js",
+    "typed",
+    "typewriter",
+    "typing",
+    "animation",
+    "text",
+    "cursor",
+    "compat",
+    "compatibility",
+    "shim",
+    "drop-in",
+    "replacement",
+    "migration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ram-ai-kumar/ultra-typed-js.git",
+    "directory": "packages/typed-compat"
+  },
+  "homepage": "https://github.com/ram-ai-kumar/ultra-typed-js#readme",
+  "bugs": {
+    "url": "https://github.com/ram-ai-kumar/ultra-typed-js/issues"
+  },
+  "author": "ram-ai-kumar",
+  "license": "MIT",
+  "peerDependencies": {
+    "@ultratyped/core": "*"
+  }
+}

@@ -1,6 +1,10 @@
 /**
  * UltraTyped.js - Ultra-fast <2KB typing animation library
  * Zero dependencies, rAF-driven, pre-tokenized strings
+ *
+ * @warning XSS Risk: When using `contentType: 'html'`, the library injects content via `innerHTML`
+ * without sanitization. NEVER use this option with untrusted input (CMS, API, user input, URL params).
+ * Only use with trusted, developer-controlled HTML content. For untrusted input, use `contentType: 'text'` (default).
  */
 
 /**
@@ -49,11 +53,37 @@ function D(a, b) {
 export default function U(el, o) {
   o = o || {};
   let S = o.strings || [],
+    stringsElement = o.stringsElement || null,
     ts = o.typeSpeed || 50,
     bs = o.backSpeed || 30,
     bd = o.backDelay || 800,
     L = o.loop !== false,
+    loopCount = o.loopCount === undefined ? Infinity : o.loopCount,
+    shuffle = o.shuffle || false,
     ct = o.contentType || "text",
+    attr = o.attr || null,
+    smartBackspace = o.smartBackspace !== false,
+    showCursor = o.showCursor !== false,
+    cursorChar = o.cursorChar || "|",
+    autoInsertCss = o.autoInsertCss !== false,
+    startDelay = o.startDelay || 0,
+    nonce = o.nonce || null,
+    fadeOut = o.fadeOut || false,
+    fadeOutDelay = o.fadeOutDelay || 500,
+    fadeOutClass = o.fadeOutClass || "typed-fade-out",
+    typingVariance = o.typingVariance || 0,
+    bindInputFocusEvents = o.bindInputFocusEvents || false,
+    onBegin = o.onBegin,
+    onComplete = o.onComplete,
+    preStringTyped = o.preStringTyped,
+    onStringTyped = o.onStringTyped,
+    onLastStringBackspaced = o.onLastStringBackspaced,
+    onTypingPaused = o.onTypingPaused,
+    onTypingResumed = o.onTypingResumed,
+    onReset = o.onReset,
+    onStop = o.onStop,
+    onStart = o.onStart,
+    onDestroy = o.onDestroy,
     i = 0,
     j = 0,
     m = 0, // string index, char index, mode
@@ -62,13 +92,85 @@ export default function U(el, o) {
     next = 0,
     raf,
     last = 0,
-    diff = 0;
+    diff = 0,
+    cursorEl = null,
+    initialDelay = true,
+    loopCounter = 0,
+    hasBegun = false,
+    originalStrings = [...S],
+    isFadingOut = false,
+    focusHandler = null,
+    pauseStart = 0,
+    prevBuf = "";
+
+  // Read strings from DOM element if stringsElement is provided
+  if (stringsElement && S.length === 0) {
+    const element =
+      typeof stringsElement === "string"
+        ? document.querySelector(stringsElement)
+        : stringsElement;
+    if (element) {
+      S = Array.from(element.children).map((child) => child.textContent.trim());
+      originalStrings = [...S];
+      toks = S.map(T);
+    }
+  }
 
   function rebuildBuf() {
     return bufTokens.join("");
   }
 
-  function start() {
+  // Fisher-Yates shuffle
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  // Apply typing variance for human-like jitter
+  function applyVariance(baseSpeed) {
+    if (typingVariance <= 0) return baseSpeed;
+    const variance = Math.random() * typingVariance * 2 - typingVariance;
+    return baseSpeed + variance;
+  }
+
+  // Auto-insert CSS for blinking cursor
+  if (autoInsertCss && showCursor) {
+    const styleId = "ultratyped-cursor-style";
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      if (nonce) {
+        style.setAttribute("nonce", nonce);
+      }
+      style.textContent = `
+        .ultratyped-cursor {
+          display: inline-block;
+          animation: ultratyped-blink 0.7s infinite;
+        }
+        @keyframes ultratyped-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+  }
+
+  // Create cursor element
+  if (showCursor) {
+    if (el && el.parentNode) {
+      cursorEl = document.createElement("span");
+      cursorEl.className = "ultratyped-cursor";
+      cursorEl.textContent = cursorChar;
+      cursorEl.setAttribute("role", "presentation");
+      el.parentNode.insertBefore(cursorEl, el.nextSibling);
+    }
+  }
+
+  function startAnimation() {
     raf = requestAnimationFrame((t) => {
       last = t;
       step(t);
@@ -77,17 +179,30 @@ export default function U(el, o) {
 
   // Visibility API - pause when tab hidden, resume when visible
   let isPaused = false;
+  let manuallyPaused = false;
   let stopped = false;
-  document.addEventListener("visibilitychange", () => {
+  let visibilityHandler = () => {
     if (document.hidden) {
       isPaused = true;
       cancelAnimationFrame(raf);
     } else {
       isPaused = false;
       last = performance.now();
-      if (!stopped) start();
+      if (!stopped && !manuallyPaused) startAnimation();
     }
-  });
+  };
+  document.addEventListener("visibilitychange", visibilityHandler);
+
+  // bindInputFocusEvents - pause when nearby input/textarea gains focus
+  if (bindInputFocusEvents) {
+    focusHandler = (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+        manuallyPaused = true;
+        cancelAnimationFrame(raf);
+      }
+    };
+    document.addEventListener("focus", focusHandler, true);
+  }
 
   // prefers-reduced-motion support - skip animation and render final string immediately
   const prefersReducedMotion = window.matchMedia(
@@ -95,83 +210,218 @@ export default function U(el, o) {
   ).matches;
   if (prefersReducedMotion && S.length > 0) {
     const finalString = S[S.length - 1];
-    if (ct === "html") {
+    if (attr) {
+      el.setAttribute(attr, finalString);
+    } else if (ct === "html") {
       el.innerHTML = finalString;
     } else {
       el.textContent = finalString;
     }
     return {
-      stop() {},
+      stop() {
+        if (cursorEl && cursorEl.parentNode) {
+          cursorEl.parentNode.removeChild(cursorEl);
+        }
+      },
       start() {},
       reset() {},
     };
   }
 
   function step(t) {
-    if (isPaused) return;
+    if (isPaused || manuallyPaused) return;
     let dt = t - last;
+
+    // Handle initial start delay
+    if (initialDelay) {
+      if (dt >= startDelay) {
+        initialDelay = false;
+        last = t;
+        if (onBegin && !hasBegun) {
+          hasBegun = true;
+          onBegin({ el, strings: S });
+        }
+        if (preStringTyped) {
+          preStringTyped(i, { el, strings: S });
+        }
+      }
+      raf = requestAnimationFrame(step);
+      return;
+    }
 
     if (m == 0) {
       // typing
-      if (dt >= ts) {
+      if (dt >= applyVariance(ts)) {
         bufTokens.push(toks[i][j++] || "");
         last = t;
         if (j >= toks[i].length) {
           m = 1;
-          next = bd;
+          pauseStart = t;
+          if (onStringTyped) {
+            onStringTyped(i, { el, strings: S });
+          }
         }
       }
     } else if (m == 1) {
       // pause
-      next -= dt;
-      if (next <= 0) {
+      const pauseElapsed = t - pauseStart;
+      if (pauseElapsed >= bd && onTypingPaused && pauseElapsed < bd + 16) {
+        onTypingPaused(i, { el, strings: S });
+      }
+      if (pauseElapsed >= bd) {
+        // Check if fadeOut is enabled and this is the last string
+        if (
+          fadeOut &&
+          (!L || loopCounter + 1 >= loopCount) &&
+          i === toks.length - 1
+        ) {
+          isFadingOut = true;
+          el.classList.add(fadeOutClass);
+          setTimeout(() => {
+            if (onComplete) {
+              onComplete({ el, strings: S });
+            }
+            return;
+          }, fadeOutDelay);
+          return;
+        }
         let ni = (i + 1) % toks.length;
-        diff = D(toks[i], toks[ni]);
+        diff = smartBackspace ? D(toks[i], toks[ni]) : 0;
         m = 2;
+        last = t;
+        if (onTypingResumed) {
+          onTypingResumed(i, { el, strings: S });
+        }
       }
     } else if (m == 2) {
       // backspace
-      if (dt >= bs) {
+      if (dt >= applyVariance(bs)) {
         if (j > diff) {
           bufTokens.pop(); // pop full token instead of byte
           j--;
           last = t;
         } else {
+          // Fire onLastStringBackspaced when last string is fully erased
+          if (
+            onLastStringBackspaced &&
+            j === 0 &&
+            (!L || loopCounter >= loopCount)
+          ) {
+            onLastStringBackspaced({ el, strings: S });
+          }
           i = (i + 1) % toks.length;
-          if (!L && i == 0) return;
+          // Check if we've completed a full loop
+          if (i == 0) {
+            loopCounter++;
+            if (!L || loopCounter >= loopCount) {
+              if (onComplete) {
+                onComplete({ el, strings: S });
+              }
+              return;
+            }
+            // Shuffle strings on each loop if shuffle is enabled
+            if (shuffle) {
+              S = shuffleArray([...originalStrings]);
+              toks = S.map(T);
+            }
+          }
+          if (preStringTyped) {
+            preStringTyped(i, { el, strings: S });
+          }
           m = 0;
         }
       }
     }
 
     const buf = rebuildBuf();
-    if (ct === "html") {
-      el.innerHTML = buf;
-    } else {
-      el.textContent = buf;
+    // Only update DOM if buffer has changed (prevents unnecessary layout recalculations during pause)
+    if (buf !== prevBuf) {
+      if (attr) {
+        el.setAttribute(attr, buf);
+      } else if (ct === "html") {
+        el.innerHTML = buf;
+      } else {
+        el.textContent = buf;
+      }
+      prevBuf = buf;
     }
     raf = requestAnimationFrame(step);
   }
 
-  start();
+  startAnimation();
 
   return {
     stop() {
       stopped = true;
       cancelAnimationFrame(raf);
+      if (onStop) {
+        onStop(i, { el, strings: S });
+      }
     },
     start() {
       stopped = false;
       cancelAnimationFrame(raf);
-      start();
+      if (onStart) {
+        onStart(i, { el, strings: S });
+      }
+      startAnimation();
     },
     reset() {
       stopped = false;
+      manuallyPaused = false;
       i = j = 0;
       bufTokens = [];
       m = 0;
+      loopCounter = 0;
+      initialDelay = true;
+      hasBegun = false;
       cancelAnimationFrame(raf);
-      start();
+      if (onReset) {
+        onReset({ el, strings: S });
+      }
+      startAnimation();
+    },
+    pause() {
+      manuallyPaused = true;
+      cancelAnimationFrame(raf);
+    },
+    resume() {
+      manuallyPaused = false;
+      last = performance.now();
+      if (!stopped) startAnimation();
+    },
+    toggle() {
+      if (manuallyPaused) {
+        this.resume();
+      } else {
+        this.pause();
+      }
+    },
+    destroy() {
+      stopped = true;
+      manuallyPaused = false;
+      cancelAnimationFrame(raf);
+      if (cursorEl && cursorEl.parentNode) {
+        cursorEl.parentNode.removeChild(cursorEl);
+      }
+      if (visibilityHandler) {
+        document.removeEventListener("visibilitychange", visibilityHandler);
+      }
+      if (focusHandler) {
+        document.removeEventListener("focus", focusHandler, true);
+      }
+      if (attr) {
+        el.removeAttribute(attr);
+      } else {
+        el.textContent = "";
+        el.innerHTML = "";
+      }
+      if (isFadingOut) {
+        el.classList.remove(fadeOutClass);
+      }
+      if (onDestroy) {
+        onDestroy({ el, strings: S });
+      }
     },
   };
 }
