@@ -88,7 +88,7 @@ export default function U(el, o) {
     j = 0,
     m = 0, // string index, char index, mode
     bufTokens = [], // track buffer as tokens instead of string
-    toks = S.map(T),
+    toks = Array.isArray(S) ? S.map(T) : [],
     next = 0,
     raf,
     last = 0,
@@ -97,7 +97,7 @@ export default function U(el, o) {
     initialDelay = true,
     loopCounter = 0,
     hasBegun = false,
-    originalStrings = [...S],
+    originalStrings = Array.isArray(S) ? [...S] : [],
     isFadingOut = false,
     focusHandler = null,
     pauseStart = 0,
@@ -239,10 +239,18 @@ export default function U(el, o) {
         last = t;
         if (onBegin && !hasBegun) {
           hasBegun = true;
-          onBegin({ el, strings: S });
+          try {
+            onBegin({ el, strings: S });
+          } catch (e) {
+            // Ignore callback errors to prevent animation crashes
+          }
         }
         if (preStringTyped) {
-          preStringTyped(i, { el, strings: S });
+          try {
+            preStringTyped(i, { el, strings: S });
+          } catch (e) {
+            // Ignore callback errors to prevent animation crashes
+          }
         }
       }
       raf = requestAnimationFrame(step);
@@ -258,7 +266,11 @@ export default function U(el, o) {
           m = 1;
           pauseStart = t;
           if (onStringTyped) {
-            onStringTyped(i, { el, strings: S });
+            try {
+              onStringTyped(i, { el, strings: S });
+            } catch (e) {
+              // Ignore callback errors to prevent animation crashes
+            }
           }
         }
       }
@@ -266,7 +278,11 @@ export default function U(el, o) {
       // pause
       const pauseElapsed = t - pauseStart;
       if (pauseElapsed >= bd && onTypingPaused && pauseElapsed < bd + 16) {
-        onTypingPaused(i, { el, strings: S });
+        try {
+          onTypingPaused(i, { el, strings: S });
+        } catch (e) {
+          // Ignore callback errors to prevent animation crashes
+        }
       }
       if (pauseElapsed >= bd) {
         // Check if fadeOut is enabled and this is the last string
@@ -279,7 +295,11 @@ export default function U(el, o) {
           el.classList.add(fadeOutClass);
           setTimeout(() => {
             if (onComplete) {
-              onComplete({ el, strings: S });
+              try {
+                onComplete({ el, strings: S });
+              } catch (e) {
+                // Ignore callback errors to prevent animation crashes
+              }
             }
             return;
           }, fadeOutDelay);
@@ -290,7 +310,11 @@ export default function U(el, o) {
         m = 2;
         last = t;
         if (onTypingResumed) {
-          onTypingResumed(i, { el, strings: S });
+          try {
+            onTypingResumed(i, { el, strings: S });
+          } catch (e) {
+            // Ignore callback errors to prevent animation crashes
+          }
         }
       }
     } else if (m == 2) {
@@ -307,7 +331,11 @@ export default function U(el, o) {
             j === 0 &&
             (!L || loopCounter >= loopCount)
           ) {
-            onLastStringBackspaced({ el, strings: S });
+            try {
+              onLastStringBackspaced({ el, strings: S });
+            } catch (e) {
+              // Ignore callback errors to prevent animation crashes
+            }
           }
           i = (i + 1) % toks.length;
           // Check if we've completed a full loop
@@ -315,7 +343,11 @@ export default function U(el, o) {
             loopCounter++;
             if (!L || loopCounter >= loopCount) {
               if (onComplete) {
-                onComplete({ el, strings: S });
+                try {
+                  onComplete({ el, strings: S });
+                } catch (e) {
+                  // Ignore callback errors to prevent animation crashes
+                }
               }
               return;
             }
@@ -355,14 +387,22 @@ export default function U(el, o) {
       stopped = true;
       cancelAnimationFrame(raf);
       if (onStop) {
-        onStop(i, { el, strings: S });
+        try {
+          onStop(i, { el, strings: S });
+        } catch (e) {
+          // Ignore callback errors to prevent animation crashes
+        }
       }
     },
     start() {
       stopped = false;
       cancelAnimationFrame(raf);
       if (onStart) {
-        onStart(i, { el, strings: S });
+        try {
+          onStart(i, { el, strings: S });
+        } catch (e) {
+          // Ignore callback errors to prevent animation crashes
+        }
       }
       startAnimation();
     },
@@ -377,7 +417,11 @@ export default function U(el, o) {
       hasBegun = false;
       cancelAnimationFrame(raf);
       if (onReset) {
-        onReset({ el, strings: S });
+        try {
+          onReset({ el, strings: S });
+        } catch (e) {
+          // Ignore callback errors to prevent animation crashes
+        }
       }
       startAnimation();
     },
@@ -420,7 +464,11 @@ export default function U(el, o) {
         el.classList.remove(fadeOutClass);
       }
       if (onDestroy) {
-        onDestroy({ el, strings: S });
+        try {
+          onDestroy({ el, strings: S });
+        } catch (e) {
+          // Ignore callback errors to prevent animation crashes
+        }
       }
     },
   };
