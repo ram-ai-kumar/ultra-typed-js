@@ -8,11 +8,7 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ### API Documentation
 
-- [ ] Generate API docs with TypeDoc or JSDoc
 - [ ] Host API documentation (GitHub Pages or dedicated docs site)
-- [ ] Document all public APIs with examples
-- [ ] Document all options with default values
-- [ ] Document all events/callbacks
 
 ### User Guides
 

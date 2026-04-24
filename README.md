@@ -578,6 +578,7 @@ UltraTyped.js has comprehensive unit test coverage with 182 tests across all pac
 - **Framework Adapters**: 70 tests across React, Vue, Svelte, Angular, Astro, Preact, Lit, Solid, TypeScript
 
 Run unit tests:
+
 ```bash
 npm test
 npm run test:coverage
@@ -592,6 +593,7 @@ UltraTyped.js uses Playwright for cross-browser compatibility testing across:
 - **Mobile Browsers**: Mobile Chrome (Pixel 5), Mobile Safari (iPhone 12)
 
 All 6 E2E tests pass on all browsers:
+
 - ✓ should render typing animation
 - ✓ should show cursor when showCursor is true
 - ✓ should handle multiple strings
@@ -600,6 +602,7 @@ All 6 E2E tests pass on all browsers:
 - ✓ should handle reset functionality
 
 Run E2E tests:
+
 ```bash
 npm run test:e2e              # Run all browsers
 npx playwright test --project=chromium   # Chrome/Edge only

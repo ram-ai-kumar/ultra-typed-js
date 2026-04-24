@@ -5,6 +5,49 @@
  * @warning XSS Risk: When using `contentType: 'html'`, the library injects content via `innerHTML`
  * without sanitization. NEVER use this option with untrusted input (CMS, API, user input, URL params).
  * Only use with trusted, developer-controlled HTML content. For untrusted input, use `contentType: 'text'` (default).
+ *
+ * @typedef {Object} UltraTypedOptions
+ * @property {string[]} [strings=[]] - Array of strings to type
+ * @property {string|HTMLElement} [stringsElement=null] - DOM element or selector to read strings from
+ * @property {number} [typeSpeed=50] - Typing speed in milliseconds per character
+ * @property {number} [backSpeed=30] - Backspacing speed in milliseconds per character
+ * @property {number} [backDelay=800] - Delay after typing a string before backspacing (ms)
+ * @property {boolean} [loop=true] - Whether to loop through strings infinitely
+ * @property {number} [loopCount=Infinity] - Number of loops before stopping (Infinity = infinite)
+ * @property {boolean} [shuffle=false] - Whether to shuffle strings on each loop
+ * @property {'text'|'html'} [contentType='text'] - Content type: 'text' (safe) or 'html' (XSS risk)
+ * @property {string|null} [attr=null] - Attribute to type into (e.g., 'placeholder')
+ * @property {boolean} [smartBackspace=true] - Only backspace characters that differ between strings
+ * @property {boolean} [showCursor=true] - Whether to show a blinking cursor
+ * @property {string} [cursorChar='|'] - Character to use for the cursor
+ * @property {boolean} [autoInsertCss=true] - Whether to auto-insert cursor CSS
+ * @property {number} [startDelay=0] - Delay before typing starts (ms)
+ * @property {string|null} [nonce=null] - CSP nonce for inline styles
+ * @property {boolean} [fadeOut=false] - Whether to fade out on completion
+ * @property {number} [fadeOutDelay=500] - Delay before fade out starts (ms)
+ * @property {string} [fadeOutClass='typed-fade-out'] - CSS class for fade out animation
+ * @property {number} [typingVariance=0] - Random variance in typing speed for human-like effect (ms)
+ * @property {boolean} [bindInputFocusEvents=false] - Pause animation when input/textarea gains focus
+ * @property {Function} [onBegin] - Callback when animation begins
+ * @property {Function} [onComplete] - Callback when all strings are completed
+ * @property {Function} [preStringTyped] - Callback before each string is typed
+ * @property {Function} [onStringTyped] - Callback after each string is typed
+ * @property {Function} [onLastStringBackspaced] - Callback when last string is fully backspaced
+ * @property {Function} [onTypingPaused] - Callback when typing pauses
+ * @property {Function} [onTypingResumed] - Callback when typing resumes
+ * @property {Function} [onReset] - Callback when animation is reset
+ * @property {Function} [onStop] - Callback when animation is stopped
+ * @property {Function} [onStart] - Callback when animation is started
+ * @property {Function} [onDestroy] - Callback when animation is destroyed
+ *
+ * @typedef {Object} UltraTypedInstance
+ * @property {Function} stop - Stop the animation
+ * @property {Function} start - Start the animation
+ * @property {Function} reset - Reset the animation to initial state
+ * @property {Function} pause - Pause the animation
+ * @property {Function} resume - Resume the animation
+ * @property {Function} toggle - Toggle between pause and resume
+ * @property {Function} destroy - Clean up and destroy the instance
  */
 
 /**
@@ -45,10 +88,16 @@ function D(a, b) {
 }
 
 /**
- * UltraTyped core function
- * @param {HTMLElement} el - Target element
- * @param {Object} o - Options
- * @returns {Object} - Instance with stop/reset methods
+ * UltraTyped core function - Creates a typing animation instance
+ * @param {HTMLElement} el - Target DOM element to animate
+ * @param {UltraTypedOptions} o - Configuration options
+ * @returns {UltraTypedInstance} - Instance with control methods
+ * @example
+ * const instance = UltraTyped(document.getElementById('typed'), {
+ *   strings: ['Hello', 'World'],
+ *   typeSpeed: 50,
+ *   loop: true
+ * });
  */
 export default function U(el, o) {
   o = o || {};
@@ -383,6 +432,11 @@ export default function U(el, o) {
   startAnimation();
 
   return {
+    /**
+     * Stop the animation
+     * @example
+     * instance.stop();
+     */
     stop() {
       stopped = true;
       cancelAnimationFrame(raf);
@@ -394,6 +448,11 @@ export default function U(el, o) {
         }
       }
     },
+    /**
+     * Start the animation
+     * @example
+     * instance.start();
+     */
     start() {
       stopped = false;
       cancelAnimationFrame(raf);
@@ -406,6 +465,11 @@ export default function U(el, o) {
       }
       startAnimation();
     },
+    /**
+     * Reset the animation to initial state
+     * @example
+     * instance.reset();
+     */
     reset() {
       stopped = false;
       manuallyPaused = false;
@@ -425,15 +489,30 @@ export default function U(el, o) {
       }
       startAnimation();
     },
+    /**
+     * Pause the animation
+     * @example
+     * instance.pause();
+     */
     pause() {
       manuallyPaused = true;
       cancelAnimationFrame(raf);
     },
+    /**
+     * Resume the animation
+     * @example
+     * instance.resume();
+     */
     resume() {
       manuallyPaused = false;
       last = performance.now();
       if (!stopped) startAnimation();
     },
+    /**
+     * Toggle between pause and resume
+     * @example
+     * instance.toggle();
+     */
     toggle() {
       if (manuallyPaused) {
         this.resume();
@@ -441,6 +520,12 @@ export default function U(el, o) {
         this.pause();
       }
     },
+    /**
+     * Clean up and destroy the instance
+     * Removes cursor, event listeners, and clears element content
+     * @example
+     * instance.destroy();
+     */
     destroy() {
       stopped = true;
       manuallyPaused = false;

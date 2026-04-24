@@ -151,9 +151,9 @@ UltraTyped.js provides hooks for performance monitoring:
 const instance = UltraTyped(el, {
   strings: ["Test string"],
   onFrame: (metrics) => {
-    console.log('Frame time:', metrics.frameTime);
-    console.log('FPS:', metrics.fps);
-  }
+    console.log("Frame time:", metrics.frameTime);
+    console.log("FPS:", metrics.fps);
+  },
 });
 ```
 
@@ -164,7 +164,7 @@ Enable debug mode for detailed performance logging:
 ```javascript
 const instance = UltraTyped(el, {
   strings: ["Test string"],
-  debug: true
+  debug: true,
 });
 ```
 
@@ -173,13 +173,13 @@ const instance = UltraTyped(el, {
 **Sentry Integration:**
 
 ```javascript
-import * as Sentry from '@sentry/browser';
+import * as Sentry from "@sentry/browser";
 
 const instance = UltraTyped(el, {
   strings: ["Test string"],
   onError: (error) => {
     Sentry.captureException(error);
-  }
+  },
 });
 ```
 
