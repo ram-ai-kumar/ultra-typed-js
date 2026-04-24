@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -74,3 +77,14 @@ jobs:
         run: npm publish -w packages/astro
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Package dist folders
+        run: |
+          mkdir -p release-artifacts
+          tar -czf release-artifacts/dist.tar.gz packages/*/dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: release-artifacts/dist.tar.gz
