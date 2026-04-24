@@ -6,6 +6,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![Downloads](https://img.shields.io/npm/dw/ultratyped)](https://www.npmjs.com/package/ultratyped)
+[![Security: CISO Ready](https://img.shields.io/badge/Security-CISO%20Ready-success)](docs/SECURITY.md)
+[![ZTA Aligned](https://img.shields.io/badge/ZTA-Aligned-informational)](docs/SECURITY.md#zero-trust-architecture-zta-alignment)
+[![OWASP Compliant](https://img.shields.io/badge/OWASP-Compliant-brightgreen)](docs/COMPLIANCE.md#owasp-top-10-2021)
 
 Ultra-fast <2KB typing animation library with zero dependencies.
 
@@ -61,14 +64,28 @@ Ultra-fast <2KB typing animation library with zero dependencies.
 
 ## Features
 
+### Core Capabilities
+
 - **<2KB gzipped** - Smallest in its class
 - **60fps smooth** - requestAnimationFrame-driven
 - **Zero dependencies** - Pure vanilla JavaScript
 - **Framework agnostic** - Works with all major frameworks
 - **TypeScript support** - Full type definitions with zero runtime cost
 - **Smart backspace** - Diff-based backspacing for efficiency
-- **Security-first** - XSS prevention, CSP compliant, zero trust architecture
 - **Production-ready** - CI/CD workflows, automated testing, comprehensive documentation
+
+### Security & Compliance (CISO-Ready)
+
+- **XSS Prevention** - Uses `textContent` by default, HTML opt-in only with sanitization warnings
+- **CSP Compliant** - No inline scripts, no `eval()`, no remote code loading
+- **Zero Trust Architecture (ZTA)** - Minimal attack surface, no network requests, zero dependencies
+- **AI/LLM Safe** - No prompt injection vectors, no data collection, deterministic behavior
+- **Supply Chain Secure** - SBOM-ready, zero transitive dependencies, auditable codebase
+- **Penetration Test Ready** - Clear boundaries, no hidden state, reproducible behavior
+- **OWASP Compliant** - No injection vulnerabilities (A03: Injection)
+- **SOC 2 Ready** - Minimal data handling, auditable codebase
+- **GDPR/CCPA Compliant** - No personal data processing, no data collection or sharing
+- **NIST Aligned** - Follows NIST Cybersecurity Framework principles
 
 ## Typed.js Compatibility
 
@@ -482,16 +499,18 @@ UltraTyped.js achieves its small size and high performance through:
 
 ## Security & Compliance
 
-UltraTyped.js is designed with security as a foundational principle. Our CISO-ready posture ensures enterprise-grade security and compliance.
+UltraTyped.js is designed with security as a foundational principle. Our CISO-ready posture ensures enterprise-grade security and compliance for global deployments.
 
 ### Security Posture
 
 - **XSS Prevention** - Uses `textContent` by default, HTML opt-in only
 - **CSP Compliant** - No inline scripts, no `eval()`, no remote code loading
-- **Zero Trust Architecture** - Minimal attack surface, no network requests, zero dependencies
-- **AI/LLM Safe** - No prompt injection vectors, no data collection
-- **Supply Chain Secure** - SBOM-ready, zero transitive dependencies
+- **Zero Trust Architecture (ZTA)** - Minimal attack surface, no network requests, zero dependencies
+- **AI/LLM Safe** - No prompt injection vectors, no data collection, deterministic behavior
+- **Supply Chain Secure** - SBOM-ready, zero transitive dependencies, auditable codebase
 - **Penetration Test Ready** - Clear boundaries, no hidden state, reproducible behavior
+- **Zero Data Collection** - No telemetry, no analytics, no tracking
+- **Deterministic Behavior** - Fully reproducible, no randomness in core logic
 
 ### ⚠️ Security Warning: HTML Content Type
 
@@ -531,11 +550,13 @@ const typed = UltraTyped("#element", {
 
 ### Compliance Frameworks
 
-- **OWASP Top 10** - No injection vulnerabilities (A03: Injection)
-- **SOC 2 Ready** - Minimal data handling, auditable codebase
-- **GDPR Compliant** - No personal data processing
-- **CCPA Compliant** - No data collection or sharing
-- **NIST Aligned** - Follows NIST Cybersecurity Framework principles
+- **OWASP Top 10** - No injection vulnerabilities (A03: Injection), secure by design
+- **SOC 2 Ready** - Minimal data handling, auditable codebase, clear incident response
+- **GDPR Compliant** - No personal data processing, zero data collection, full transparency
+- **CCPA Compliant** - No data collection or sharing, no sale of personal information
+- **NIST Aligned** - Follows NIST Cybersecurity Framework principles (Identify, Protect, Detect, Respond, Recover)
+- **ISO 27001 Aligned** - Security policies, risk assessment, asset management principles
+- **Supply Chain Security** - SBOM-ready, zero transitive dependencies, provenance verification
 
 ### Security Documentation
 
