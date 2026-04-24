@@ -22,3 +22,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vite-based playground for live demos
 - CI/CD workflows for automated builds and releases
 - GitHub Pages deployment configuration
+- Animation frame rate monitoring tests (11 tests covering rAF usage, frame cancellation, timing consistency, visibility API, pause/resume, and reduced motion support)

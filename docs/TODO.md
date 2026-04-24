@@ -4,16 +4,6 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ---
 
-## Testing & Quality Assurance
-
-### Performance Testing
-
-- [ ] Automated performance benchmarks in CI
-- [x] Regression testing for bundle size
-- [ ] Animation frame rate monitoring
-
----
-
 ## Documentation
 
 ### API Documentation
@@ -269,6 +259,23 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - [ ] Test for memory leaks
 - [ ] Add performance monitoring
 - [ ] Add uptime monitoring
+
+### Performance Roadmap
+
+#### Planned Optimizations
+
+- [ ] Web Worker support for off-main-thread typing
+- [ ] GPU acceleration for complex animations
+- [ ] Intersection Observer for lazy loading
+- [ ] RequestIdleCallback for background processing
+- [ ] Automated performance benchmarks in CI
+
+#### Research Areas
+
+- [ ] WASM implementation for critical paths
+- [ ] Adaptive quality based on device capabilities
+- [ ] Predictive pre-rendering
+- [ ] Streaming string processing
 
 ---
 

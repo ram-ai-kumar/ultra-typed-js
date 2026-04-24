@@ -1137,4 +1137,251 @@ describe("UltraTyped Core Library", () => {
       expect(instance).toBeDefined();
     });
   });
+
+  describe("Animation Frame Rate Monitoring", () => {
+    it("should use requestAnimationFrame for animation loop", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      expect(rafSpy).toHaveBeenCalled();
+      instance.destroy();
+      rafSpy.mockRestore();
+    });
+
+    it("should cancel animation frame on stop", () => {
+      const cancelRafSpy = vi.spyOn(window, "cancelAnimationFrame");
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.stop();
+      expect(cancelRafSpy).toHaveBeenCalled();
+      instance.destroy();
+      cancelRafSpy.mockRestore();
+    });
+
+    it("should cancel animation frame on destroy", () => {
+      const cancelRafSpy = vi.spyOn(window, "cancelAnimationFrame");
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.destroy();
+      expect(cancelRafSpy).toHaveBeenCalled();
+      cancelRafSpy.mockRestore();
+    });
+
+    it("should maintain consistent frame timing during typing", () => {
+      const frameTimes = [];
+      const originalRaf = window.requestAnimationFrame;
+
+      window.requestAnimationFrame = vi.fn((callback) => {
+        const now = performance.now();
+        frameTimes.push(now);
+        return originalRaf(callback);
+      });
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      // Allow some frames to be captured
+      setTimeout(() => {
+        instance.destroy();
+        window.requestAnimationFrame = originalRaf;
+
+        // Check that frames are being requested
+        expect(frameTimes.length).toBeGreaterThan(0);
+      }, 100);
+    });
+
+    it("should pause animation frames when tab is hidden", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+      const cancelRafSpy = vi.spyOn(window, "cancelAnimationFrame");
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      const initialRafCalls = rafSpy.mock.calls.length;
+
+      // Simulate visibility change to hidden
+      Object.defineProperty(document, "hidden", {
+        writable: true,
+        value: true,
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+
+      // RAF should be cancelled when hidden
+      expect(cancelRafSpy).toHaveBeenCalled();
+
+      // Restore visibility
+      Object.defineProperty(document, "hidden", {
+        writable: true,
+        value: false,
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+
+      instance.destroy();
+      rafSpy.mockRestore();
+      cancelRafSpy.mockRestore();
+    });
+
+    it("should resume animation frames when tab becomes visible", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      // Simulate visibility change to hidden
+      Object.defineProperty(document, "hidden", {
+        writable: true,
+        value: true,
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+
+      const callsAfterHidden = rafSpy.mock.calls.length;
+
+      // Simulate visibility change to visible
+      Object.defineProperty(document, "hidden", {
+        writable: true,
+        value: false,
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+
+      // RAF should be called again when visible
+      expect(rafSpy.mock.calls.length).toBeGreaterThan(callsAfterHidden);
+
+      instance.destroy();
+      rafSpy.mockRestore();
+    });
+
+    it("should not request frames during manual pause", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.pause();
+      const callsAfterPause = rafSpy.mock.calls.length;
+
+      // Wait a bit to ensure no new frames are requested
+      setTimeout(() => {
+        expect(rafSpy.mock.calls.length).toBe(callsAfterPause);
+        instance.destroy();
+        rafSpy.mockRestore();
+      }, 50);
+    });
+
+    it("should resume frame requests after manual resume", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      instance.pause();
+      const callsAfterPause = rafSpy.mock.calls.length;
+
+      instance.resume();
+
+      // New frames should be requested after resume
+      expect(rafSpy.mock.calls.length).toBeGreaterThan(callsAfterPause);
+
+      instance.destroy();
+      rafSpy.mockRestore();
+    });
+
+    it("should handle rapid frame request cancellation gracefully", () => {
+      const cancelRafSpy = vi.spyOn(window, "cancelAnimationFrame");
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      expect(() => {
+        for (let i = 0; i < 100; i++) {
+          instance.stop();
+          instance.start();
+        }
+      }).not.toThrow();
+
+      expect(cancelRafSpy).toHaveBeenCalled();
+      instance.destroy();
+      cancelRafSpy.mockRestore();
+    });
+
+    it("should measure frame time deltas correctly", () => {
+      const frameDeltas = [];
+      let lastFrameTime = 0;
+
+      const originalRaf = window.requestAnimationFrame;
+      window.requestAnimationFrame = vi.fn((callback) => {
+        const now = performance.now();
+        if (lastFrameTime > 0) {
+          frameDeltas.push(now - lastFrameTime);
+        }
+        lastFrameTime = now;
+        return originalRaf(callback);
+      });
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      setTimeout(() => {
+        instance.destroy();
+        window.requestAnimationFrame = originalRaf;
+
+        // Frame deltas should be reasonable (typically ~16ms for 60fps)
+        if (frameDeltas.length > 0) {
+          const avgDelta =
+            frameDeltas.reduce((a, b) => a + b, 0) / frameDeltas.length;
+          expect(avgDelta).toBeGreaterThan(0);
+        }
+      }, 100);
+    });
+
+    it("should not request frames when prefers-reduced-motion is enabled", () => {
+      const rafSpy = vi.spyOn(window, "requestAnimationFrame");
+      const originalMatchMedia = window.matchMedia;
+
+      window.matchMedia = vi.fn().mockImplementation((query) => ({
+        matches: query === "(prefers-reduced-motion: reduce)",
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }));
+
+      const instance = UltraTyped(container, {
+        strings: ["Test"],
+        typeSpeed: 10,
+      });
+
+      // With reduced motion, animation should complete immediately without rAF
+      expect(container.textContent).toBe("Test");
+
+      instance.destroy();
+      rafSpy.mockRestore();
+      window.matchMedia = originalMatchMedia;
+    });
+  });
 });

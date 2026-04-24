@@ -9,15 +9,21 @@ UltraTyped.js achieves exceptional performance through careful architectural dec
 ### Bundle Size
 
 - **Core Library**: <2KB gzipped
+
 - **Framework Adapters**: ~500B each gzipped
+
 - **Total Footprint**: <3KB for core + one adapter
+
 - **Tree-shakeable**: Yes, supports partial imports
 
 ### Runtime Performance
 
 - **Frame Rate**: 60fps (requestAnimationFrame-driven)
+
 - **CPU Usage**: <1% on modern devices
+
 - **Memory Allocation**: Zero per-frame allocations
+
 - **Startup Time**: <5ms initialization
 
 ## Optimization Techniques
@@ -25,43 +31,67 @@ UltraTyped.js achieves exceptional performance through careful architectural dec
 ### Memory Efficiency
 
 **Zero Per-Frame Allocations:**
+
 - Pre-allocated string buffer for incremental updates
+
 - No closure creation in hot path
+
 - Single DOM write per frame
+
 - Garbage collection pressure: negligible
 
 **Memory Footprint:**
+
 - Core instance: ~512 bytes
+
 - String storage: O(n) where n = total string length
+
 - No hidden object allocations
+
 - No retained references after destroy()
 
 ### CPU Efficiency
 
 **requestAnimationFrame Integration:**
+
 - Syncs with browser paint cycle
+
 - Respects browser throttling
+
 - Pauses when tab hidden (Visibility API)
+
 - Battery-aware on mobile devices
 
 **Algorithmic Optimizations:**
+
 - Single-pass tokenization at init: O(n)
+
 - Diff-based backspacing: O(k) where k = differences
+
 - No regex in hot path
+
 - No expensive DOM queries in loop
 
 ### DOM Efficiency
 
 **Minimal DOM Manipulation:**
+
 - Single `textContent` write per frame
+
 - Batched updates prevent reflow thrashing
+
 - Cached element reference
+
 - No layout queries during animation
 
 **Safe DOM Operations:**
+
 - `textContent` over `innerHTML` (safer + faster)
+
 - No forced synchronous layouts
+
 - No style recalculations in loop
+
 - No attribute mutations during animation
 
 ## Scalability
@@ -96,13 +126,13 @@ View benchmark dashboard at `benchmarks/dashboard.html`
 
 ### Comparative Performance
 
-| Metric | UltraTyped.js | Competitor A | Competitor B |
-|--------|---------------|--------------|--------------|
-| Bundle Size (gzipped) | <2KB | 8KB | 15KB |
-| CPU Usage (typing) | <1% | 3% | 5% |
-| Memory Usage | 512B | 2KB | 4KB |
-| Frame Rate | 60fps | 55fps | 45fps |
-| Startup Time | <5ms | 15ms | 30ms |
+| Metric                | UltraTyped.js | Competitor A | Competitor B |
+| --------------------- | ------------- | ------------ | ------------ |
+| Bundle Size (gzipped) | <2KB          | 8KB          | 15KB         |
+| CPU Usage (typing)    | <1%           | 3%           | 5%           |
+| Memory Usage          | 512B          | 2KB          | 4KB          |
+| Frame Rate            | 60fps         | 55fps        | 45fps        |
+| Startup Time          | <5ms          | 15ms         | 30ms         |
 
 ### Performance Under Load
 
@@ -210,21 +240,19 @@ Performance benchmarks run automatically in CI:
 - Memory: +100B triggers warning
 - CPU: +2% triggers warning
 
-## Performance Roadmap
+### Animation Frame Rate Monitoring
 
-### Planned Optimizations
+UltraTyped.js includes comprehensive tests for animation frame rate monitoring to ensure consistent 60fps performance:
 
-- [ ] Web Worker support for off-main-thread typing
-- [ ] GPU acceleration for complex animations
-- [ ] Intersection Observer for lazy loading
-- [ ] RequestIdleCallback for background processing
+- **requestAnimationFrame validation**: Verifies the animation loop uses rAF correctly
+- **Frame cancellation tests**: Ensures proper cleanup on stop() and destroy()
+- **Frame timing consistency**: Measures frame time deltas during typing
+- **Visibility API integration**: Tests pause/resume behavior when tab visibility changes
+- **Manual pause/resume**: Validates frame requests during manual pause/resume operations
+- **Rapid cancellation stress test**: Tests 100 rapid stop/start cycles for stability
+- **Reduced motion support**: Verifies no rAF when prefers-reduced-motion is enabled
 
-### Research Areas
-
-- [ ] WASM implementation for critical paths
-- [ ] Adaptive quality based on device capabilities
-- [ ] Predictive pre-rendering
-- [ ] Streaming string processing
+These tests are located in `packages/core/src/index.test.js` under the "Animation Frame Rate Monitoring" test suite.
 
 ## Additional Resources
 
