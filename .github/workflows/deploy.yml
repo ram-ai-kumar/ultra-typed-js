@@ -20,6 +20,8 @@ jobs:
 
       - run: npm run -w playground build
 
+      - run: npm run build:docs
+
       - name: Copy benchmarks to playground dist
         run: |
           mkdir -p ./playground/dist/benchmarks

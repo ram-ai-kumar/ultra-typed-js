@@ -8,8 +8,6 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ### API Documentation
 
-- [ ] Host API documentation (GitHub Pages or dedicated docs site)
-
 ### User Guides
 
 - [ ] **Migration guide from Typed.js** (highest SEO and conversion value — target "typed.js alternative" searches)
@@ -140,45 +138,54 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ### Dependency Management
 
-- [ ] Enable Dependabot for dependency updates
+- [ ] Add `.github/dependabot.yml` config to enable Dependabot for npm and GitHub Actions updates
   - Security alerts
-  - Version updates
+  - Version updates with grouped PRs
   - Pull request automation
-- [ ] Set up Renovate (alternative to Dependabot)
+- [ ] Set up Renovate as alternative/complement to Dependabot
 - [ ] Configure automated security updates
-- [ ] Schedule weekly dependency audits
+- [ ] Add `npm audit --audit-level=high` gate to CI (fail build on high/critical vulns)
+- [ ] Schedule weekly dependency audits in CI
+- [ ] **Remove `legacy-peer-deps=true` from `.npmrc`** — silently ignores peer-dep conflicts, masking real version mismatches; resolve peer deps explicitly instead
 
 ### Security Scanning
 
-- [ ] Set up Snyk for security scanning
-- [ ] Integrate Snyk with CI/CD
-- [ ] Set up GitHub Code Scanning (CodeQL)
-- [ ] Set up GitHub Dependabot security updates
-- [ ] Configure npm audit in CI
+- [ ] **Add `.github/workflows/codeql.yml`** — CodeQL static analysis for JavaScript/TypeScript (free via GitHub Advanced Security)
+- [ ] Set up Snyk for security scanning and integrate with CI/CD
 - [ ] Add OWASP dependency check
+- [ ] **Add `eslint-plugin-security`** to ESLint config (catches unsafe regex, `innerHTML` misuse, `eval`)
+- [ ] **Pin all GitHub Actions to full SHA hashes** instead of mutable `@v4`/`@v3` tags to prevent supply chain attacks via tag hijacking
+  - `actions/checkout@<sha>`
+  - `actions/setup-node@<sha>`
+  - `actions/upload-artifact@<sha>`
+  - `peaceiris/actions-gh-pages@<sha>`
 
 ### Security Audits
 
-- [ ] Conduct external security audit
-- [ ] Penetration testing
+- [ ] Conduct external security audit (third-party pentest)
+- [ ] Penetration testing scoped to XSS, DOM manipulation, resource exhaustion
 - [ ] Vulnerability assessment
-- [ ] Third-party security review
+- [ ] **Fix `security@example.com` placeholder** in `SECURITY.md` and `COMPLIANCE.md` — replace with real contact or GitHub private vulnerability reporting URL
+- [ ] **Fix incorrect CSP recommendation** in `SECURITY.md` and `COMPLIANCE.md` — currently recommends `script-src 'unsafe-inline'` which defeats CSP; correct recommendation is `script-src 'self'` with nonce for inline styles only
 
 ### Supply Chain Security
 
-- [ ] Generate SBOM (Software Bill of Materials)
-- [ ] Sign npm packages with provenance
-- [ ] Configure npm provenance in CI
-- [ ] Set up package verification
-- [ ] Implement supply chain integrity checks
+- [ ] **Add `--provenance` flag to all `npm publish` steps** in `release.yml` — generates SLSA provenance attestation, verifiable on npm registry
+- [ ] Add `engines` field to all `package.json` files (declare minimum Node/npm version)
+- [ ] Generate and publish SBOM (CycloneDX format) as a GitHub Release asset
+- [ ] **Run tests before publish in `release.yml`** — current pipeline publishes immediately after build with no test gate
+- [ ] Add `--access public` to npm publish commands to prevent accidental private publish
+- [ ] Add package integrity verification (checksum in release notes)
+- [ ] Add `"sideEffects": false` correctly to core — current absence means bundlers may not tree-shake properly
 
 ### Security Documentation
 
-- [ ] Expand SECURITY.md with more details
-- [ ] Add security policy
-- [ ] Document vulnerability disclosure process
-- [ ] Add security reporting guidelines
-- [ ] Document security best practices for users
+- [ ] Move `SECURITY.md` to repo root (GitHub natively surfaces `SECURITY.md` at root for the "Report a vulnerability" button)
+- [ ] Add `.github/SECURITY.md` to enable GitHub's private vulnerability reporting
+- [ ] Document vulnerability disclosure process with actual contact info
+- [ ] Document CSP integration guide with correct header examples
+- [ ] Document DOMPurify integration pattern for `contentType: 'html'` users
+- [ ] Add security changelog section to `CHANGELOG.md`
 
 ---
 
@@ -555,6 +562,21 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - [ ] Technical debt tracking
 - [ ] Code review coverage
 - [ ] Test coverage metrics
+- [ ] **Set coverage thresholds to 90%** (currently 80% in `vitest.config.ts`) for lines, branches, functions, statements
+- [ ] **Add mutation testing** (Stryker) — current tests assert `not.toThrow()` but rarely assert DOM state; mutation testing will surface false-green tests
+- [ ] **Add static analysis** (SonarQube/SonarCloud free tier) to CI — track complexity, duplication, and technical debt score
+- [ ] **Add `no-floating-promises` and `strict-boolean-expressions` ESLint rules** once ESLint is configured
+- [ ] **Audit and delete phantom API docs** — `PERFORMANCE.md` documents `onFrame` and `debug` options that don't exist in `src/index.js`; either implement or remove
+
+### Test Quality Improvements
+
+- [ ] **Replace `expect(instance).toBeDefined()` smoke tests** with behavioral assertions (check `el.textContent` content after advancing fake timers)
+- [ ] **Add timer-based integration tests** using `vi.useFakeTimers()` + `vi.advanceTimersByTime()` to test actual typing output, not just no-throw
+- [ ] **Add React adapter re-render test** — verify that passing a new options object doesn't cause destroy/recreate on every render
+- [ ] **Add test: global cursor style element removed on last instance destroy**
+- [ ] **Add test: `destroy()` writes correct content type** (no double write)
+- [ ] **Add test: TypeScript types compile cleanly** using `tsd` or `dtslint` in CI
+- [ ] Expand E2E coverage beyond `e2e/basic.spec.ts` — test loop completion, callbacks, cursor behavior
 
 ### User Satisfaction
 
@@ -653,13 +675,64 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ---
 
+## CISO & Zero Trust Architecture (ZTA)
+
+### ZTA Posture — Current Gaps
+
+> These items close the delta between the *claimed* ZTA posture in `SECURITY.md`/`COMPLIANCE.md` and the *actual* implementation.
+
+- [ ] **Verify Explicitly — CI pipeline has no test gate before publish** (`release.yml` builds then publishes with no `npm test` step)
+- [ ] **Verify Explicitly — GitHub Actions use mutable version tags** (`@v4`, `@v3`) instead of SHA-pinned refs; a compromised action tag can exfiltrate `NPM_TOKEN`
+- [ ] **Least Privilege — `GITHUB_TOKEN` permissions not scoped** in workflows; add explicit `permissions:` blocks (e.g., `contents: read`, `id-token: write` for provenance)
+- [ ] **Least Privilege — npm publish has no 2FA enforcement** in automation; enable `npm token create --type=automation` tokens bound to the publishing scope
+- [ ] **Assume Breach — No SLSA provenance** on published packages; consumers cannot verify the package was built from the declared source commit
+- [ ] **Assume Breach — `security@example.com` placeholder** in disclosure docs means there is no active incident response channel
+- [ ] **Micro-segmentation — `legacy-peer-deps=true`** suppresses npm's dependency conflict detection, widening the blast radius of transitive version conflicts
+
+### ZTA Controls — Implementation Tasks
+
+- [ ] Add `permissions:` blocks to all GitHub Actions workflow jobs (principle of least privilege)
+  ```yaml
+  permissions:
+    contents: read
+    id-token: write   # required for npm provenance
+  ```
+- [ ] Enable branch protection rules on `main`: require PR reviews, require status checks (CI + bundle-size), block force-push
+- [ ] Enable GitHub repository security settings: secret scanning, push protection, private vulnerability reporting
+- [ ] Add `CODEOWNERS` file to require security-team review on changes to `src/`, `rollup.config.js`, and workflow files
+- [ ] Configure npm `publishConfig` to use `--provenance` and scope to public registry
+- [ ] Add `npm audit` as a required CI gate (currently not in `ci.yml`)
+- [ ] Create GitHub Environment `npm-publish` with required reviewers for manual approval before release
+- [ ] Rotate `NPM_TOKEN` quarterly; document rotation procedure in runbook
+
+### CISO Posture — Documentation Gaps
+
+- [ ] **Fix CSP recommendation in `SECURITY.md` line 88** — recommends `unsafe-inline` which negates CSP protections; correct to use nonce-based inline style allowance
+- [ ] **Fix CSP recommendation in `COMPLIANCE.md` line 402** — same issue
+- [ ] Add **SLSA Level 2** compliance statement once provenance is enabled
+- [ ] Add **CycloneDX SBOM** generation step to release workflow; attach SBOM to GitHub Release
+- [ ] Add Trusted Types policy documentation for environments with `require-trusted-types-for 'script'` CSP directive
+- [ ] Publish a **Vendor Security Questionnaire (VSQ)** template that enterprise customers can use to pre-approve the library
+- [ ] Add **FedRAMP-ready checklist** noting client-side-only scope
+- [ ] Document `onFrame` and `debug` options accurately — `PERFORMANCE.md` documents them but they don't exist in the implementation
+
+### CISO Posture — Runtime Security Controls
+
+- [ ] **Add runtime input sanitization guard for `contentType: 'html'`** — when HTML mode is detected, emit a `console.warn` in development builds and document the required DOMPurify integration
+- [ ] **Add Trusted Types compatible output path** — expose `setInnerHTMLFromTrustedType(el, TrustedHTML)` for environments enforcing Trusted Types policies
+- [ ] Add `crossorigin="anonymous"` documentation for CDN usage (prevents credential leakage via CORS)
+- [ ] Add Subresource Integrity (SRI) hash generation to release workflow for CDN consumers
+
+---
+
 ## Priority Matrix
 
 ### Priority 0 — Do Before Any Release or Promotion
 
-- **Correctness**: `backDelay` expires quadratically fast (quadratic countdown bug in `m=1`); `visibilitychange` listener never removed on `destroy()` (memory leak in SPAs); `el.parentNode` null crash with detached DOM; React adapter stale closure silently ignores prop updates; TypeScript interface covers only 20% of the API surface
-- **Security**: `contentType: 'html'` is an unsanitized XSS sink with no warning; `autoInsertCss` injects `<style>` without CSP nonce; `"sideEffects": false` in core is incorrect and risks tree-shaking erasure
-- **Performance**: unconditional DOM write (`innerHTML`/`textContent`) every rAF frame including during pause phase causes ~50 redundant layout recalculations per back-delay
+- **Correctness**: `backDelay` expires quadratically fast (quadratic countdown bug in `m=1`); `visibilitychange` listener never removed on `destroy()` (memory leak in SPAs); `el.parentNode` null crash with detached DOM; React adapter `[options]` dep causes destroy/recreate on every render since object identity changes each call; TypeScript `index.d.ts` covers only 5 of 23 documented options (missing `stringsElement`, `showCursor`, `cursorChar`, `nonce`, `loopCount`, `shuffle`, `fadeOut`, `attr`, `typingVariance`, all callbacks, `pause`, `resume`, `toggle`, `destroy`)
+- **Security**: `contentType: 'html'` is an unsanitized XSS sink with no runtime warning; `autoInsertCss` global `<style>` element is never removed by `destroy()` even when the last instance is torn down; `"sideEffects"` field missing from core `package.json` (not just incorrect — absent); `SECURITY.md` and `COMPLIANCE.md` both recommend `unsafe-inline` CSP which defeats XSS protection; `security@example.com` is a placeholder with no real incident channel
+- **CI/CD Security**: GitHub Actions use mutable version tags — a compromised `@v4` tag can steal `NPM_TOKEN`; `release.yml` publishes with no test gate; no `permissions:` scoping on any workflow job
+- **Performance**: `destroy()` always writes both `el.textContent = ""` then `el.innerHTML = ""` regardless of `contentType` — causes two unnecessary DOM mutations; multiple `cancelAnimationFrame` calls don't guard against `undefined` raf handle on very first frame
 
 ### High Priority (Do First)
 
@@ -700,14 +773,21 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - Fix `backDelay` quadratic countdown bug (`pauseStart` timestamp approach)
 - Fix `visibilitychange` memory leak (store handler ref, remove in `destroy()`)
 - Fix `el.parentNode` null crash (guard before cursor insertion)
-- Fix React adapter stale closure (add options to `useEffect` deps)
-- Fix TypeScript interface to cover full API surface
-- Fix `contentType: 'html'` XSS — add sanitize option + prominent warning
-- Fix `autoInsertCss` CSP incompatibility (expose `nonce` option)
-- Fix `"sideEffects": false` in core `package.json`
-- Fix redundant DOM writes during pause phase (cache `prevBuf`)
+- **Fix React adapter infinite re-render** — `useEffect([options])` recreates instance every render because object literal identity changes; fix by destructuring stable primitive deps or using `useRef` to hold the options
+- **Fix TypeScript `index.d.ts`** — currently exposes only 5 of 23 options; add all missing fields and extend `UltraTypedInstance` with `pause()`, `resume()`, `toggle()`, `destroy()`
+- Fix `contentType: 'html'` XSS — add `console.warn` in dev + DOMPurify integration guide
+- ~~Fix `autoInsertCss` CSP incompatibility~~ ✓ (`nonce` option implemented in source)
+- **Add `"sideEffects": false` to core `package.json`** — field is currently absent
+- ~~Fix redundant DOM writes during pause phase~~ ✓ (`prevBuf` cache implemented)
+- **Fix `destroy()` double DOM write** — currently always sets both `textContent` and `innerHTML` to `""` regardless of `contentType`; use a single conditional write
+- **Fix global cursor `<style>` leak** — `autoInsertCss` injects a shared `#ultratyped-cursor-style` element that is never removed; track instance count and remove on last `destroy()` call
+- **Pin GitHub Actions to SHA hashes** in all three workflow files — security fix for supply chain attacks
+- **Add `npm test` step before publish** in `release.yml`
+- **Add `permissions:` scoping** to all workflow jobs
+- **Fix `security@example.com` placeholder** in `SECURITY.md` and `COMPLIANCE.md`
+- **Fix `unsafe-inline` CSP recommendation** in `SECURITY.md` line 88 and `COMPLIANCE.md` line 402
 
-### Phase 1: Typed.js Parity + Build Infrastructure (3-4 weeks)
+### Phase 1: Typed.js Parity + Build Infrastructure + CI Security (3-4 weeks)
 
 - Cursor feature (`showCursor`, `cursorChar`, `autoInsertCss`)
 - All missing options (`startDelay`, `loopCount`, `shuffle`, `fadeOut`, `attr`, `typingVariance`, `bindInputFocusEvents`)
@@ -717,6 +797,12 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 - IIFE/UMD build
 - `publint` + `size-limit` + `are-the-types-wrong` in CI
 - npm keywords + `repository`/`homepage` fields
+- **Add Dependabot config** (`.github/dependabot.yml`) for npm + Actions
+- **Add CodeQL workflow** (`.github/workflows/codeql.yml`)
+- **Add `npm audit` gate to `ci.yml`**
+- **Enable `--provenance` on all npm publish steps**
+- **Add `CODEOWNERS` file** for security-sensitive paths
+- **Add GitHub Environment with required reviewers** for `npm-publish`
 
 ### Phase 2: Foundation (2-3 weeks)
 

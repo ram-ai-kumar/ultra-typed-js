@@ -12,7 +12,7 @@
 
 Ultra-fast <2KB typing animation library with zero dependencies.
 
-**[Live Demo](https://ram-ai-kumar.github.io/ultra-typed-js/)** | **[Documentation](docs/)** | **[Benchmarks](benchmarks/)**
+**[Live Demo](https://ram-ai-kumar.github.io/ultra-typed-js/)** | **[Documentation](https://ram-ai-kumar.github.io/ultra-typed-js/docs/API.html)** | **[Benchmarks](benchmarks/)**
 
 ## Table of Contents
 

@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "npm run build -w packages/core && npm run build -w packages/alpine -w packages/angular -w packages/astro -w packages/lit -w packages/preact -w packages/react -w packages/solid -w packages/svelte -w packages/typescript -w packages/vue && npm run build -w playground",
+    "build:docs": "node scripts/build-docs.js",
     "dev": "npm run dev --workspace=playground",
     "bench": "node benchmarks/compare.js",
     "clean": "rm -rf packages/*/dist playground/dist",
@@ -22,8 +23,8 @@
     "size:report": "node scripts/size-report.js"
   },
   "devDependencies": {
-    "@angular/core": "^18.0.0",
     "@angular/common": "^18.0.0",
+    "@angular/core": "^18.0.0",
     "@playwright/test": "^1.59.1",
     "@rollup/plugin-terser": "^0.4.4",
     "@rollup/plugin-typescript": "^11.1.6",
@@ -37,6 +38,7 @@
     "gzip-size": "^7.0.0",
     "happy-dom": "^15.11.6",
     "jsdom": "^25.0.1",
+    "marked": "^18.0.2",
     "preact": "^10.25.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
