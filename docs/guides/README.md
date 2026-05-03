@@ -11,6 +11,7 @@ This section contains comprehensive guides for using UltraTyped.js effectively i
 
 ### Usage Guides
 - **[Best Practices](best-practices.md)** - Recommended patterns and professional development practices
+- **[Security Best Practices](security-best-practices.md)** - Security guidelines and safe implementation patterns
 - **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
 - **[Performance Optimization](performance-optimization.md)** - Advanced performance techniques and optimization
 
