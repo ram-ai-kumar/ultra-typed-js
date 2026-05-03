@@ -186,6 +186,7 @@ console.log("Animation methods:", typeof instance.start, typeof instance.stop);
    ```
 
 3. **Check for auto-start**
+
    ```javascript
    // UltraTyped.js auto-starts by default
    // If using manual start:
@@ -582,6 +583,7 @@ export class AppComponent {
    ```
 
 3. **Monitor memory usage**
+
    ```javascript
    // Development debugging
    if (process.env.NODE_ENV === "development") {
