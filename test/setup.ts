@@ -29,3 +29,24 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: vi.fn(),
   })),
 });
+
+// Mock Vue lifecycle hooks to prevent warnings when testing composables outside component context
+const mockOnMounted = vi.fn((callback) => {
+  // Execute callback immediately for testing purposes
+  callback();
+});
+
+const mockOnBeforeUnmount = vi.fn((callback) => {
+  // Store cleanup function for potential manual cleanup in tests
+  // In real component lifecycle, this would be called on unmount
+});
+
+// Mock Vue's lifecycle hooks
+vi.mock("vue", async () => {
+  const actual = await vi.importActual("vue");
+  return {
+    ...actual,
+    onMounted: mockOnMounted,
+    onBeforeUnmount: mockOnBeforeUnmount,
+  };
+});
