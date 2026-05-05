@@ -10,7 +10,8 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ### Examples Gallery
 
-- [ ] Create examples for each framework
+- [x] Create examples for each framework
+- [ ] Write test coverage to validate examples
 - [ ] Interactive examples playground
 - [ ] Code snippets for common use cases
 - [ ] Advanced usage examples

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraTyped.js - Basic Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .typed-element {
+            font-size: 24px;
+            color: #2563eb;
+            min-height: 40px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            background-color: #f3f4f6;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UltraTyped.js - Basic Example</h1>
+        
+        <div class="example-section">
+            <div class="example-title">Basic Typing Animation</div>
+            <div id="typed-basic" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-basic">Start</button>
+                <button id="pause-basic">Pause</button>
+                <button id="resume-basic">Resume</button>
+                <button id="reset-basic">Reset</button>
+                <button id="stop-basic">Stop</button>
+            </div>
+            <div id="status-basic" class="status">Ready to start</div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">HTML Content Example</div>
+            <div id="typed-html" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-html">Start HTML</button>
+                <button id="pause-html">Pause</button>
+                <button id="resume-html">Resume</button>
+                <button id="destroy-html">Destroy</button>
+            </div>
+            <div id="status-html" class="status">Ready to start</div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">Placeholder Animation</div>
+            <input type="text" id="input-placeholder" placeholder="Type here..." style="width: 300px; padding: 10px; font-size: 16px;">
+            <div class="controls">
+                <button id="start-placeholder">Animate Placeholder</button>
+                <button id="stop-placeholder">Stop</button>
+            </div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">Strings from Element</div>
+            <div id="strings-source" style="display: none;">
+                <span>First string from element</span>
+                <span>Second string from element</span>
+                <span>Third string from element</span>
+            </div>
+            <div id="typed-element-source" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-element-source">Start from Element</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import UltraTyped from local package -->
+    <script type="module">
+        import UltraTyped from '../../dist/index.mjs';
+        
+        // Basic example with all features
+        const basicElement = document.getElementById('typed-basic');
+        const basicInstance = UltraTyped(basicElement, {
+            strings: [
+                'Welcome to UltraTyped.js!',
+                'Ultra-fast typing animation',
+                'Less than 2KB in size',
+                'Zero dependencies',
+                'Built with performance in mind'
+            ],
+            typeSpeed: 50,
+            backSpeed: 30,
+            backDelay: 1000,
+            loop: true,
+            showCursor: true,
+            cursorChar: '|',
+            startDelay: 0,
+            shuffle: false,
+            
+            // Event callbacks
+            onBegin: () => {
+                updateStatus('status-basic', 'Animation began...');
+            },
+            onComplete: () => {
+                updateStatus('status-basic', 'All strings completed!');
+            },
+            preStringTyped: (arrayPos, self) => {
+                updateStatus('status-basic', `About to type string ${arrayPos + 1}: "${self.strings[arrayPos]}"`);
+            },
+            onStringTyped: (arrayPos, self) => {
+                updateStatus('status-basic', `Finished typing string ${arrayPos + 1}`);
+            },
+            onTypingPaused: (arrayPos, self) => {
+                updateStatus('status-basic', `Paused at string ${arrayPos + 1}`);
+            },
+            onTypingResumed: (arrayPos, self) => {
+                updateStatus('status-basic', `Resumed at string ${arrayPos + 1}`);
+            },
+            onReset: () => {
+                updateStatus('status-basic', 'Animation reset');
+            },
+            onStop: () => {
+                updateStatus('status-basic', 'Animation stopped');
+            },
+            onDestroy: () => {
+                updateStatus('status-basic', 'Animation destroyed');
+            }
+        });
+
+        // HTML content example
+        const htmlElement = document.getElementById('typed-html');
+        const htmlInstance = UltraTyped(htmlElement, {
+            strings: [
+                'This supports <strong>HTML</strong> content!',
+                'With <em>emphasis</em> and <span style="color: red;">colors</span>',
+                'Even <a href="#" onclick="alert(\'Hello!\')">links</a> work',
+                'And <code>code blocks</code> too'
+            ],
+            contentType: 'html',
+            typeSpeed: 40,
+            backSpeed: 25,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▋'
+        });
+
+        // Placeholder animation example
+        const inputElement = document.getElementById('input-placeholder');
+        const placeholderInstance = UltraTyped(inputElement, {
+            strings: [
+                'Search for anything...',
+                'Type your query here',
+                'What are you looking for?'
+            ],
+            attr: 'placeholder',
+            typeSpeed: 30,
+            backSpeed: 20,
+            loop: true,
+            showCursor: false
+        });
+
+        // Strings from element example
+        const elementSource = document.getElementById('typed-element-source');
+        const stringsSourceElement = document.getElementById('strings-source');
+        const elementSourceInstance = UltraTyped(elementSource, {
+            stringsElement: stringsSourceElement,
+            typeSpeed: 45,
+            backSpeed: 25,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▌'
+        });
+
+        // Control functions
+        function updateStatus(statusId, message) {
+            const statusElement = document.getElementById(statusId);
+            if (statusElement) {
+                statusElement.textContent = message;
+            }
+        }
+
+        // Basic example controls
+        document.getElementById('start-basic').addEventListener('click', () => {
+            basicInstance.start();
+        });
+
+        document.getElementById('pause-basic').addEventListener('click', () => {
+            basicInstance.pause();
+        });
+
+        document.getElementById('resume-basic').addEventListener('click', () => {
+            basicInstance.resume();
+        });
+
+        document.getElementById('reset-basic').addEventListener('click', () => {
+            basicInstance.reset();
+        });
+
+        document.getElementById('stop-basic').addEventListener('click', () => {
+            basicInstance.stop();
+        });
+
+        // HTML example controls
+        document.getElementById('start-html').addEventListener('click', () => {
+            htmlInstance.start();
+        });
+
+        document.getElementById('pause-html').addEventListener('click', () => {
+            htmlInstance.pause();
+        });
+
+        document.getElementById('resume-html').addEventListener('click', () => {
+            htmlInstance.resume();
+        });
+
+        document.getElementById('destroy-html').addEventListener('click', () => {
+            htmlInstance.destroy();
+            updateStatus('status-html', 'HTML instance destroyed');
+        });
+
+        // Placeholder controls
+        document.getElementById('start-placeholder').addEventListener('click', () => {
+            placeholderInstance.start();
+        });
+
+        document.getElementById('stop-placeholder').addEventListener('click', () => {
+            placeholderInstance.stop();
+        });
+
+        // Element source controls
+        document.getElementById('start-element-source').addEventListener('click', () => {
+            elementSourceInstance.start();
+        });
+
+        // Auto-start the basic example
+        setTimeout(() => {
+            basicInstance.start();
+        }, 500);
+    </script>
+</body>
+</html>
