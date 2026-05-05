@@ -278,6 +278,10 @@ export default function U(el, o) {
   }
 
   function step(t) {
+    if (toks.length === 0 || i >= toks.length) {
+      cancelAnimationFrame(raf);
+      return;
+    }
     if (isPaused || manuallyPaused) return;
     let dt = t - last;
 
@@ -429,7 +433,9 @@ export default function U(el, o) {
     raf = requestAnimationFrame(step);
   }
 
-  startAnimation();
+  if (toks.length > 0) {
+    startAnimation();
+  }
 
   return {
     /**

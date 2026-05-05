@@ -19,6 +19,9 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
+    "test:examples": "vitest run e2e/examples.validate.test.ts e2e/examples.patterns.test.ts",
+    "test:examples:patterns": "vitest run e2e/examples.patterns.test.ts",
+    "test:examples:all": "npm run test:examples && npm run test:examples:patterns",
     "size:check": "size-limit",
     "size:report": "node scripts/size-report.js"
   },
