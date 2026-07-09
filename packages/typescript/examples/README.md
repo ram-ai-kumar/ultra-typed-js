@@ -20,22 +20,24 @@ The `index.ts` file showcases comprehensive TypeScript integration:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core package first
-   npm run build:core
-   
+   pnpm --filter packages/core build
+
    # Compile and run the TypeScript example
    npx tsc packages/typescript/examples/index.ts --target es2020 --module esnext --moduleResolution node --outDir packages/typescript/examples/dist
-   
+
    # Run with Node.js
    node packages/typescript/examples/dist/index.js
    ```
 
 2. **In a browser**:
+
    ```bash
    # Compile for browser
    npx tsc packages/typescript/examples/index.ts --target es2020 --module esnext --moduleResolution node --outDir packages/typescript/examples/dist --globalName UltraTypedTSExample
-   
+
    # Include in HTML
    # <script src="dist/index.js"></script>
    ```
@@ -45,71 +47,71 @@ The `index.ts` file showcases comprehensive TypeScript integration:
 #### Basic Typed Configuration
 
 ```typescript
-import UltraTyped, { type UltraTypedOptions } from 'ultratyped'
+import UltraTyped, { type UltraTypedOptions } from "ultratyped";
 
 const options: UltraTypedOptions = {
-  strings: ['Type-safe typing animation', 'Full IntelliSense'],
+  strings: ["Type-safe typing animation", "Full IntelliSense"],
   typeSpeed: 50,
   backSpeed: 30,
   loop: true,
-  contentType: 'text'
-}
+  contentType: "text",
+};
 
-const instance = UltraTyped(element, options)
+const instance = UltraTyped(element, options);
 ```
 
 #### Custom Interface Extension
 
 ```typescript
 interface CustomTypingConfig extends UltraTypedOptions {
-  customProperty?: string
+  customProperty?: string;
   metadata?: {
-    author: string
-    version: string
-    created: Date
-  }
+    author: string;
+    version: string;
+    created: Date;
+  };
 }
 
 const customConfig: CustomTypingConfig = {
-  strings: ['Extended configuration'],
+  strings: ["Extended configuration"],
   typeSpeed: 40,
   loop: true,
-  contentType: 'text',
-  customProperty: 'custom-value',
+  contentType: "text",
+  customProperty: "custom-value",
   metadata: {
-    author: 'Developer',
-    version: '1.0.0',
-    created: new Date()
-  }
-}
+    author: "Developer",
+    version: "1.0.0",
+    created: new Date(),
+  },
+};
 ```
 
 #### Generic Wrapper Class
 
 ```typescript
 class TypedManager<T extends UltraTypedOptions = UltraTypedOptions> {
-  private instance: UltraTypedInstance | null = null
-  private element: HTMLElement
-  private options: T
+  private instance: UltraTypedInstance | null = null;
+  private element: HTMLElement;
+  private options: T;
 
   constructor(element: HTMLElement, options: T) {
-    this.element = element
-    this.options = options
+    this.element = element;
+    this.options = options;
   }
 
   initialize(): UltraTypedInstance {
-    this.instance = UltraTyped(this.element, this.options)
-    return this.instance
+    this.instance = UltraTyped(this.element, this.options);
+    return this.instance;
   }
 
   getInstance(): UltraTypedInstance | null {
-    return this.instance
+    return this.instance;
   }
 }
 
 // Usage
-const manager = new TypedManager(element, options)
-const instance = manager.initialize()
+const manager = new TypedManager(element, options);
+const instance = manager.initialize();
 ```
 
 #### Type-safe Factory Functions
@@ -118,54 +120,54 @@ const instance = manager.initialize()
 function createTypingAnimation(
   element: HTMLElement,
   strings: string[],
-  options: Partial<UltraTypedOptions> = {}
+  options: Partial<UltraTypedOptions> = {},
 ): UltraTypedInstance {
   const fullOptions: UltraTypedOptions = {
     strings,
     typeSpeed: 50,
     backSpeed: 30,
     loop: true,
-    contentType: 'text',
-    ...options
-  }
-  
-  return UltraTyped(element, fullOptions)
+    contentType: "text",
+    ...options,
+  };
+
+  return UltraTyped(element, fullOptions);
 }
 
 // Usage
-const instance = createTypingAnimation(element, ['Hello', 'World'], {
+const instance = createTypingAnimation(element, ["Hello", "World"], {
   typeSpeed: 45,
-  loop: false
-})
+  loop: false,
+});
 ```
 
 #### Builder Pattern Implementation
 
 ```typescript
 class TypedConfigBuilder {
-  private config: Partial<UltraTypedOptions> = {}
+  private config: Partial<UltraTypedOptions> = {};
 
   strings(strings: string[]): this {
-    this.config.strings = strings
-    return this
+    this.config.strings = strings;
+    return this;
   }
 
   speed(typeSpeed: number, backSpeed?: number): this {
-    this.config.typeSpeed = typeSpeed
+    this.config.typeSpeed = typeSpeed;
     if (backSpeed !== undefined) {
-      this.config.backSpeed = backSpeed
+      this.config.backSpeed = backSpeed;
     }
-    return this
+    return this;
   }
 
   looping(loop: boolean): this {
-    this.config.loop = loop
-    return this
+    this.config.loop = loop;
+    return this;
   }
 
   html(enabled: boolean): this {
-    this.config.contentType = enabled ? 'html' : 'text'
-    return this
+    this.config.contentType = enabled ? "html" : "text";
+    return this;
   }
 
   build(): UltraTypedOptions {
@@ -175,85 +177,89 @@ class TypedConfigBuilder {
       backSpeed: 30,
       backDelay: 800,
       loop: true,
-      contentType: 'text'
-    }
-    
-    return { ...defaults, ...this.config }
+      contentType: "text",
+    };
+
+    return { ...defaults, ...this.config };
   }
 }
 
 // Usage
 const config = new TypedConfigBuilder()
-  .strings(['Builder pattern', 'Type-safe configuration'])
+  .strings(["Builder pattern", "Type-safe configuration"])
   .speed(45, 25)
   .looping(true)
   .html(false)
-  .build()
+  .build();
 
-const instance = UltraTyped(element, config)
+const instance = UltraTyped(element, config);
 ```
 
 #### Generic Animation Registry
 
 ```typescript
-type TypedAnimationState = 'idle' | 'running' | 'paused' | 'stopped'
+type TypedAnimationState = "idle" | "running" | "paused" | "stopped";
 
 interface TypedAnimationMetadata {
-  id: string
-  element: HTMLElement
-  state: TypedAnimationState
-  createdAt: Date
-  lastActivity?: Date
+  id: string;
+  element: HTMLElement;
+  state: TypedAnimationState;
+  createdAt: Date;
+  lastActivity?: Date;
 }
 
 class TypedAnimationRegistry {
-  private animations = new Map<string, UltraTypedInstance>()
-  private metadata = new Map<string, TypedAnimationMetadata>()
+  private animations = new Map<string, UltraTypedInstance>();
+  private metadata = new Map<string, TypedAnimationMetadata>();
 
-  register(id: string, instance: UltraTypedInstance, element: HTMLElement): void {
-    this.animations.set(id, instance)
+  register(
+    id: string,
+    instance: UltraTypedInstance,
+    element: HTMLElement,
+  ): void {
+    this.animations.set(id, instance);
     this.metadata.set(id, {
       id,
       element,
-      state: 'idle',
-      createdAt: new Date()
-    })
+      state: "idle",
+      createdAt: new Date(),
+    });
   }
 
   get(id: string): UltraTypedInstance | undefined {
-    return this.animations.get(id)
+    return this.animations.get(id);
   }
 
   start(id: string): void {
-    const instance = this.animations.get(id)
+    const instance = this.animations.get(id);
     if (instance) {
-      instance.start()
-      this.updateState(id, 'running')
+      instance.start();
+      this.updateState(id, "running");
     }
   }
 
   stop(id: string): void {
-    const instance = this.animations.get(id)
+    const instance = this.animations.get(id);
     if (instance) {
-      instance.stop()
-      this.updateState(id, 'stopped')
+      instance.stop();
+      this.updateState(id, "stopped");
     }
   }
 
   updateState(id: string, state: TypedAnimationState): void {
-    const metadata = this.metadata.get(id)
+    const metadata = this.metadata.get(id);
     if (metadata) {
-      metadata.state = state
-      metadata.lastActivity = new Date()
+      metadata.state = state;
+      metadata.lastActivity = new Date();
     }
   }
 }
 
 // Usage
-const registry = new TypedAnimationRegistry()
-const instance = UltraTyped(element, options)
-registry.register('main-animation', instance, element)
-registry.start('main-animation')
+const registry = new TypedAnimationRegistry();
+const instance = UltraTyped(element, options);
+registry.register("main-animation", instance, element);
+registry.start("main-animation");
 ```
 
 ### Key TypeScript Concepts
@@ -265,17 +271,17 @@ All UltraTyped.js APIs are fully typed:
 ```typescript
 // ✅ Type-safe - compiler will catch errors
 const options: UltraTypedOptions = {
-  strings: ['Hello', 'World'],
+  strings: ["Hello", "World"],
   typeSpeed: 50, // Must be number
-  loop: true,     // Must be boolean
-  contentType: 'text' // Must be 'text' | 'html'
-}
+  loop: true, // Must be boolean
+  contentType: "text", // Must be 'text' | 'html'
+};
 
 // ❌ Type error - contentType must be 'text' or 'html'
 const badOptions: UltraTypedOptions = {
-  strings: ['Hello'],
-  contentType: 'invalid' // Error!
-}
+  strings: ["Hello"],
+  contentType: "invalid", // Error!
+};
 ```
 
 #### IntelliSense Support
@@ -283,15 +289,15 @@ const badOptions: UltraTypedOptions = {
 Full autocomplete and documentation:
 
 ```typescript
-const instance = UltraTyped(element, options)
+const instance = UltraTyped(element, options);
 
 // ✅ Full IntelliSense for methods
-instance.start() // ✅ Available
-instance.stop()  // ✅ Available
-instance.reset() // ✅ Available
+instance.start(); // ✅ Available
+instance.stop(); // ✅ Available
+instance.reset(); // ✅ Available
 
 // ❌ Compiler error - method doesn't exist
-instance.destroy() // Error: Property 'destroy' does not exist
+instance.destroy(); // Error: Property 'destroy' does not exist
 ```
 
 #### Generic Types
@@ -301,15 +307,17 @@ Create reusable, type-safe components:
 ```typescript
 // Generic manager that works with any UltraTypedOptions extension
 class TypedManager<T extends UltraTypedOptions = UltraTypedOptions> {
-  constructor(element: HTMLElement, options: T) { /* ... */ }
+  constructor(element: HTMLElement, options: T) {
+    /* ... */
+  }
 }
 
 // Usage with custom config
 interface MyConfig extends UltraTypedOptions {
-  customProp: string
+  customProp: string;
 }
 
-const manager = new TypedManager<MyConfig>(element, myConfig)
+const manager = new TypedManager<MyConfig>(element, myConfig);
 ```
 
 ### Available Types
@@ -318,41 +326,41 @@ const manager = new TypedManager<MyConfig>(element, myConfig)
 
 ```typescript
 interface UltraTypedOptions {
-  strings: string[]
-  typeSpeed?: number
-  backSpeed?: number
-  backDelay?: number
-  loop?: boolean
-  contentType?: 'text' | 'html'
+  strings: string[];
+  typeSpeed?: number;
+  backSpeed?: number;
+  backDelay?: number;
+  loop?: boolean;
+  contentType?: "text" | "html";
 }
 
 interface UltraTypedInstance {
-  start(): void
-  stop(): void
-  reset(): void
+  start(): void;
+  stop(): void;
+  reset(): void;
 }
 ```
 
 #### Custom Types (from example)
 
 ```typescript
-type TypedAnimationState = 'idle' | 'running' | 'paused' | 'stopped'
+type TypedAnimationState = "idle" | "running" | "paused" | "stopped";
 
 interface TypedAnimationMetadata {
-  id: string
-  element: HTMLElement
-  state: TypedAnimationState
-  createdAt: Date
-  lastActivity?: Date
+  id: string;
+  element: HTMLElement;
+  state: TypedAnimationState;
+  createdAt: Date;
+  lastActivity?: Date;
 }
 
 interface CustomTypingConfig extends UltraTypedOptions {
-  customProperty?: string
+  customProperty?: string;
   metadata?: {
-    author: string
-    version: string
-    created: Date
-  }
+    author: string;
+    version: string;
+    created: Date;
+  };
 }
 ```
 
@@ -391,6 +399,7 @@ packages/typescript/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - TypeScript compilation target
 - RequestAnimationFrame

@@ -20,8 +20,8 @@ This guide helps you migrate from `typewriter-effect` to UltraTyped.js with mini
 Replace `typewriter-effect` with UltraTyped.js for the best performance:
 
 ```bash
-npm uninstall typewriter-effect
-npm install ultratyped
+pnpm uninstall typewriter-effect
+pnpm install ultratyped
 ```
 
 **Before (typewriter-effect):**
@@ -121,13 +121,13 @@ class TypewriterCompat {
 ### Options Mapping
 
 | typewriter-effect Option | UltraTyped.js Option | Default | Notes                 |
-| ------------------------ | -------------------- | ------- | --------------------- | ------ |
-| `strings`                | `strings`            | `[]`    | ✅ Same                |
-| `autoStart`              | Auto-start           | `true`  | ✅ Same behavior       |
-| `loop`                   | `loop`               | `true`  | ✅ Same                |
-| `delay`                  | `typeSpeed`          | `50`    | ⚠️ Different naming    |
-| `deleteSpeed`            | `backSpeed`          | `30`    | ⚠️ Different naming    |
-| `cursor`                 | `showCursor`         | `true`  | ⚠️ Different naming    |
+| ------------------------ | -------------------- | ------- | --------------------- | ------- |
+| `strings`                | `strings`            | `[]`    | ✅ Same               |
+| `autoStart`              | Auto-start           | `true`  | ✅ Same behavior      |
+| `loop`                   | `loop`               | `true`  | ✅ Same               |
+| `delay`                  | `typeSpeed`          | `50`    | ⚠️ Different naming   |
+| `deleteSpeed`            | `backSpeed`          | `30`    | ⚠️ Different naming   |
+| `cursor`                 | `showCursor`         | `true`  | ⚠️ Different naming   |
 | `cursorChar`             | `cursorChar`         | `'      | '`                    | ✅ Same |
 | `devMode`                | N/A                  | N/A     | Use browser dev tools |
 
@@ -140,11 +140,11 @@ class TypewriterCompat {
 | `.deleteAll()`           | `backSpeed: number`    | Controls deletion speed        |
 | `.deleteChars(count)`    | `smartBackspace: true` | Automatic smart deletion       |
 | `.start()`               | Auto-start             | Animation starts automatically |
-| `.stop()`                | `.stop()`              | ✅ Same                         |
-| `.pause()`               | `.pause()`             | ✅ Same                         |
-| `.resume()`              | `.resume()`            | ✅ Same                         |
-| `.reset()`               | `.reset()`             | ✅ Same                         |
-| `.destroy()`             | `.destroy()`           | ✅ Same                         |
+| `.stop()`                | `.stop()`              | ✅ Same                        |
+| `.pause()`               | `.pause()`             | ✅ Same                        |
+| `.resume()`              | `.resume()`            | ✅ Same                        |
+| `.reset()`               | `.reset()`             | ✅ Same                        |
+| `.destroy()`             | `.destroy()`           | ✅ Same                        |
 
 ---
 

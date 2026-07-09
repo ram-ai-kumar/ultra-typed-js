@@ -196,8 +196,9 @@ export default function U(el, o) {
       }
       style.textContent = `
         .ultratyped-cursor {
-          display: inline-block;
+          display: inline;
           animation: ultratyped-blink 0.7s infinite;
+          margin-left: 2px;
         }
         @keyframes ultratyped-blink {
           0%, 100% { opacity: 1; }
@@ -208,15 +209,18 @@ export default function U(el, o) {
     }
   }
 
-  // Create cursor element
+  // Create text node and cursor element
+  let textNode = null;
   if (showCursor) {
-    if (el && el.parentNode) {
-      cursorEl = document.createElement("span");
-      cursorEl.className = "ultratyped-cursor";
-      cursorEl.textContent = cursorChar;
-      cursorEl.setAttribute("role", "presentation");
-      el.parentNode.insertBefore(cursorEl, el.nextSibling);
-    }
+    // Clear element content for clean cursor setup
+    el.textContent = "";
+    textNode = document.createTextNode("");
+    cursorEl = document.createElement("span");
+    cursorEl.className = "ultratyped-cursor";
+    cursorEl.textContent = cursorChar;
+    cursorEl.setAttribute("role", "presentation");
+    el.appendChild(textNode);
+    el.appendChild(cursorEl);
   }
 
   function startAnimation() {
@@ -424,9 +428,17 @@ export default function U(el, o) {
       if (attr) {
         el.setAttribute(attr, buf);
       } else if (ct === "html") {
-        el.innerHTML = buf;
+        if (showCursor && textNode) {
+          textNode.nodeValue = buf;
+        } else {
+          el.innerHTML = buf;
+        }
       } else {
-        el.textContent = buf;
+        if (showCursor && textNode) {
+          textNode.nodeValue = buf;
+        } else {
+          el.textContent = buf;
+        }
       }
       prevBuf = buf;
     }

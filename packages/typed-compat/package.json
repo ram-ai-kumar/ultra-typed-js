@@ -43,7 +43,10 @@
   },
   "author": "ram-ai-kumar",
   "license": "MIT",
-  "peerDependencies": {
-    "@ultratyped/core": "*"
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "dependencies": {
+    "ultratyped": "workspace:*"
   }
 }

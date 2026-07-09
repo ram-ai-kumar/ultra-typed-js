@@ -12,13 +12,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - run: npm install
+      - run: pnpm install
 
-      - run: npm run build
+      - run: pnpm build
 
       # Upload built dist artifacts so the bundle-size job doesn't need to rebuild
       - name: Upload dist artifacts
@@ -33,13 +37,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - run: npm install
+      - run: pnpm install
 
-      - run: npm test
+      - run: pnpm test
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -54,11 +62,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - run: npm install
+      - run: pnpm install
 
       # Restore pre-built dists from the build job (avoids a full rebuild)
       - name: Download dist artifacts
@@ -70,11 +82,11 @@ jobs:
       # Gate 1 — Hard ceiling: each package must stay under its declared gzip limit.
       # Fails immediately if any bundle is too large. Config lives in .size-limit.json.
       - name: Check hard gzip limits (size-limit)
-        run: npm run size:check
+        run: pnpm size:check
 
       # Gate 2 — Regression guard: compares measured sizes against the committed
       # baseline (benchmarks/bundle-size-baseline.json). Fails if any package grew
       # more than 5% since the last accepted baseline commit.
       # Pass --ci for compact log output; no ANSI colours in GitHub logs.
       - name: Report bundle size delta vs baseline
-        run: npm run size:report -- --ci
+        run: pnpm size:report -- --ci

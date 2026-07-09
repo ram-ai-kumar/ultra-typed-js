@@ -18,41 +18,43 @@ The Solid example showcases Solid.js integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Solid packages first
-   npm run build:core
-   npm run build:solid
+   pnpm --filter packages/core build
+   pnpm --filter packages/solid build
 
    # Navigate to the Solid example directory
    cd packages/solid/examples
 
    # Install dependencies
-   npm install
+   pnpm install
 
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### Solid Integration Patterns
 
 #### Using the Official Hook
+
 ```tsx
-import { useUltraTyped } from '@ultratyped/solid';
-import { createSignal } from 'solid-js';
+import { useUltraTyped } from "@ultratyped/solid";
+import { createSignal } from "solid-js";
 
 function MyComponent() {
   const [ref, setRef] = createSignal<HTMLElement | null>(null);
 
   const instance = useUltraTyped(ref, {
-    strings: ['Hello', 'World', 'Solid'],
+    strings: ["Hello", "World", "Solid"],
     typeSpeed: 50,
-    loop: true
+    loop: true,
   });
 
   return <div ref={setRef} />;
@@ -60,9 +62,10 @@ function MyComponent() {
 ```
 
 #### Manual Integration with Cleanup
+
 ```tsx
-import { createEffect, onCleanup, createRef } from 'solid-js';
-import UltraTyped from 'ultratyped';
+import { createEffect, onCleanup, createRef } from "solid-js";
+import UltraTyped from "ultratyped";
 
 function TypingComponent() {
   let element: HTMLDivElement | undefined;
@@ -71,10 +74,10 @@ function TypingComponent() {
   createEffect(() => {
     if (element && !instance) {
       instance = UltraTyped(element, {
-        strings: ['Hello', 'World'],
+        strings: ["Hello", "World"],
         typeSpeed: 50,
         loop: true,
-        onComplete: () => console.log('Completed')
+        onComplete: () => console.log("Completed"),
       });
     }
   });
@@ -91,12 +94,13 @@ function TypingComponent() {
 ```
 
 #### Signal-Driven Configuration
+
 ```tsx
-import { createSignal, createEffect, onCleanup } from 'solid-js';
-import UltraTyped from 'ultratyped';
+import { createSignal, createEffect, onCleanup } from "solid-js";
+import UltraTyped from "ultratyped";
 
 function DynamicTypingComponent() {
-  const [strings, setStrings] = createSignal(['Hello', 'World']);
+  const [strings, setStrings] = createSignal(["Hello", "World"]);
   const [speed, setSpeed] = createSignal(50);
   let element: HTMLDivElement | undefined;
   let instance: any = null;
@@ -106,7 +110,7 @@ function DynamicTypingComponent() {
       instance = UltraTyped(element, {
         strings: strings(),
         typeSpeed: speed(),
-        loop: true
+        loop: true,
       });
     }
   });
@@ -130,8 +134,8 @@ function DynamicTypingComponent() {
     <div>
       <div ref={element} />
       <textarea
-        value={strings().join('\n')}
-        onInput={(e) => setStrings(e.target.value.split('\n'))}
+        value={strings().join("\n")}
+        onInput={(e) => setStrings(e.target.value.split("\n"))}
       />
       <input
         type="number"
@@ -144,59 +148,66 @@ function DynamicTypingComponent() {
 ```
 
 #### Multiple Instances Component
+
 ```tsx
-import { createSignal, createEffect, onCleanup } from 'solid-js';
-import UltraTyped from 'ultratyped';
+import { createSignal, createEffect, onCleanup } from "solid-js";
+import UltraTyped from "ultratyped";
 
 function MultipleInstances() {
-  let refs = [null, null, null].map(() => ({ current: null as HTMLDivElement | null }));
+  let refs = [null, null, null].map(() => ({
+    current: null as HTMLDivElement | null,
+  }));
   const [instances, setInstances] = createSignal<any[]>([]);
   const [allRunning, setAllRunning] = createSignal(false);
 
   createEffect(() => {
-    const newInstances = refs.map((ref, index) => {
-      if (ref.current) {
-        return UltraTyped(ref.current, {
-          strings: [`Instance ${index + 1}A`, `Instance ${index + 1}B`],
-          typeSpeed: 50 + index * 20,
-          loop: true,
-          showCursor: index === 0
-        });
-      }
-      return null;
-    }).filter(Boolean);
+    const newInstances = refs
+      .map((ref, index) => {
+        if (ref.current) {
+          return UltraTyped(ref.current, {
+            strings: [`Instance ${index + 1}A`, `Instance ${index + 1}B`],
+            typeSpeed: 50 + index * 20,
+            loop: true,
+            showCursor: index === 0,
+          });
+        }
+        return null;
+      })
+      .filter(Boolean);
 
     setInstances(newInstances);
 
     onCleanup(() => {
-      newInstances.forEach(instance => {
+      newInstances.forEach((instance) => {
         if (instance) instance.destroy();
       });
     });
   });
 
   const startAll = () => {
-    instances().forEach(instance => instance?.start());
+    instances().forEach((instance) => instance?.start());
     setAllRunning(true);
   };
 
   const pauseAll = () => {
-    instances().forEach(instance => instance?.pause());
+    instances().forEach((instance) => instance?.pause());
     setAllRunning(false);
   };
 
   const stopAll = () => {
-    instances().forEach(instance => instance?.stop());
+    instances().forEach((instance) => instance?.stop());
     setAllRunning(false);
   };
 
   return (
     <div>
       {refs.map((ref, index) => (
-        <div ref={ref} style={{ margin: '10px 0', "font-size": '20px' }} />
+        <div ref={ref} style={{ margin: "10px 0", "font-size": "20px" }} />
       ))}
       <div>
-        <button onClick={startAll} disabled={allRunning()}>Start All</button>
+        <button onClick={startAll} disabled={allRunning()}>
+          Start All
+        </button>
         <button onClick={pauseAll}>Pause All</button>
         <button onClick={stopAll}>Stop All</button>
       </div>
@@ -206,16 +217,21 @@ function MultipleInstances() {
 ```
 
 #### Advanced Component with Controls
+
 ```tsx
-import { createSignal, createEffect, onCleanup } from 'solid-js';
-import UltraTyped from 'ultratyped';
+import { createSignal, createEffect, onCleanup } from "solid-js";
+import UltraTyped from "ultratyped";
 
 function AdvancedTyping() {
   let element: HTMLDivElement | undefined;
   let instance: any = null;
-  const [status, setStatus] = createSignal('Ready');
+  const [status, setStatus] = createSignal("Ready");
   const [isRunning, setIsRunning] = createSignal(false);
-  const [strings, setStrings] = createSignal(['Advanced', 'Solid', 'Full control']);
+  const [strings, setStrings] = createSignal([
+    "Advanced",
+    "Solid",
+    "Full control",
+  ]);
   const [typeSpeed, setTypeSpeed] = createSignal(50);
 
   createEffect(() => {
@@ -229,18 +245,18 @@ function AdvancedTyping() {
 
         onBegin: () => {
           setIsRunning(true);
-          setStatus('Animation began');
+          setStatus("Animation began");
         },
         onComplete: () => {
-          setStatus('All strings completed!');
+          setStatus("All strings completed!");
         },
         onStringTyped: (arrayPos: number) => {
           setStatus(`Finished string ${arrayPos + 1}`);
         },
         onStop: () => {
           setIsRunning(false);
-          setStatus('Animation stopped');
-        }
+          setStatus("Animation stopped");
+        },
       });
     }
   });
@@ -268,30 +284,73 @@ function AdvancedTyping() {
   };
 
   return (
-    <div style={{ "font-family": 'Arial, sans-serif', "max-width": '600px', margin: '0 auto', padding: '20px' }}>
-      <div ref={element} style={{ "font-size": '24px', color: '#2563eb', "min-height": '40px', margin: '20px 0', "font-family": "'Courier New', monospace" }}></div>
+    <div
+      style={{
+        "font-family": "Arial, sans-serif",
+        "max-width": "600px",
+        margin: "0 auto",
+        padding: "20px",
+      }}
+    >
+      <div
+        ref={element}
+        style={{
+          "font-size": "24px",
+          color: "#2563eb",
+          "min-height": "40px",
+          margin: "20px 0",
+          "font-family": "'Courier New', monospace",
+        }}
+      ></div>
 
-      <div style={{ display: 'flex', gap: '10px', margin: '20px 0', "flex-wrap": 'wrap' }}>
-        <button onClick={start} disabled={isRunning()}>Start</button>
-        <button onClick={pause} disabled={!isRunning()}>Pause</button>
+      <div
+        style={{
+          display: "flex",
+          gap: "10px",
+          margin: "20px 0",
+          "flex-wrap": "wrap",
+        }}
+      >
+        <button onClick={start} disabled={isRunning()}>
+          Start
+        </button>
+        <button onClick={pause} disabled={!isRunning()}>
+          Pause
+        </button>
         <button onClick={stop}>Stop</button>
         <button onClick={reset}>Reset</button>
       </div>
 
-      <div style={{ padding: '10px', "background-color": '#f3f4f6', "border-radius": '5px', margin: '10px 0' }}>
+      <div
+        style={{
+          padding: "10px",
+          "background-color": "#f3f4f6",
+          "border-radius": "5px",
+          margin: "10px 0",
+        }}
+      >
         {status()}
       </div>
 
-      <div style={{ display: 'flex', gap: '10px', margin: '15px 0' }}>
+      <div style={{ display: "flex", gap: "10px", margin: "15px 0" }}>
         <button onClick={addString}>Add String</button>
         <button onClick={removeString}>Remove Last</button>
       </div>
 
-      <div style={{ margin: '15px 0', padding: '15px', "background-color": '#f9fafb', "border-radius": '5px' }}>
+      <div
+        style={{
+          margin: "15px 0",
+          padding: "15px",
+          "background-color": "#f9fafb",
+          "border-radius": "5px",
+        }}
+      >
         <p>Current strings ({strings().length}):</p>
         <ul>
           {strings().map((str, index) => (
-            <li>{index + 1}. {str}</li>
+            <li>
+              {index + 1}. {str}
+            </li>
           ))}
         </ul>
       </div>
@@ -303,30 +362,35 @@ function AdvancedTyping() {
 ### Example Components
 
 #### 1. Basic Typing Component
+
 - Shows fundamental Solid integration
 - Manual instance management with proper cleanup
 - Event callback handling with Solid signals
 - Interactive controls for configuration
 
 #### 2. Hook-Based Component
+
 - Uses the official `useUltraTyped` hook
 - Cleaner component code with encapsulated logic
 - Automatic cleanup handled by the hook
 - Signal tracking and control methods
 
 #### 3. Multiple Instances Component
+
 - Manages multiple UltraTyped instances
 - Coordinated control across all instances
 - Different styling and speeds for visual variety
 - Proper cleanup for all instances
 
 #### 4. Dynamic Configuration Component
+
 - Demonstrates signal-driven configuration
 - Updates UltraTyped when Solid signals change
 - Textarea and input for dynamic updates
 - Reset behavior on configuration change
 
 #### 5. Advanced Component with Controls
+
 - Full control over UltraTyped instance
 - Interactive buttons for control
 - Status tracking with Solid signals
@@ -335,6 +399,7 @@ function AdvancedTyping() {
 ### Key Solid Concepts
 
 #### createEffect and onCleanup
+
 ```tsx
 createEffect(() => {
   // Initialize UltraTyped
@@ -352,13 +417,14 @@ onCleanup(() => {
 ```
 
 #### Refs and Signals
+
 ```tsx
-import { createSignal } from 'solid-js';
+import { createSignal } from "solid-js";
 
 const [ref, setRef] = createSignal<HTMLElement | null>(null);
 
 // In JSX
-<div ref={setRef} />
+<div ref={setRef} />;
 
 // Access value
 if (ref()) {
@@ -367,18 +433,20 @@ if (ref()) {
 ```
 
 #### Signals for State
+
 ```tsx
-const [strings, setStrings] = createSignal(['Hello', 'World']);
+const [strings, setStrings] = createSignal(["Hello", "World"]);
 const [speed, setSpeed] = createSignal(50);
 
 // Read signal
 console.log(strings());
 
 // Update signal
-setStrings(['New', 'Strings']);
+setStrings(["New", "Strings"]);
 ```
 
 #### Effects for Reactive Updates
+
 ```tsx
 createEffect(() => {
   if (instance) {
@@ -431,6 +499,7 @@ packages/solid/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - Solid.js requirements
 - RequestAnimationFrame

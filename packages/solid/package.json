@@ -21,7 +21,7 @@
     "solid-js": "^1.0.0"
   },
   "dependencies": {
-    "ultratyped": "^1.0.0"
+    "ultratyped": "workspace:*"
   },
   "files": [
     "dist"

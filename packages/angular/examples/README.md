@@ -18,49 +18,57 @@ The Angular example showcases Angular integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Angular packages first
-   npm run build:core
-   npm run build:angular
+   pnpm --filter packages/core build
+   pnpm --filter packages/angular build
 
    # Navigate to the Angular example directory
    cd packages/angular/examples
 
    # Install dependencies
-   npm install
+   pnpm install
 
    # Start the development server
-   npm start
+   pnpm start
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
+   pnpm build
    ```
 
 ### Angular Integration Patterns
 
 #### Using the UltraTyped Service
+
 ```typescript
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import { UltraTypedService } from '@ultratyped/angular';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
+import { UltraTypedService } from "@ultratyped/angular";
 
 @Component({
-  selector: 'app-typing',
-  template: '<span #typedElement></span>'
+  selector: "app-typing",
+  template: "<span #typedElement></span>",
 })
 export class TypingComponent implements OnInit, OnDestroy {
-  @ViewChild('typedElement', { static: true }) element!: ElementRef;
+  @ViewChild("typedElement", { static: true }) element!: ElementRef;
   private instance: any;
 
   constructor(private ultraTypedService: UltraTypedService) {}
 
   ngOnInit() {
     this.instance = this.ultraTypedService.create(this.element.nativeElement, {
-      strings: ['Hello', 'World'],
+      strings: ["Hello", "World"],
       typeSpeed: 50,
       loop: true,
-      onComplete: () => console.log('Completed')
+      onComplete: () => console.log("Completed"),
     });
   }
 
@@ -73,36 +81,43 @@ export class TypingComponent implements OnInit, OnDestroy {
 ```
 
 #### Manual Integration with Cleanup
+
 ```typescript
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
-import UltraTyped from 'ultratyped';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
+import UltraTyped from "ultratyped";
 
 @Component({
-  selector: 'app-manual-typing',
+  selector: "app-manual-typing",
   template: `
     <div #typedElement></div>
     <button (click)="start()">Start</button>
     <button (click)="pause()">Pause</button>
     <button (click)="stop()">Stop</button>
-  `
+  `,
 })
 export class ManualTypingComponent implements OnInit, OnDestroy {
-  @ViewChild('typedElement', { static: true }) element!: ElementRef;
+  @ViewChild("typedElement", { static: true }) element!: ElementRef;
   private instance: any;
-  status = 'Ready';
+  status = "Ready";
 
   ngOnInit() {
     if (this.element) {
       this.instance = UltraTyped(this.element.nativeElement, {
-        strings: ['Hello', 'World'],
+        strings: ["Hello", "World"],
         typeSpeed: 50,
         loop: true,
         onBegin: () => {
-          this.status = 'Animation began';
+          this.status = "Animation began";
         },
         onComplete: () => {
-          this.status = 'All strings completed!';
-        }
+          this.status = "All strings completed!";
+        },
       });
     }
   }
@@ -129,27 +144,43 @@ export class ManualTypingComponent implements OnInit, OnDestroy {
 ```
 
 #### Dynamic Configuration Component
+
 ```typescript
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
-import UltraTyped from 'ultratyped';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+  Input,
+} from "@angular/core";
+import UltraTyped from "ultratyped";
 
 @Component({
-  selector: 'app-dynamic-typing',
+  selector: "app-dynamic-typing",
   template: `
     <div #typedElement></div>
     <div>
       <label>Strings (one per line):</label>
-      <textarea [value]="strings.join('\n')" (input)="updateStrings($event)"></textarea>
+      <textarea
+        [value]="
+          strings.join(
+            '
+'
+          )
+        "
+        (input)="updateStrings($event)"
+      ></textarea>
     </div>
     <div>
       <label>Type Speed:</label>
-      <input type="number" [value]="typeSpeed" (input)="updateSpeed($event)">
+      <input type="number" [value]="typeSpeed" (input)="updateSpeed($event)" />
     </div>
-  `
+  `,
 })
 export class DynamicTypingComponent implements OnInit, OnDestroy {
-  @ViewChild('typedElement', { static: true }) element!: ElementRef;
-  @Input() strings: string[] = ['Hello', 'World'];
+  @ViewChild("typedElement", { static: true }) element!: ElementRef;
+  @Input() strings: string[] = ["Hello", "World"];
   @Input() typeSpeed = 50;
 
   private instance: any;
@@ -167,7 +198,7 @@ export class DynamicTypingComponent implements OnInit, OnDestroy {
       this.instance = UltraTyped(this.element.nativeElement, {
         strings: this.strings,
         typeSpeed: this.typeSpeed,
-        loop: true
+        loop: true,
       });
     }
   }
@@ -180,7 +211,9 @@ export class DynamicTypingComponent implements OnInit, OnDestroy {
   }
 
   updateStrings(event: any) {
-    const newStrings = event.target.value.split('\n').filter((s: string) => s.trim());
+    const newStrings = event.target.value
+      .split("\n")
+      .filter((s: string) => s.trim());
     this.strings = newStrings;
     if (this.instance) {
       this.instance.strings = newStrings;
@@ -200,24 +233,28 @@ export class DynamicTypingComponent implements OnInit, OnDestroy {
 ### Example Components
 
 #### 1. Basic Typing Component
+
 - Shows fundamental Angular integration
 - Uses ViewChild for DOM access
 - Manual instance management with proper cleanup
 - Event callback handling
 
 #### 2. Service-Based Component
+
 - Uses Angular service for encapsulation
 - Cleaner component code
 - Automatic cleanup handled by service
 - Dependency injection patterns
 
 #### 3. Multiple Instances Component
+
 - Manages multiple UltraTyped instances
 - Coordinated control across all instances
 - Different styling and speeds
 - Proper cleanup for all instances
 
 #### 4. Dynamic Configuration Component
+
 - Demonstrates Input() properties
 - Reactive updates on configuration changes
 - Event emitters for callbacks
@@ -225,6 +262,7 @@ export class DynamicTypingComponent implements OnInit, OnDestroy {
 ### Key Angular Concepts
 
 #### ViewChild and ElementRef
+
 ```typescript
 @ViewChild('typedElement', { static: true }) element!: ElementRef;
 
@@ -237,6 +275,7 @@ ngOnInit() {
 ```
 
 #### Lifecycle Hooks
+
 ```typescript
 ngOnInit() {
   // Initialize component
@@ -252,6 +291,7 @@ ngOnDestroy() {
 ```
 
 #### Service Injection
+
 ```typescript
 constructor(private ultraTypedService: UltraTypedService) {}
 
@@ -303,6 +343,7 @@ packages/angular/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - Angular requirements
 - RequestAnimationFrame

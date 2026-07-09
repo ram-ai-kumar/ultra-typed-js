@@ -29,15 +29,15 @@ UltraTyped.js is designed with security as a foundational principle:
 
 ```javascript
 // ✅ Secure by default
-UltraTyped('#element', {
-  strings: ['Safe', 'Content'],
-  contentType: 'text', // Default: safe text mode
+UltraTyped("#element", {
+  strings: ["Safe", "Content"],
+  contentType: "text", // Default: safe text mode
 });
 
 // ❌ Requires caution
-UltraTyped('#element', {
+UltraTyped("#element", {
   strings: ['<script>alert("xss")</script>'],
-  contentType: 'html', // HTML mode - validate input!
+  contentType: "html", // HTML mode - validate input!
 });
 ```
 
@@ -48,11 +48,13 @@ UltraTyped('#element', {
 ### Basic CSP Configuration
 
 ```html
-<meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; 
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; 
                script-src 'self'; 
                style-src 'self' 'nonce-ultratyped-css'; 
-               font-src 'self';">
+               font-src 'self';"
+/>
 ```
 
 ### UltraTyped.js CSP Integration
@@ -61,10 +63,10 @@ UltraTyped.js automatically supports CSP through the `nonce` option:
 
 ```javascript
 // ✅ CSP-compliant configuration
-const instance = UltraTyped('#element', {
-  strings: ['CSP', 'Compliant'],
+const instance = UltraTyped("#element", {
+  strings: ["CSP", "Compliant"],
   autoInsertCss: true,
-  nonce: 'ultratyped-css', // Must match your CSP nonce
+  nonce: "ultratyped-css", // Must match your CSP nonce
 });
 ```
 
@@ -80,13 +82,13 @@ const instance = UltraTyped('#element', {
 function setupCSPNonce() {
   // Generate or retrieve nonce from server
   const nonce = generateSecureNonce();
-  
-  UltraTyped('#element', {
-    strings: ['Secure', 'Typing'],
+
+  UltraTyped("#element", {
+    strings: ["Secure", "Typing"],
     autoInsertCss: true,
     nonce: nonce,
   });
-  
+
   // Add nonce to CSP header
   updateCSPHeader(`style-src 'self' 'nonce-${nonce}'`);
 }
@@ -104,9 +106,9 @@ UltraTyped.js supports HTML content but requires careful validation:
 // ✅ Safe HTML with trusted content
 const trustedHTML = '<span class="highlight">Safe content</span>';
 
-UltraTyped('#element', {
+UltraTyped("#element", {
   strings: [trustedHTML],
-  contentType: 'html',
+  contentType: "html",
 });
 ```
 
@@ -116,9 +118,9 @@ UltraTyped('#element', {
 // ❌ DANGEROUS - Never do this with user input
 const userInput = getUserInput(); // Could be malicious
 
-UltraTyped('#element', {
+UltraTyped("#element", {
   strings: [userInput],
-  contentType: 'html', // XSS vulnerability!
+  contentType: "html", // XSS vulnerability!
 });
 ```
 
@@ -127,19 +129,19 @@ UltraTyped('#element', {
 For dynamic content, always sanitize HTML:
 
 ```javascript
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
 function safeTyping(strings) {
-  const sanitizedStrings = strings.map(str => 
+  const sanitizedStrings = strings.map((str) =>
     DOMPurify.sanitize(str, {
-      ALLOWED_TAGS: ['span', 'strong', 'em', 'br'],
-      ALLOWED_ATTR: ['class'],
-    })
+      ALLOWED_TAGS: ["span", "strong", "em", "br"],
+      ALLOWED_ATTR: ["class"],
+    }),
   );
 
-  return UltraTyped('#element', {
+  return UltraTyped("#element", {
     strings: sanitizedStrings,
-    contentType: 'html',
+    contentType: "html",
   });
 }
 ```
@@ -162,20 +164,20 @@ Always validate typing strings before processing:
 ```javascript
 function validateTypingStrings(strings) {
   if (!Array.isArray(strings)) {
-    throw new Error('Strings must be an array');
+    throw new Error("Strings must be an array");
   }
 
-  return strings.filter(str => {
+  return strings.filter((str) => {
     // Basic validation
-    if (typeof str !== 'string') return false;
+    if (typeof str !== "string") return false;
     if (str.length > 10000) return false; // Prevent DoS
-    
+
     // Security validation
     if (/<script|javascript:|on\w+=/i.test(str)) {
-      console.warn('Potentially unsafe content detected');
+      console.warn("Potentially unsafe content detected");
       return false;
     }
-    
+
     return true;
   });
 }
@@ -184,7 +186,7 @@ function validateTypingStrings(strings) {
 const userInput = getUserStrings();
 const safeStrings = validateTypingStrings(userInput);
 
-UltraTyped('#element', {
+UltraTyped("#element", {
   strings: safeStrings,
   typeSpeed: 50,
 });
@@ -197,24 +199,24 @@ Validate UltraTyped.js configuration:
 ```javascript
 function validateConfig(config) {
   const safeConfig = { ...config };
-  
+
   // Validate strings
   if (config.strings) {
     safeConfig.strings = validateTypingStrings(config.strings);
   }
-  
+
   // Validate contentType
-  if (config.contentType === 'html') {
-    console.warn('HTML content type detected - ensure input is sanitized');
+  if (config.contentType === "html") {
+    console.warn("HTML content type detected - ensure input is sanitized");
   }
-  
+
   // Validate numeric options
-  ['typeSpeed', 'backSpeed', 'startDelay'].forEach(key => {
-    if (config[key] && (typeof config[key] !== 'number' || config[key] < 0)) {
+  ["typeSpeed", "backSpeed", "startDelay"].forEach((key) => {
+    if (config[key] && (typeof config[key] !== "number" || config[key] < 0)) {
       safeConfig[key] = 50; // Safe default
     }
   });
-  
+
   return safeConfig;
 }
 ```
@@ -229,10 +231,10 @@ UltraTyped.js has zero runtime dependencies, eliminating supply chain risks:
 
 ```bash
 # ✅ Clean dependency tree
-npm install ultratyped
+pnpm install ultratyped
 
 # No transitive dependencies
-npm ls ultratyped
+pnpm ls ultratyped
 # ultratyped@1.0.0
 ```
 
@@ -242,14 +244,14 @@ Framework adapters inherit the same security principles:
 
 ```javascript
 // ✅ Secure React integration
-import { useUltraTyped } from '@ultratyped/react';
+import { useUltraTyped } from "@ultratyped/react";
 
 function SecureComponent() {
   const { ref } = useUltraTyped({
-    strings: ['Secure', 'React'],
+    strings: ["Secure", "React"],
     typeSpeed: 50,
   });
-  
+
   return <span ref={ref} />;
 }
 ```
@@ -261,9 +263,9 @@ Monitor dependencies for security issues:
 ```json
 {
   "scripts": {
-    "audit": "npm audit --audit-level=high",
-    "audit-fix": "npm audit fix",
-    "check-deps": "npm ls --depth=0"
+    "audit": "pnpm audit --audit-level=high",
+    "audit-fix": "pnpm audit fix",
+    "check-deps": "pnpm ls --depth=0"
   }
 }
 ```
@@ -280,16 +282,16 @@ When using UltraTyped.js with SSR:
 // ✅ SSR-safe implementation
 function TypingComponent({ strings }) {
   const [isClient, setIsClient] = useState(false);
-  
+
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
+
   // Server: render static content
   if (!isClient) {
     return <span>{strings[0]}</span>;
   }
-  
+
   // Client: initialize typing effect
   return <TypingEffect strings={strings} />;
 }
@@ -304,7 +306,7 @@ Ensure secure hydration patterns:
 function secureHydration(element, data) {
   // Validate data before hydration
   const validatedData = validateTypingStrings(data.strings);
-  
+
   if (isClient && element) {
     UltraTyped(element, {
       strings: validatedData,
@@ -322,14 +324,14 @@ function secureHydration(element, data) {
 
 ```jsx
 // ✅ Secure React component
-import { useUltraTyped } from '@ultratyped/react';
+import { useUltraTyped } from "@ultratyped/react";
 
 function SecureTyping({ content }) {
   const { ref } = useUltraTyped({
     strings: validateTypingStrings(content),
     typeSpeed: 50,
   });
-  
+
   return <span ref={ref} />;
 }
 ```
@@ -338,7 +340,7 @@ function SecureTyping({ content }) {
 
 ```vue
 <script setup>
-import { useUltraTyped } from '@ultratyped/vue';
+import { useUltraTyped } from "@ultratyped/vue";
 
 const props = defineProps({
   strings: {
@@ -366,11 +368,11 @@ onMounted(() => {
 ```svelte
 <script>
   import { ultratyped } from '@ultratyped/svelte';
-  
+
   export let strings;
-  
+
   $: validatedStrings = validateTypingStrings(strings);
-  
+
   function typingAction(element) {
     ultratyped(element, {
       strings: validatedStrings,
@@ -398,10 +400,10 @@ class SecurityMonitor {
   setupMonitoring() {
     // Monitor for XSS attempts
     const originalCreateElement = document.createElement;
-    document.createElement = function(tagName) {
-      if (tagName === 'script') {
-        console.warn('Script element creation detected');
-        SecurityMonitor.logViolation('script_creation', tagName);
+    document.createElement = function (tagName) {
+      if (tagName === "script") {
+        console.warn("Script element creation detected");
+        SecurityMonitor.logViolation("script_creation", tagName);
       }
       return originalCreateElement.call(this, tagName);
     };
@@ -414,11 +416,11 @@ class SecurityMonitor {
       timestamp: Date.now(),
       userAgent: navigator.userAgent,
     };
-    
+
     this.violations.push(violation);
-    
+
     // Send to security monitoring
-    if (typeof window !== 'undefined' && window.securityLogger) {
+    if (typeof window !== "undefined" && window.securityLogger) {
       window.securityLogger.log(violation);
     }
   }
@@ -437,15 +439,15 @@ class SecurityMonitor {
 
 ```javascript
 // Monitor CSP violations
-document.addEventListener('securitypolicyviolation', (e) => {
-  console.error('CSP Violation:', {
+document.addEventListener("securitypolicyviolation", (e) => {
+  console.error("CSP Violation:", {
     blockedURI: e.blockedURI,
     violatedDirective: e.violatedDirective,
     originalPolicy: e.originalPolicy,
   });
-  
+
   // Log security event
-  SecurityMonitor.logViolation('csp_violation', {
+  SecurityMonitor.logViolation("csp_violation", {
     directive: e.violatedDirective,
     uri: e.blockedURI,
   });
@@ -469,20 +471,18 @@ class GDPRCompliantTyping {
 
   validateForGDPR(options) {
     // Check for personal data
-    const hasPersonalData = options.strings.some(str => 
-      this.containsPersonalData(str)
+    const hasPersonalData = options.strings.some((str) =>
+      this.containsPersonalData(str),
     );
-    
+
     if (hasPersonalData && !this.consentManager.hasConsent()) {
       // Remove or anonymize personal data
       return {
         ...options,
-        strings: options.strings.map(str => 
-          this.anonymizePersonalData(str)
-        ),
+        strings: options.strings.map((str) => this.anonymizePersonalData(str)),
       };
     }
-    
+
     return options;
   }
 
@@ -493,8 +493,8 @@ class GDPRCompliantTyping {
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Emails
       /\b\d{3}[-\s]?\d{2}[-\s]?\d{4}\b/, // SSN
     ];
-    
-    return patterns.some(pattern => pattern.test(text));
+
+    return patterns.some((pattern) => pattern.test(text));
   }
 }
 ```
@@ -503,19 +503,19 @@ class GDPRCompliantTyping {
 
 ```javascript
 // ✅ WCAG-compliant typing effect
-const accessibleTyping = UltraTyped('#element', {
-  strings: ['Accessible', 'Content'],
+const accessibleTyping = UltraTyped("#element", {
+  strings: ["Accessible", "Content"],
   typeSpeed: 50,
   // Accessibility features
   onStart: (self) => {
     // Announce to screen readers
-    const announcement = document.createElement('div');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.setAttribute('aria-atomic', 'true');
-    announcement.className = 'sr-only';
-    announcement.textContent = 'Typing animation started';
+    const announcement = document.createElement("div");
+    announcement.setAttribute("aria-live", "polite");
+    announcement.setAttribute("aria-atomic", "true");
+    announcement.className = "sr-only";
+    announcement.textContent = "Typing animation started";
     document.body.appendChild(announcement);
-    
+
     setTimeout(() => {
       document.body.removeChild(announcement);
     }, 1000);
@@ -558,43 +558,47 @@ const accessibleTyping = UltraTyped('#element', {
 ### ❌ Common Mistakes
 
 1. **Using untrusted input in HTML mode**
+
    ```javascript
    // Dangerous
-   UltraTyped('#el', { strings: [userInput], contentType: 'html' });
+   UltraTyped("#el", { strings: [userInput], contentType: "html" });
    ```
 
 2. **Ignoring CSP requirements**
+
    ```javascript
    // Missing nonce for CSP
-   UltraTyped('#el', { autoInsertCss: true }); // CSP violation
+   UltraTyped("#el", { autoInsertCss: true }); // CSP violation
    ```
 
 3. **Not validating configuration**
    ```javascript
    // Unsafe configuration
-   UltraTyped('#el', { typeSpeed: -1000, strings: maliciousInput });
+   UltraTyped("#el", { typeSpeed: -1000, strings: maliciousInput });
    ```
 
 ### ✅ Secure Alternatives
 
 1. **Validate all inputs**
+
    ```javascript
    const safeStrings = validateTypingStrings(userInput);
-   UltraTyped('#el', { strings: safeStrings, contentType: 'text' });
+   UltraTyped("#el", { strings: safeStrings, contentType: "text" });
    ```
 
 2. **Respect CSP requirements**
+
    ```javascript
-   UltraTyped('#el', { 
-     autoInsertCss: true, 
-     nonce: getSecureNonce() 
+   UltraTyped("#el", {
+     autoInsertCss: true,
+     nonce: getSecureNonce(),
    });
    ```
 
 3. **Validate configuration**
    ```javascript
    const safeConfig = validateConfig(userConfig);
-   UltraTyped('#el', safeConfig);
+   UltraTyped("#el", safeConfig);
    ```
 
 ---

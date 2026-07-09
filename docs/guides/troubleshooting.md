@@ -70,9 +70,7 @@ console.log("Animation methods:", typeof instance.start, typeof instance.stop);
 1. **Package not installed**
 
    ```bash
-   npm install ultratyped
-   # or
-   yarn add ultratyped
+   pnpm install ultratyped
    ```
 
 2. **Wrong import path**

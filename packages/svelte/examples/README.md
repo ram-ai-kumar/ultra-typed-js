@@ -18,25 +18,26 @@ The Svelte example showcases modern Svelte integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Svelte packages first
-   npm run build:core
-   npm run build:svelte
-   
+   pnpm --filter packages/core build
+   pnpm --filter packages/svelte build
+
    # Navigate to the Svelte example directory
    cd packages/svelte/examples
-   
+
    # Install dependencies
-   npm install
-   
+   pnpm install
+
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### Svelte Integration Patterns
@@ -86,7 +87,7 @@ The Svelte example showcases modern Svelte integration patterns:
 ```svelte
 <script>
   import { ultratyped } from '@ultratyped/svelte'
-  
+
   export let strings = ['Hello', 'World']
   export let typeSpeed = 50
 </script>
@@ -124,7 +125,7 @@ The Svelte example showcases modern Svelte integration patterns:
         backSpeed: 30,
         loop,
         showCursor,
-        
+
         onBegin: () => {
           isRunning = true
           status = 'Animation began'
@@ -190,21 +191,21 @@ The Svelte example showcases modern Svelte integration patterns:
 
 <div class="typing-component">
   <div bind:this={element} class="typed-element"></div>
-  
+
   <div class="controls">
     <button on:click={start} disabled={isRunning}>Start</button>
     <button on:click={pause} disabled={!isRunning}>Pause</button>
     <button on:click={stop}>Stop</button>
     <button on:click={reset}>Reset</button>
   </div>
-  
+
   <div class="status">{status}</div>
-  
+
   <div class="string-controls">
     <button on:click={addString}>Add String</button>
     <button on:click={removeString}>Remove Last</button>
   </div>
-  
+
   <div class="string-list">
     <p>Current strings ({strings.length}):</p>
     <ul>
@@ -365,7 +366,7 @@ The Svelte example showcases modern Svelte integration patterns:
 ```svelte
 <script>
   import { ultratyped } from '@ultratyped/svelte'
-  
+
   export let strings = ['Action-based', 'Automatic cleanup']
 </script>
 
@@ -380,11 +381,13 @@ The Svelte example showcases modern Svelte integration patterns:
 ### Integration Patterns Comparison
 
 #### Component Pattern
+
 - **Pros**: Full control, complex state, event callbacks
 - **Cons**: Manual cleanup, more code
 - **Use case**: Complex components with custom logic
 
 #### Action Pattern
+
 - **Pros**: Automatic cleanup, simple syntax, idiomatic
 - **Cons**: Less control, limited to basic usage
 - **Use case**: Simple typing effects, automatic cleanup
@@ -424,6 +427,7 @@ packages/svelte/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - Svelte 4+ features
 - RequestAnimationFrame

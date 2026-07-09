@@ -18,7 +18,7 @@
     "build": "rollup -c"
   },
   "dependencies": {
-    "ultratyped": "^1.0.0"
+    "ultratyped": "workspace:*"
   },
   "files": [
     "dist"

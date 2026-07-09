@@ -18,38 +18,40 @@ The Lit example showcases LitElement integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Lit packages first
-   npm run build:core
-   npm run build:lit
+   pnpm --filter packages/core build
+   pnpm --filter packages/lit build
 
    # Navigate to the Lit example directory
    cd packages/lit/examples
 
    # Install dependencies
-   npm install
+   pnpm install
 
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### Lit Integration Patterns
 
 #### Basic LitElement Component
-```typescript
-import { LitElement, html, css, property } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import UltraTyped from 'ultratyped';
 
-@customElement('ultra-typed-element')
+```typescript
+import { LitElement, html, css, property } from "lit";
+import { customElement } from "lit/decorators.js";
+import UltraTyped from "ultratyped";
+
+@customElement("ultra-typed-element")
 class UltraTypedElement extends LitElement {
-  @property() strings: string[] = ['Hello', 'World'];
+  @property() strings: string[] = ["Hello", "World"];
   @property({ type: Number }) typeSpeed = 50;
   @property({ type: Boolean }) loop = true;
 
@@ -58,7 +60,7 @@ class UltraTypedElement extends LitElement {
   static styles = css`
     :host {
       display: inline-block;
-      font-family: 'Courier New', monospace;
+      font-family: "Courier New", monospace;
       color: #2563eb;
     }
   `;
@@ -68,23 +70,23 @@ class UltraTypedElement extends LitElement {
   }
 
   firstUpdated() {
-    const element = this.shadowRoot?.querySelector('.typed-element');
+    const element = this.shadowRoot?.querySelector(".typed-element");
     if (element) {
       this.instance = UltraTyped(element, {
         strings: this.strings,
         typeSpeed: this.typeSpeed,
         loop: this.loop,
-        onComplete: () => console.log('Completed')
+        onComplete: () => console.log("Completed"),
       });
     }
   }
 
   updated(changedProperties: Map<string, any>) {
-    if (changedProperties.has('strings') && this.instance) {
+    if (changedProperties.has("strings") && this.instance) {
       this.instance.strings = this.strings;
       this.instance.reset();
     }
-    if (changedProperties.has('typeSpeed') && this.instance) {
+    if (changedProperties.has("typeSpeed") && this.instance) {
       this.instance.typeSpeed = this.typeSpeed;
     }
   }
@@ -100,12 +102,13 @@ class UltraTypedElement extends LitElement {
 ```
 
 #### Using @ultratyped/lit Directive
-```typescript
-import { LitElement, html, css } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { ultraTyped } from '@ultratyped/lit';
 
-@customElement('my-typing-component')
+```typescript
+import { LitElement, html, css } from "lit";
+import { customElement } from "lit/decorators.js";
+import { ultraTyped } from "@ultratyped/lit";
+
+@customElement("my-typing-component")
 class MyTypingComponent extends LitElement {
   static styles = css`
     .typed-container {
@@ -118,11 +121,11 @@ class MyTypingComponent extends LitElement {
     return html`
       <div class="typed-container">
         ${ultraTyped({
-          strings: ['Hello', 'World', 'Lit'],
+          strings: ["Hello", "World", "Lit"],
           typeSpeed: 50,
           loop: true,
-          onBegin: () => console.log('Started'),
-          onComplete: () => console.log('Completed')
+          onBegin: () => console.log("Started"),
+          onComplete: () => console.log("Completed"),
         })}
       </div>
     `;
@@ -131,19 +134,20 @@ class MyTypingComponent extends LitElement {
 ```
 
 #### Advanced Component with Controls
-```typescript
-import { LitElement, html, css, property } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-import UltraTyped from 'ultratyped';
 
-@customElement('advanced-typing')
+```typescript
+import { LitElement, html, css, property } from "lit";
+import { customElement, state } from "lit/decorators.js";
+import UltraTyped from "ultratyped";
+
+@customElement("advanced-typing")
 class AdvancedTyping extends LitElement {
-  @property() strings: string[] = ['Advanced', 'Lit', 'Full control'];
+  @property() strings: string[] = ["Advanced", "Lit", "Full control"];
   @property({ type: Number }) typeSpeed = 50;
   @property({ type: Boolean }) loop = true;
   @property() showCursor = true;
 
-  @state() private status = 'Ready';
+  @state() private status = "Ready";
   @state() private isRunning = false;
 
   private instance: any = null;
@@ -162,7 +166,7 @@ class AdvancedTyping extends LitElement {
       color: #2563eb;
       min-height: 40px;
       margin: 20px 0;
-      font-family: 'Courier New', monospace;
+      font-family: "Courier New", monospace;
     }
 
     .controls {
@@ -215,7 +219,7 @@ class AdvancedTyping extends LitElement {
   }
 
   firstUpdated() {
-    const element = this.shadowRoot?.querySelector('.typed-element');
+    const element = this.shadowRoot?.querySelector(".typed-element");
     if (element) {
       this.instance = UltraTyped(element, {
         strings: this.strings,
@@ -226,18 +230,18 @@ class AdvancedTyping extends LitElement {
 
         onBegin: () => {
           this.isRunning = true;
-          this.status = 'Animation began';
+          this.status = "Animation began";
         },
         onComplete: () => {
-          this.status = 'All strings completed!';
+          this.status = "All strings completed!";
         },
         onStringTyped: (arrayPos: number) => {
           this.status = `Finished string ${arrayPos + 1}`;
         },
         onStop: () => {
           this.isRunning = false;
-          this.status = 'Animation stopped';
-        }
+          this.status = "Animation stopped";
+        },
       });
     }
   }
@@ -271,24 +275,28 @@ class AdvancedTyping extends LitElement {
 ### Example Components
 
 #### 1. Basic LitElement Component
+
 - Shows fundamental Lit integration
 - Uses firstUpdated lifecycle
 - Manual instance management with cleanup
 - Event callback handling
 
 #### 2. Directive-Based Component
+
 - Uses Lit directives for cleaner syntax
 - Automatic cleanup through directive lifecycle
 - Simpler component code
 - Declarative usage
 
 #### 3. Advanced Component with Controls
+
 - Full control over UltraTyped instance
 - Interactive buttons for control
 - Status tracking with Lit state
 - Reactive property updates
 
 #### 4. Multiple Instances
+
 - Manages multiple UltraTyped instances
 - Coordinated control across instances
 - Different configurations per instance
@@ -297,6 +305,7 @@ class AdvancedTyping extends LitElement {
 ### Key Lit Concepts
 
 #### Lifecycle Callbacks
+
 ```typescript
 firstUpdated() {
   // Called after the element's DOM has been updated the first time
@@ -314,6 +323,7 @@ disconnectedCallback() {
 ```
 
 #### Reactive Properties
+
 ```typescript
 @property() strings: string[] = ['Hello', 'World'];
 
@@ -326,6 +336,7 @@ updated(changedProperties: Map<string, any>) {
 ```
 
 #### Event Handling
+
 ```typescript
 render() {
   return html`
@@ -339,6 +350,7 @@ private start() {
 ```
 
 #### Shadow DOM Styles
+
 ```typescript
 static styles = css`
   :host {
@@ -394,6 +406,7 @@ packages/lit/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - Web Components (Custom Elements, Shadow DOM)
 - Lit requirements
 - RequestAnimationFrame

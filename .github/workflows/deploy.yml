@@ -10,17 +10,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - run: npm install
+      - run: pnpm install
 
-      - run: npm run build
+      - run: pnpm build
 
-      - run: npm run -w playground build
+      - run: pnpm --filter playground build
 
-      - run: npm run build:docs
+      - run: pnpm build:docs
 
       - name: Copy benchmarks to playground dist
         run: |

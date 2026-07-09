@@ -20,7 +20,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed implementation notes on all parity
 Use `@ultratyped/typed-compat` for zero code changes:
 
 ```bash
-npm install @ultratyped/typed-compat @ultratyped/core
+pnpm install @ultratyped/typed-compat @ultratyped/core
 ```
 
 **Before (Typed.js):**
@@ -113,8 +113,8 @@ typed.reset();
 
 All Typed.js v2 options map directly to UltraTyped.js:
 
-| Typed.js Option        | UltraTyped.js Option   | Notes  |
-| ---------------------- | ---------------------- | ------ |
+| Typed.js Option        | UltraTyped.js Option   | Notes   |
+| ---------------------- | ---------------------- | ------- |
 | `strings`              | `strings`              | ✅ Same |
 | `stringsElement`       | `stringsElement`       | ✅ Same |
 | `typeSpeed`            | `typeSpeed`            | ✅ Same |
@@ -142,8 +142,8 @@ All Typed.js v2 options map directly to UltraTyped.js:
 
 All Typed.js callbacks work identically:
 
-| Typed.js Callback                 | UltraTyped.js Callback                    | Notes            |
-| --------------------------------- | ----------------------------------------- | ---------------- |
+| Typed.js Callback                 | UltraTyped.js Callback                    | Notes             |
+| --------------------------------- | ----------------------------------------- | ----------------- |
 | `onBegin(self)`                   | `onBegin({ el, strings })`                | ✅ Same signature |
 | `onComplete(self)`                | `onComplete({ el, strings })`             | ✅ Same signature |
 | `preStringTyped(arrayPos, self)`  | `preStringTyped(i, { el, strings })`      | ✅ Same signature |
@@ -162,8 +162,8 @@ All Typed.js callbacks work identically:
 
 All Typed.js instance methods work identically:
 
-| Typed.js Method   | UltraTyped.js Method | Notes  |
-| ----------------- | -------------------- | ------ |
+| Typed.js Method   | UltraTyped.js Method | Notes   |
+| ----------------- | -------------------- | ------- |
 | `typed.stop()`    | `typed.stop()`       | ✅ Same |
 | `typed.start()`   | `typed.start()`      | ✅ Same |
 | `typed.reset()`   | `typed.reset()`      | ✅ Same |
@@ -302,18 +302,23 @@ useUltraTyped(typedElement, {
 **Before (Typed.js):**
 
 ```typescript
-import { AfterViewInit, DestroyRef, Directive, ElementRef } from '@angular/core';
+import {
+  AfterViewInit,
+  DestroyRef,
+  Directive,
+  ElementRef,
+} from "@angular/core";
 import Typed from "typed.js";
 
 @Directive({
-  selector: '[typed]'
+  selector: "[typed]",
 })
 export class TypedDirective implements AfterViewInit, OnDestroy {
   private typedInstance: Typed | null = null;
 
   constructor(
     private elementRef: ElementRef,
-    private destroyRef: DestroyRef
+    private destroyRef: DestroyRef,
   ) {}
 
   ngAfterViewInit() {
@@ -332,8 +337,15 @@ export class TypedDirective implements AfterViewInit, OnDestroy {
 **After (UltraTyped.js):**
 
 ```typescript
-import { Directive, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
-import UltraTyped from 'ultratyped';
+import {
+  Directive,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from "@angular/core";
+import UltraTyped from "ultratyped";
 
 export interface UltraTypedOptions {
   strings: string[];
@@ -344,8 +356,8 @@ export interface UltraTypedOptions {
 }
 
 @Directive({
-  selector: '[ultratyped]',
-  standalone: true
+  selector: "[ultratyped]",
+  standalone: true,
 })
 export class UltraTypedDirective implements OnChanges, OnDestroy {
   private instance: ReturnType<typeof UltraTyped> | null = null;
@@ -355,7 +367,7 @@ export class UltraTypedDirective implements OnChanges, OnDestroy {
   constructor(private el: ElementRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['ultratyped']) {
+    if (changes["ultratyped"]) {
       this.init();
     }
   }
@@ -385,18 +397,18 @@ export class UltraTypedDirective implements OnChanges, OnDestroy {
 **Before (Typed.js):**
 
 ```javascript
-import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
 import Typed from "typed.js";
 
-@customElement('typed-element')
+@customElement("typed-element")
 class TypedElement extends LitElement {
   render() {
     return html`<span id="typed"></span>`;
   }
 
   firstUpdated() {
-    this.typed = new Typed(this.shadowRoot.getElementById('typed'), {
+    this.typed = new Typed(this.shadowRoot.getElementById("typed"), {
       strings: ["Hello, world!"],
       typeSpeed: 50,
     });
@@ -411,11 +423,11 @@ class TypedElement extends LitElement {
 **After (UltraTyped.js):**
 
 ```javascript
-import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
 import { UltraTypedController } from "@ultratyped/lit";
 
-@customElement('ultra-typed-element')
+@customElement("ultra-typed-element")
 class UltraTypedElement extends LitElement {
   render() {
     return html`<span id="typed"></span>`;
@@ -423,10 +435,14 @@ class UltraTypedElement extends LitElement {
 
   constructor() {
     super();
-    this.ultraTyped = new UltraTypedController(this, this.renderRoot.getElementById('typed'), {
-      strings: ["Hello, world!"],
-      typeSpeed: 50,
-    });
+    this.ultraTyped = new UltraTypedController(
+      this,
+      this.renderRoot.getElementById("typed"),
+      {
+        strings: ["Hello, world!"],
+        typeSpeed: 50,
+      },
+    );
   }
 }
 ```
@@ -436,8 +452,8 @@ class UltraTypedElement extends LitElement {
 **Before (Typed.js):**
 
 ```javascript
-import { h } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { h } from "preact";
+import { useEffect, useRef } from "preact/hooks";
 import Typed from "typed.js";
 
 function App() {
@@ -459,8 +475,8 @@ function App() {
 **After (UltraTyped.js):**
 
 ```javascript
-import { h } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { h } from "preact";
+import { useEffect, useRef } from "preact/hooks";
 import { useUltraTyped } from "@ultratyped/preact";
 
 function App() {
@@ -530,7 +546,7 @@ function App() {
           strings: ["Hello, world!"],
           typeSpeed: 50,
         });
-      }
+      },
     };
   }
 </script>
@@ -553,7 +569,7 @@ function App() {
           strings: ["Hello, world!"],
           typeSpeed: 50,
         });
-      }
+      },
     };
   }
 </script>

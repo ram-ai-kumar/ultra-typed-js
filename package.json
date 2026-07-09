@@ -8,9 +8,9 @@
     "playground"
   ],
   "scripts": {
-    "build": "npm run build -w packages/core && npm run build -w packages/alpine -w packages/angular -w packages/astro -w packages/lit -w packages/preact -w packages/react -w packages/solid -w packages/svelte -w packages/typescript -w packages/vue && npm run build -w playground",
+    "build": "pnpm --filter packages/core build && pnpm --filter packages/alpine build && pnpm --filter packages/angular build && pnpm --filter packages/astro build && pnpm --filter packages/lit build && pnpm --filter packages/preact build && pnpm --filter packages/react build && pnpm --filter packages/solid build && pnpm --filter packages/svelte build && pnpm --filter packages/typescript build && pnpm --filter packages/vue build && pnpm --filter playground build",
     "build:docs": "node scripts/build-docs.js",
-    "dev": "npm run dev --workspace=playground",
+    "dev": "pnpm --filter playground dev",
     "bench": "node benchmarks/compare.js",
     "clean": "rm -rf packages/*/dist playground/dist",
     "test": "vitest",
@@ -21,7 +21,7 @@
     "test:e2e:headed": "playwright test --headed",
     "test:examples": "vitest run e2e/examples.validate.test.ts e2e/examples.patterns.test.ts",
     "test:examples:patterns": "vitest run e2e/examples.patterns.test.ts",
-    "test:examples:all": "npm run test:examples && npm run test:examples:patterns",
+    "test:examples:all": "pnpm test:examples && pnpm test:examples:patterns",
     "size:check": "size-limit",
     "size:report": "node scripts/size-report.js"
   },

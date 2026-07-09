@@ -103,22 +103,22 @@ Each framework example includes its own README with detailed setup instructions:
 cd packages/[framework]/examples
 
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm dev
 ```
 
 ### Build Requirements
 
 ```bash
 # Build required packages first
-npm run build:core
-npm run build:[framework]
+pnpm --filter packages/core build
+pnpm --filter packages/[framework] build
 
 # Then run the example
 cd packages/[framework]/examples
-npm run dev
+pnpm dev
 ```
 
 ## Example Features

@@ -18,39 +18,41 @@ The Preact example showcases Preact integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Preact packages first
-   npm run build:core
-   npm run build:preact
+   pnpm --filter packages/core build
+   pnpm --filter packages/preact build
 
    # Navigate to the Preact example directory
    cd packages/preact/examples
 
    # Install dependencies
-   npm install
+   pnpm install
 
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### Preact Integration Patterns
 
 #### Using the Official Hook
+
 ```tsx
-import { useUltraTyped } from '@ultratyped/preact';
-import { h } from 'preact';
+import { useUltraTyped } from "@ultratyped/preact";
+import { h } from "preact";
 
 function MyComponent() {
   const ref = useUltraTyped({
-    strings: ['Hello', 'World', 'Preact'],
+    strings: ["Hello", "World", "Preact"],
     typeSpeed: 50,
-    loop: true
+    loop: true,
   });
 
   return <div ref={ref} />;
@@ -58,10 +60,11 @@ function MyComponent() {
 ```
 
 #### Manual Integration with Cleanup
+
 ```tsx
-import { useEffect, useRef } from 'preact/hooks';
-import UltraTyped from 'ultratyped';
-import { h } from 'preact';
+import { useEffect, useRef } from "preact/hooks";
+import UltraTyped from "ultratyped";
+import { h } from "preact";
 
 function TypingComponent() {
   const typedRef = useRef<HTMLDivElement>(null);
@@ -70,10 +73,10 @@ function TypingComponent() {
   useEffect(() => {
     if (typedRef.current && !instanceRef.current) {
       instanceRef.current = UltraTyped(typedRef.current, {
-        strings: ['Hello', 'World'],
+        strings: ["Hello", "World"],
         typeSpeed: 50,
         loop: true,
-        onComplete: () => console.log('Completed')
+        onComplete: () => console.log("Completed"),
       });
     }
 
@@ -91,13 +94,14 @@ function TypingComponent() {
 ```
 
 #### State-Driven Configuration
+
 ```tsx
-import { useState, useEffect, useRef } from 'preact/hooks';
-import UltraTyped from 'ultratyped';
-import { h } from 'preact';
+import { useState, useEffect, useRef } from "preact/hooks";
+import UltraTyped from "ultratyped";
+import { h } from "preact";
 
 function DynamicTypingComponent() {
-  const [strings, setStrings] = useState(['Hello', 'World']);
+  const [strings, setStrings] = useState(["Hello", "World"]);
   const [speed, setSpeed] = useState(50);
   const typedRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<any>(null);
@@ -107,7 +111,7 @@ function DynamicTypingComponent() {
       instanceRef.current = UltraTyped(typedRef.current, {
         strings,
         typeSpeed: speed,
-        loop: true
+        loop: true,
       });
     }
 
@@ -132,8 +136,10 @@ function DynamicTypingComponent() {
     <div>
       <div ref={typedRef} />
       <textarea
-        value={strings.join('\n')}
-        onChange={(e) => setStrings((e.target as HTMLTextAreaElement).value.split('\n'))}
+        value={strings.join("\n")}
+        onChange={(e) =>
+          setStrings((e.target as HTMLTextAreaElement).value.split("\n"))
+        }
       />
       <input
         type="number"
@@ -146,60 +152,73 @@ function DynamicTypingComponent() {
 ```
 
 #### Multiple Instances Component
+
 ```tsx
-import { useEffect, useRef, useState } from 'preact/hooks';
-import UltraTyped from 'ultratyped';
-import { h } from 'preact';
+import { useEffect, useRef, useState } from "preact/hooks";
+import UltraTyped from "ultratyped";
+import { h } from "preact";
 
 function MultipleInstances() {
-  const refs = [useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null), useRef<HTMLDivElement>(null)];
+  const refs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
   const [instances, setInstances] = useState<any[]>([]);
   const [allRunning, setAllRunning] = useState(false);
 
   useEffect(() => {
-    const newInstances = refs.map((ref, index) => {
-      if (ref.current) {
-        return UltraTyped(ref.current, {
-          strings: [`Instance ${index + 1}A`, `Instance ${index + 1}B`],
-          typeSpeed: 50 + index * 20,
-          loop: true,
-          showCursor: index === 0
-        });
-      }
-      return null;
-    }).filter(Boolean);
+    const newInstances = refs
+      .map((ref, index) => {
+        if (ref.current) {
+          return UltraTyped(ref.current, {
+            strings: [`Instance ${index + 1}A`, `Instance ${index + 1}B`],
+            typeSpeed: 50 + index * 20,
+            loop: true,
+            showCursor: index === 0,
+          });
+        }
+        return null;
+      })
+      .filter(Boolean);
 
     setInstances(newInstances);
 
     return () => {
-      newInstances.forEach(instance => {
+      newInstances.forEach((instance) => {
         if (instance) instance.destroy();
       });
     };
   }, []);
 
   const startAll = () => {
-    instances.forEach(instance => instance?.start());
+    instances.forEach((instance) => instance?.start());
     setAllRunning(true);
   };
 
   const pauseAll = () => {
-    instances.forEach(instance => instance?.pause());
+    instances.forEach((instance) => instance?.pause());
     setAllRunning(false);
   };
 
   const stopAll = () => {
-    instances.forEach(instance => instance?.stop());
+    instances.forEach((instance) => instance?.stop());
     setAllRunning(false);
   };
 
   return (
     <div>
       {refs.map((ref, index) => (
-        <div key={index} ref={ref} style={{ margin: '10px 0', fontSize: '20px' }} />
+        <div
+          key={index}
+          ref={ref}
+          style={{ margin: "10px 0", fontSize: "20px" }}
+        />
       ))}
       <div>
-        <button onClick={startAll} disabled={allRunning}>Start All</button>
+        <button onClick={startAll} disabled={allRunning}>
+          Start All
+        </button>
         <button onClick={pauseAll}>Pause All</button>
         <button onClick={stopAll}>Stop All</button>
       </div>
@@ -211,24 +230,28 @@ function MultipleInstances() {
 ### Example Components
 
 #### 1. Basic Typing Component
+
 - Shows fundamental Preact integration
 - Manual instance management with proper cleanup
 - Event callback handling with Preact state
 - Interactive controls for configuration
 
 #### 2. Hook-Based Component
+
 - Uses the official `useUltraTyped` hook
 - Cleaner component code with encapsulated logic
 - Automatic cleanup handled by the hook
 - Status tracking and control methods
 
 #### 3. Multiple Instances Component
+
 - Manages multiple UltraTyped instances
 - Coordinated control across all instances
 - Different styling and speeds for visual variety
 - Proper cleanup for all instances
 
 #### 4. Dynamic Configuration Component
+
 - Demonstrates state-driven configuration
 - Updates UltraTyped when Preact state changes
 - Textarea and input for dynamic updates
@@ -237,6 +260,7 @@ function MultipleInstances() {
 ### Key Preact Concepts
 
 #### useEffect Cleanup
+
 ```tsx
 useEffect(() => {
   // Initialize UltraTyped
@@ -250,11 +274,12 @@ useEffect(() => {
 ```
 
 #### useRef for DOM Elements
+
 ```tsx
 const typedRef = useRef<HTMLDivElement>(null);
 
 // In JSX
-<div ref={typedRef} />
+<div ref={typedRef} />;
 
 // In useEffect
 if (typedRef.current) {
@@ -263,18 +288,20 @@ if (typedRef.current) {
 ```
 
 #### useState for State Management
+
 ```tsx
-const [strings, setStrings] = useState(['Hello', 'World']);
+const [strings, setStrings] = useState(["Hello", "World"]);
 const [speed, setSpeed] = useState(50);
 
 // Update state
-setStrings(['New', 'Strings']);
+setStrings(["New", "Strings"]);
 setSpeed(80);
 ```
 
 #### useCallback for Stable References
+
 ```tsx
-import { useCallback } from 'preact/hooks';
+import { useCallback } from "preact/hooks";
 
 const startTyping = useCallback(() => {
   if (instanceRef.current) {
@@ -325,6 +352,7 @@ packages/preact/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - Preact requirements
 - RequestAnimationFrame

@@ -19,24 +19,26 @@ The `basic-example.html` file showcases all the key features of UltraTyped.js:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core package first
-   npm run build:core
-   
+   pnpm --filter packages/core build
+
    # Open the example in your browser
    open packages/core/examples/basic-example.html
    ```
 
 2. **Using a local server** (recommended):
+
    ```bash
    # Navigate to the examples directory
    cd packages/core/examples
-   
+
    # Start a simple HTTP server
    python3 -m http.server 8000
    # or with Node.js
    npx serve .
-   
+
    # Open http://localhost:8000/basic-example.html
    ```
 
@@ -52,17 +54,19 @@ The example is divided into four sections:
 ### Key Concepts
 
 #### Initialization
+
 ```javascript
-import UltraTyped from '../../dist/index.mjs';
+import UltraTyped from "../../dist/index.mjs";
 
 const instance = UltraTyped(element, {
-    strings: ['Hello', 'World'],
-    typeSpeed: 50,
-    loop: true
+  strings: ["Hello", "World"],
+  typeSpeed: 50,
+  loop: true,
 });
 ```
 
 #### Control Methods
+
 - `instance.start()` - Start the animation
 - `instance.pause()` - Pause the animation
 - `instance.resume()` - Resume from pause
@@ -71,6 +75,7 @@ const instance = UltraTyped(element, {
 - `instance.destroy()` - Clean up and destroy
 
 #### Event Callbacks
+
 ```javascript
 {
     onBegin: () => console.log('Animation began'),
@@ -81,6 +86,7 @@ const instance = UltraTyped(element, {
 ```
 
 #### Configuration Options
+
 - `strings` - Array of strings to type
 - `typeSpeed` - Typing speed in milliseconds
 - `backSpeed` - Backspacing speed
@@ -92,6 +98,7 @@ const instance = UltraTyped(element, {
 ### Browser Compatibility
 
 The example works in all modern browsers that support:
+
 - ES6 modules
 - RequestAnimationFrame
 - DOM manipulation
@@ -100,7 +107,7 @@ The example works in all modern browsers that support:
 
 - The example imports UltraTyped from the local build (`../../dist/index.mjs`)
 - Make sure to build the core package before running the example
-- For development, you can use `npm link` to test with the local package
+- For development, you can use `pnpm link` to test with the local package
 
 ### Next Steps
 

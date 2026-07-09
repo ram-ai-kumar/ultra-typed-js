@@ -18,30 +18,32 @@ The React example showcases modern React integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and React packages first
-   npm run build:core
-   npm run build:react
-   
+   pnpm --filter packages/core build
+   pnpm --filter packages/react build
+
    # Navigate to the React example directory
    cd packages/react/examples
-   
+
    # Install dependencies
-   npm install
-   
+   pnpm install
+
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### React Integration Patterns
 
 #### Using the Official Hook
+
 ```typescript
 import { useUltraTyped } from '@ultratyped/react';
 
@@ -51,12 +53,13 @@ function MyComponent() {
     typeSpeed: 50,
     loop: true
   });
-  
+
   return <div ref={ref} />;
 }
 ```
 
 #### Manual Integration with Cleanup
+
 ```typescript
 import { useEffect, useRef } from 'react';
 import UltraTyped from 'ultratyped';
@@ -64,7 +67,7 @@ import UltraTyped from 'ultratyped';
 function TypingComponent() {
   const typedRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<any>(null);
-  
+
   useEffect(() => {
     if (typedRef.current && !instanceRef.current) {
       instanceRef.current = UltraTyped(typedRef.current, {
@@ -74,7 +77,7 @@ function TypingComponent() {
         onComplete: () => console.log('Completed')
       });
     }
-    
+
     // Cleanup function - crucial for preventing memory leaks
     return () => {
       if (instanceRef.current) {
@@ -83,19 +86,20 @@ function TypingComponent() {
       }
     };
   }, []);
-  
+
   return <div ref={typedRef} />;
 }
 ```
 
 #### State-Driven Configuration
+
 ```typescript
 function DynamicTypingComponent() {
   const [strings, setStrings] = useState(['Hello', 'World']);
   const [speed, setSpeed] = useState(50);
   const typedRef = useRef<HTMLDivElement>(null);
   const instanceRef = useRef<any>(null);
-  
+
   useEffect(() => {
     if (typedRef.current && !instanceRef.current) {
       instanceRef.current = UltraTyped(typedRef.current, {
@@ -104,7 +108,7 @@ function DynamicTypingComponent() {
         loop: true
       });
     }
-    
+
     return () => {
       if (instanceRef.current) {
         instanceRef.current.destroy();
@@ -112,7 +116,7 @@ function DynamicTypingComponent() {
       }
     };
   }, []);
-  
+
   // Update configuration when state changes
   useEffect(() => {
     if (instanceRef.current) {
@@ -121,16 +125,16 @@ function DynamicTypingComponent() {
       instanceRef.current.reset();
     }
   }, [strings, speed]);
-  
+
   return (
     <div>
       <div ref={typedRef} />
-      <input 
+      <input
         value={strings.join('\n')}
         onChange={(e) => setStrings(e.target.value.split('\n'))}
       />
-      <input 
-        type="number" 
+      <input
+        type="number"
         value={speed}
         onChange={(e) => setSpeed(Number(e.target.value))}
       />
@@ -142,18 +146,21 @@ function DynamicTypingComponent() {
 ### Example Components
 
 #### 1. Basic Typing Component
+
 - Shows fundamental React integration
 - Manual instance management with proper cleanup
 - Event callback handling with React state
 - Interactive controls for configuration
 
 #### 2. Hook-Based Component
+
 - Uses the official `useUltraTyped` hook
 - Cleaner component code with encapsulated logic
 - Automatic cleanup handled by the hook
 - Status tracking and control methods
 
 #### 3. Multiple Instances Component
+
 - Manages multiple UltraTyped instances
 - Coordinated control across all instances
 - Different styling and speeds for visual variety
@@ -162,11 +169,12 @@ function DynamicTypingComponent() {
 ### Key React Concepts
 
 #### useEffect Cleanup
+
 ```typescript
 useEffect(() => {
   // Initialize UltraTyped
   const instance = UltraTyped(element, options);
-  
+
   // Cleanup function - called on unmount
   return () => {
     instance.destroy();
@@ -175,6 +183,7 @@ useEffect(() => {
 ```
 
 #### useRef for DOM Elements
+
 ```typescript
 const typedRef = useRef<HTMLDivElement>(null);
 
@@ -188,6 +197,7 @@ if (typedRef.current) {
 ```
 
 #### useCallback for Stable References
+
 ```typescript
 const startTyping = useCallback(() => {
   if (instanceRef.current) {
@@ -237,6 +247,7 @@ packages/react/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - React 18+ features
 - RequestAnimationFrame

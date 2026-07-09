@@ -18,30 +18,32 @@ The Astro example showcases Astro integration patterns:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and Astro packages first
-   npm run build:core
-   npm run build:astro
+   pnpm --filter packages/core build
+   pnpm --filter packages/astro build
 
    # Navigate to the Astro example directory
    cd packages/astro/examples
 
    # Install dependencies
-   npm install
+   pnpm install
 
    # Start the development server
-   npm run dev
+   pnpm dev
    ```
 
 2. **Build for production**:
    ```bash
-   npm run build
-   npm run preview
+   pnpm build
+   pnpm preview
    ```
 
 ### Astro Integration Patterns
 
 #### Basic Astro Component with Client Directive
+
 ```astro
 ---
 import UltraTyped from 'ultratyped';
@@ -69,6 +71,7 @@ import UltraTyped from 'ultratyped';
 ```
 
 #### Using @ultratyped/astro Integration
+
 ```astro
 ---
 import { UltraTypedComponent } from '@ultratyped/astro';
@@ -92,6 +95,7 @@ import { UltraTypedComponent } from '@ultratyped/astro';
 ```
 
 #### Multiple Islands Example
+
 ```astro
 ---
 import Layout from '../layouts/Main.astro';
@@ -146,6 +150,7 @@ import Layout from '../layouts/Main.astro';
 ```
 
 #### Reactive Configuration with Astro
+
 ```astro
 ---
 const strings = ['Dynamic', 'Reactive', 'Astro'];
@@ -180,24 +185,28 @@ const typeSpeed = 50;
 ### Example Components
 
 #### 1. Basic Astro Component
+
 - Shows fundamental Astro integration
 - Uses client directives for hydration
 - Manual instance management with cleanup
 - Event callback handling
 
 #### 2. Multiple Islands
+
 - Demonstrates Astro's island architecture
 - Different client directives (load, visible, idle)
 - Independent typing instances
 - Proper cleanup for each island
 
 #### 3. View Transitions Support
+
 - Handles Astro's View Transitions API
 - Cleans up instances before page swap
 - Re-initializes after navigation
 - Smooth page transitions
 
 #### 4. Component Wrapper
+
 - Creates reusable Astro components
 - Encapsulates UltraTyped logic
 - Props-based configuration
@@ -206,6 +215,7 @@ const typeSpeed = 50;
 ### Key Astro Concepts
 
 #### Client Directives
+
 ```astro
 <!-- Load immediately -->
 <MyComponent client:load />
@@ -221,6 +231,7 @@ const typeSpeed = 50;
 ```
 
 #### Script Tag Usage
+
 ```astro
 <script>
   // This script runs on the client
@@ -237,6 +248,7 @@ const typeSpeed = 50;
 ```
 
 #### View Transitions Cleanup
+
 ```astro
 <script>
   let instance;
@@ -253,6 +265,7 @@ const typeSpeed = 50;
 ```
 
 #### Define Variables
+
 ```astro
 ---
 const strings = ['Hello', 'World'];
@@ -308,6 +321,7 @@ packages/astro/examples/
 ### Browser Compatibility
 
 Works in all modern browsers that support:
+
 - ES6 modules
 - Astro requirements
 - RequestAnimationFrame

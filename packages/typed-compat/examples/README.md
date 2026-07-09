@@ -20,25 +20,27 @@ The `index.html` file showcases complete Typed.js v2 API compatibility:
 ### Running the Example
 
 1. **From the project root**:
+
    ```bash
    # Build the core and typed-compat packages first
-   npm run build:core
-   npm run build:typed-compat
-   
+   pnpm --filter packages/core build
+   pnpm --filter packages/typed-compat build
+
    # Open the example in your browser
    open packages/typed-compat/examples/index.html
    ```
 
 2. **Using a local server** (recommended):
+
    ```bash
    # Navigate to the examples directory
    cd packages/typed-compat/examples
-   
+
    # Start a simple HTTP server
    python3 -m http.server 8000
    # or with Node.js
    npx serve .
-   
+
    # Open http://localhost:8000/index.html
    ```
 
@@ -48,36 +50,36 @@ The `index.html` file showcases complete Typed.js v2 API compatibility:
 
 ```javascript
 // Before: Typed.js
-import Typed from 'typed.js'
+import Typed from "typed.js";
 
 // After: UltraTyped.js Compat
-import Typed from '@ultratyped/typed-compat'
+import Typed from "@ultratyped/typed-compat";
 ```
 
 #### Step 2: No Code Changes Needed
 
 ```javascript
 // This code works exactly the same with both libraries
-const typed = new Typed('#element', {
-  strings: ['Hello', 'World'],
+const typed = new Typed("#element", {
+  strings: ["Hello", "World"],
   typeSpeed: 50,
   backSpeed: 30,
   loop: true,
   showCursor: true,
-  cursorChar: '|',
+  cursorChar: "|",
   onComplete: () => {
-    console.log('Animation completed!')
-  }
-})
+    console.log("Animation completed!");
+  },
+});
 
 // All methods work the same
-typed.start()
-typed.stop()
-typed.pause()
-typed.resume()
-typed.reset()
-typed.toggle()
-typed.destroy()
+typed.start();
+typed.stop();
+typed.pause();
+typed.resume();
+typed.reset();
+typed.toggle();
+typed.destroy();
 ```
 
 #### Step 3: Enjoy Performance Benefits
@@ -94,8 +96,8 @@ typed.destroy()
 
 ```javascript
 // Both libraries support the same constructor
-new Typed(element, options)
-new Typed(selector, options) // String selector support
+new Typed(element, options);
+new Typed(selector, options); // String selector support
 ```
 
 #### Options
@@ -107,26 +109,26 @@ All Typed.js v2 options are supported:
   // Content options
   strings: ['Hello', 'World'],
   stringsElement: '#strings-container',
-  
+
   // Speed options
   typeSpeed: 50,
   backSpeed: 30,
   backDelay: 800,
   startDelay: 500,
-  
+
   // Loop options
   loop: true,
   loopCount: Infinity,
   shuffle: false,
-  
+
   // Cursor options
   showCursor: true,
   cursorChar: '|',
   autoInsertCss: true,
-  
+
   // Content type
   contentType: 'text', // 'text' | 'html'
-  
+
   // Advanced options
   smartBackspace: true,
   typingVariance: 0,
@@ -134,7 +136,7 @@ All Typed.js v2 options are supported:
   fadeOut: false,
   fadeOutDelay: 500,
   fadeOutClass: 'typed-fade-out',
-  
+
   // Event callbacks
   onBegin: () => {},
   onComplete: () => {},
@@ -155,16 +157,16 @@ All Typed.js v2 options are supported:
 All Typed.js methods are available:
 
 ```javascript
-const typed = new Typed(element, options)
+const typed = new Typed(element, options);
 
 // Control methods
-typed.start()      // Start or restart animation
-typed.stop()       // Stop the animation
-typed.pause()      // Pause the animation
-typed.resume()     // Resume from pause
-typed.reset()      // Reset to initial state
-typed.toggle()     // Toggle between pause and resume
-typed.destroy()    // Clean up and destroy instance
+typed.start(); // Start or restart animation
+typed.stop(); // Stop the animation
+typed.pause(); // Pause the animation
+typed.resume(); // Resume from pause
+typed.reset(); // Reset to initial state
+typed.toggle(); // Toggle between pause and resume
+typed.destroy(); // Clean up and destroy instance
 ```
 
 ### Example Migrations
@@ -173,20 +175,20 @@ typed.destroy()    // Clean up and destroy instance
 
 ```javascript
 // Original Typed.js code
-import Typed from 'typed.js'
+import Typed from "typed.js";
 
-const typed = new Typed('.typed', {
-  strings: ['Welcome to my website'],
-  typeSpeed: 50
-})
+const typed = new Typed(".typed", {
+  strings: ["Welcome to my website"],
+  typeSpeed: 50,
+});
 
 // Migrated to UltraTyped.js
-import Typed from '@ultratyped/typed-compat'
+import Typed from "@ultratyped/typed-compat";
 
-const typed = new Typed('.typed', {
-  strings: ['Welcome to my website'],
-  typeSpeed: 50
-})
+const typed = new Typed(".typed", {
+  strings: ["Welcome to my website"],
+  typeSpeed: 50,
+});
 
 // No other changes needed!
 ```
@@ -195,36 +197,36 @@ const typed = new Typed('.typed', {
 
 ```javascript
 // Original Typed.js code
-import Typed from 'typed.js'
+import Typed from "typed.js";
 
-const typed = new Typed('#hero', {
-  stringsElement: '#hero-strings',
+const typed = new Typed("#hero", {
+  stringsElement: "#hero-strings",
   typeSpeed: 40,
   backSpeed: 20,
   loop: true,
   shuffle: true,
   showCursor: true,
-  cursorChar: '_',
+  cursorChar: "_",
   onComplete: () => {
-    console.log('Hero animation complete')
-  }
-})
+    console.log("Hero animation complete");
+  },
+});
 
 // Migrated to UltraTyped.js
-import Typed from '@ultratyped/typed-compat'
+import Typed from "@ultratyped/typed-compat";
 
-const typed = new Typed('#hero', {
-  stringsElement: '#hero-strings',
+const typed = new Typed("#hero", {
+  stringsElement: "#hero-strings",
   typeSpeed: 40,
   backSpeed: 20,
   loop: true,
   shuffle: true,
   showCursor: true,
-  cursorChar: '_',
+  cursorChar: "_",
   onComplete: () => {
-    console.log('Hero animation complete')
-  }
-})
+    console.log("Hero animation complete");
+  },
+});
 
 // Exactly the same code!
 ```
@@ -233,41 +235,41 @@ const typed = new Typed('#hero', {
 
 ```javascript
 // Original Typed.js in React
-import Typed from 'typed.js'
-import { useEffect, useRef } from 'react'
+import Typed from "typed.js";
+import { useEffect, useRef } from "react";
 
 function TypedComponent() {
-  const el = useRef(null)
-  
+  const el = useRef(null);
+
   useEffect(() => {
     const typed = new Typed(el.current, {
-      strings: ['React component'],
-      typeSpeed: 50
-    })
-    
-    return () => typed.destroy()
-  }, [])
-  
-  return <span ref={el}></span>
+      strings: ["React component"],
+      typeSpeed: 50,
+    });
+
+    return () => typed.destroy();
+  }, []);
+
+  return <span ref={el}></span>;
 }
 
 // Migrated to UltraTyped.js
-import Typed from '@ultratyped/typed-compat'
-import { useEffect, useRef } from 'react'
+import Typed from "@ultratyped/typed-compat";
+import { useEffect, useRef } from "react";
 
 function TypedComponent() {
-  const el = useRef(null)
-  
+  const el = useRef(null);
+
   useEffect(() => {
     const typed = new Typed(el.current, {
-      strings: ['React component'],
-      typeSpeed: 50
-    })
-    
-    return () => typed.destroy()
-  }, [])
-  
-  return <span ref={el}></span>
+      strings: ["React component"],
+      typeSpeed: 50,
+    });
+
+    return () => typed.destroy();
+  }, []);
+
+  return <span ref={el}></span>;
 }
 
 // Same component, just different import!
@@ -275,14 +277,14 @@ function TypedComponent() {
 
 ### Performance Comparison
 
-| Feature | Typed.js | UltraTyped.js | Improvement |
-|---------|----------|---------------|-------------|
-| Bundle Size | ~7KB | <2KB | 71% smaller |
-| Animation Engine | setTimeout | requestAnimationFrame | 60fps smooth |
-| String Processing | Runtime regex | Pre-tokenized | Faster execution |
-| Memory Usage | Higher | Lower | Better efficiency |
-| Modern Support | Limited | Full | ES6 modules, TS |
-| Maintenance | Stale | Active | Ongoing updates |
+| Feature           | Typed.js      | UltraTyped.js         | Improvement       |
+| ----------------- | ------------- | --------------------- | ----------------- |
+| Bundle Size       | ~7KB          | <2KB                  | 71% smaller       |
+| Animation Engine  | setTimeout    | requestAnimationFrame | 60fps smooth      |
+| String Processing | Runtime regex | Pre-tokenized         | Faster execution  |
+| Memory Usage      | Higher        | Lower                 | Better efficiency |
+| Modern Support    | Limited       | Full                  | ES6 modules, TS   |
+| Maintenance       | Stale         | Active                | Ongoing updates   |
 
 ### Browser Compatibility
 
@@ -300,44 +302,44 @@ UltraTyped.js typed-compat supports all browsers that Typed.js supports, plus mo
 
 ```javascript
 // Perfect for landing page hero sections
-const hero = new Typed('#hero-title', {
-  strings: ['Build Faster', 'Ship Better', 'Grow Together'],
+const hero = new Typed("#hero-title", {
+  strings: ["Build Faster", "Ship Better", "Grow Together"],
   typeSpeed: 60,
   backSpeed: 40,
   loop: true,
-  showCursor: true
-})
+  showCursor: true,
+});
 ```
 
 #### Code Examples
 
 ```javascript
 // Great for code typing effects
-const code = new Typed('#code-example', {
+const code = new Typed("#code-example", {
   strings: [
     'const greeting = "Hello, World!";',
-    'console.log(greeting);',
-    'return greeting;'
+    "console.log(greeting);",
+    "return greeting;",
   ],
   typeSpeed: 30,
   backSpeed: 20,
-  contentType: 'text',
-  showCursor: false
-})
+  contentType: "text",
+  showCursor: false,
+});
 ```
 
 #### Interactive Elements
 
 ```javascript
 // Works with form inputs too
-const placeholder = new Typed('#search-input', {
-  strings: ['Search for anything...', 'Type your query...'],
+const placeholder = new Typed("#search-input", {
+  strings: ["Search for anything...", "Type your query..."],
   typeSpeed: 40,
   backSpeed: 30,
   loop: true,
-  attr: 'placeholder',
-  showCursor: false
-})
+  attr: "placeholder",
+  showCursor: false,
+});
 ```
 
 ### Troubleshooting
@@ -354,12 +356,12 @@ const placeholder = new Typed('#search-input', {
 ```javascript
 // Enable debug logging
 const typed = new Typed(element, {
-  strings: ['Debug mode'],
+  strings: ["Debug mode"],
   typeSpeed: 50,
-  onBegin: () => console.log('Animation began'),
-  onComplete: () => console.log('Animation completed'),
-  onStringTyped: (arrayPos) => console.log(`String ${arrayPos} typed`)
-})
+  onBegin: () => console.log("Animation began"),
+  onComplete: () => console.log("Animation completed"),
+  onStringTyped: (arrayPos) => console.log(`String ${arrayPos} typed`),
+});
 ```
 
 ### Dependencies
