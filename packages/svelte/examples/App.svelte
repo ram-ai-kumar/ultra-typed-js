@@ -85,10 +85,7 @@
     }
     
     .section-title {
-      font-size: 20px;
-      font-weight: bold;
       margin-bottom: 15px;
-      color: #374151;
     }
     
     .action-demo {
@@ -100,11 +97,8 @@
     }
     
     .action-element {
-      font-size: 24px;
-      color: #0284c7;
       min-height: 40px;
       margin: 20px 0;
-      font-family: 'Courier New', monospace;
     }
     
     .action-controls {
@@ -118,8 +112,6 @@
       background-color: #e0f2fe;
       border-radius: 5px;
       margin: 10px 0;
-      font-size: 14px;
-      color: #0c4a6e;
     }
     
     button {
@@ -129,7 +121,6 @@
       background-color: #0284c7;
       color: white;
       cursor: pointer;
-      font-size: 14px;
       transition: background-color 0.2s;
     }
     

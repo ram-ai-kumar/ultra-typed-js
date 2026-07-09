@@ -83,9 +83,9 @@
     <!-- Multiple Instances Component -->
     <div class="example-section">
       <h3>Multiple Instances</h3>
-      <div ref="element1" class="typed-element" style="color: #dc2626"></div>
-      <div ref="element2" class="typed-element" style="color: #2563eb"></div>
-      <div ref="element3" class="typed-element" style="color: #9333ea"></div>
+      <div ref="element1" class="typed-element"></div>
+      <div ref="element2" class="typed-element"></div>
+      <div ref="element3" class="typed-element"></div>
       <div class="controls">
         <button @click="startAll">Start All</button>
         <button @click="pauseAll">Pause All</button>
@@ -582,18 +582,12 @@ h1 {
 }
 
 h3 {
-  font-size: 18px;
-  font-weight: bold;
   margin-bottom: 15px;
-  color: #374151;
 }
 
 .typed-element {
-  font-size: 24px;
-  color: #2563eb;
   min-height: 40px;
   margin: 20px 0;
-  font-family: "Courier New", monospace;
 }
 
 .controls {
@@ -610,7 +604,6 @@ button {
   background-color: #2563eb;
   color: white;
   cursor: pointer;
-  font-size: 14px;
   transition: background-color 0.2s;
 }
 
@@ -628,7 +621,6 @@ button:disabled {
   background-color: #f3f4f6;
   border-radius: 5px;
   margin: 10px 0;
-  font-size: 14px;
 }
 
 .input-group {
@@ -638,8 +630,6 @@ button:disabled {
 label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
-  color: #374151;
 }
 
 input,
@@ -649,7 +639,6 @@ textarea {
   padding: 8px;
   border: 1px solid #d1d5db;
   border-radius: 4px;
-  font-size: 14px;
 }
 
 textarea {

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraTyped.js - Ultra-fast Typing Animation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin: 0 0 10px 0;
+            color: white;
+        }
+        
+        .hero .tagline {
+            font-size: 24px;
+            margin: 0 0 20px 0;
+            opacity: 0.9;
+        }
+        
+        .hero .stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .hero .stat {
+            text-align: center;
+        }
+        
+        .hero .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+        }
+        
+        .hero .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .about {
+            padding: 30px;
+            background-color: #f9fafb;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .about h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        
+        .about p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .feature {
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .feature h3 {
+            color: #2563eb;
+            margin-top: 0;
+        }
+        
+        .feature p {
+            color: #4b5563;
+            line-height: 1.5;
+        }
+        
+        .demo-section {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .demo-section h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .typed-element {
+            min-height: 60px;
+            margin: 20px 0;
+            display: block;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            background-color: #f9f9f9;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            background-color: #f3f4f6;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .example-title {
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Text element styles for demonstration */
+        .extra-large-thick {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.2;
+            color: #2563eb;
+        }
+
+        .demo-h1 {
+            font-size: 36px;
+            font-weight: bold;
+            line-height: 1.3;
+            color: #dc2626;
+        }
+
+        .demo-h2 {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 1.4;
+            color: #16a34a;
+        }
+
+        .demo-h3 {
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.5;
+            color: #9333ea;
+        }
+
+        .demo-normal {
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 1.6;
+            color: #0891b2;
+        }
+
+        .demo-pre {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            color: #ea580c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>UltraTyped.js</h1>
+            <p class="tagline">Ultra-fast typing animation library</p>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value">&lt;2KB</div>
+                    <div class="stat-label">Minified Size</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Dependencies</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">TypeScript</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Section -->
+        <div class="about">
+            <h2>About UltraTyped.js</h2>
+            <p>
+                UltraTyped.js is a lightweight, zero-dependency typing animation library that brings your text to life. 
+                Perfect for hero sections, landing pages, and any place where you want to add dynamic, engaging text effects.
+            </p>
+            <p>
+                Built with performance in mind, UltraTyped.js is less than 2KB when minified and gzipped, making it 
+                ideal for production use without impacting your page load times. It's written entirely in TypeScript 
+                for better type safety and developer experience.
+            </p>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features">
+            <div class="feature">
+                <h3>🚀 Lightweight</h3>
+                <p>Less than 2KB minified and gzipped. No impact on page load performance.</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Zero Dependencies</h3>
+                <p>No external libraries required. Just drop it in and start typing.</p>
+            </div>
+            <div class="feature">
+                <h3>🎨 Flexible Styling</h3>
+                <p>Text inherits styles from parent elements. Works with any CSS framework.</p>
+            </div>
+            <div class="feature">
+                <h3>🔧 Rich API</h3>
+                <p>Comprehensive control with start, pause, resume, stop, and event callbacks.</p>
+            </div>
+            <div class="feature">
+                <h3>📱 Responsive</h3>
+                <p>Works perfectly on all devices and screen sizes.</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 Framework Support</h3>
+                <p>Available for React, Vue, Alpine, Svelte, Angular, and Astro.</p>
+            </div>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="demo-section">
+            <h2>Live Demo</h2>
+        
+        <div class="example-section">
+            <div class="example-title">Basic Typing Animation</div>
+            <div id="typed-basic" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-basic">Start</button>
+                <button id="pause-basic">Pause</button>
+                <button id="resume-basic">Resume</button>
+                <button id="reset-basic">Reset</button>
+                <button id="stop-basic">Stop</button>
+            </div>
+            <div id="status-basic" class="status">Ready to start</div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">HTML Content Example</div>
+            <div id="typed-html" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-html">Start HTML</button>
+                <button id="pause-html">Pause</button>
+                <button id="resume-html">Resume</button>
+                <button id="destroy-html">Destroy</button>
+            </div>
+            <div id="status-html" class="status">Ready to start</div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">Placeholder Animation</div>
+            <input type="text" id="input-placeholder" placeholder="Type here..." style="width: 300px; padding: 10px; font-size: 16px;">
+            <div class="controls">
+                <button id="start-placeholder">Animate Placeholder</button>
+                <button id="stop-placeholder">Stop</button>
+            </div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">Strings from Element</div>
+            <div id="strings-source" style="display: none;">
+                <span>First string from element</span>
+                <span>Second string from element</span>
+                <span>Third string from element</span>
+            </div>
+            <div id="typed-element-source" class="typed-element"></div>
+            <div class="controls">
+                <button id="start-element-source">Start from Element</button>
+            </div>
+        </div>
+
+        <div class="example-section">
+            <div class="example-title">Text Element Style Inheritance</div>
+            <p style="margin-bottom: 20px;">UltraTyped works with any text element - the typed text inherits styling from its parent:</p>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #2563eb; border-radius: 8px; background-color: #eff6ff;">
+                <strong style="display: block; margin-bottom: 10px; color: #1e40af;">Extra Large Thick Text:</strong>
+                <div id="typed-extra-large" class="typed-element extra-large-thick" style="border: 2px solid #2563eb; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #dc2626; border-radius: 8px; background-color: #fef2f2;">
+                <strong style="display: block; margin-bottom: 10px; color: #991b1b;">H1 Style:</strong>
+                <div id="typed-h1" class="typed-element demo-h1" style="border: 2px solid #dc2626; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #16a34a; border-radius: 8px; background-color: #f0fdf4;">
+                <strong style="display: block; margin-bottom: 10px; color: #166534;">H2 Style:</strong>
+                <div id="typed-h2" class="typed-element demo-h2" style="border: 2px solid #16a34a; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #9333ea; border-radius: 8px; background-color: #faf5ff;">
+                <strong style="display: block; margin-bottom: 10px; color: #6b21a8;">H3 Style:</strong>
+                <div id="typed-h3" class="typed-element demo-h3" style="border: 2px solid #9333ea; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #0891b2; border-radius: 8px; background-color: #ecfeff;">
+                <strong style="display: block; margin-bottom: 10px; color: #155e75;">Normal Text:</strong>
+                <div id="typed-normal" class="typed-element demo-normal" style="border: 2px solid #0891b2; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #ea580c; border-radius: 8px; background-color: #fff7ed;">
+                <strong style="display: block; margin-bottom: 10px; color: #9a3412;">Pre/Code Style:</strong>
+                <div id="typed-pre" class="typed-element demo-pre" style="border: 2px solid #ea580c; background-color: white;">Loading...</div>
+            </div>
+            
+            <div class="controls">
+                <button id="start-inheritance">Start All</button>
+                <button id="stop-inheritance">Stop All</button>
+            </div>
+            <div id="status-inheritance" class="status">Ready to start</div>
+        </div>
+        </div> <!-- End demo-section -->
+    </div>
+
+    <!-- Import UltraTyped from local package -->
+    <script type="module">
+        import UltraTyped from '../../dist/index.mjs';
+        
+        console.log('UltraTyped loaded:', UltraTyped);
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing instances...');
+            
+            // Basic example with all features
+            const basicElement = document.getElementById('typed-basic');
+            console.log('Basic element found:', basicElement);
+            const basicInstance = UltraTyped(basicElement, {
+                strings: [
+                    'Welcome to UltraTyped.js!',
+                    'Ultra-fast typing animation',
+                    'Less than 2KB in size',
+                    'Zero dependencies',
+                    'Built with performance in mind'
+                ],
+                typeSpeed: 50,
+                backSpeed: 30,
+                backDelay: 1000,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|',
+                startDelay: 0,
+                shuffle: false,
+                
+                // Event callbacks
+                onBegin: () => {
+                    updateStatus('status-basic', 'Animation began...');
+                },
+                onComplete: () => {
+                    updateStatus('status-basic', 'All strings completed!');
+                },
+                preStringTyped: (arrayPos, self) => {
+                    updateStatus('status-basic', `About to type string ${arrayPos + 1}: "${self.strings[arrayPos]}"`);
+                },
+                onStringTyped: (arrayPos, self) => {
+                    updateStatus('status-basic', `Finished typing string ${arrayPos + 1}`);
+                },
+                onTypingPaused: (arrayPos, self) => {
+                    updateStatus('status-basic', `Paused at string ${arrayPos + 1}`);
+                },
+                onTypingResumed: (arrayPos, self) => {
+                    updateStatus('status-basic', `Resumed at string ${arrayPos + 1}`);
+                },
+                onReset: () => {
+                    updateStatus('status-basic', 'Animation reset');
+                },
+                onStop: () => {
+                    updateStatus('status-basic', 'Animation stopped');
+                },
+                onDestroy: () => {
+                    updateStatus('status-basic', 'Animation destroyed');
+                }
+            });
+
+            // HTML content example
+            const htmlElement = document.getElementById('typed-html');
+            const htmlInstance = UltraTyped(htmlElement, {
+                strings: [
+                    'This supports <strong>HTML</strong> content!',
+                    'With <em>emphasis</em> and <span style="color: red;">colors</span>',
+                    'Even <a href="#" onclick="alert(\'Hello!\')">links</a> work',
+                    'And <code>code blocks</code> too'
+                ],
+                contentType: 'html',
+                typeSpeed: 40,
+                backSpeed: 25,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▋'
+            });
+
+            // Placeholder animation example
+            const inputElement = document.getElementById('input-placeholder');
+            const placeholderInstance = UltraTyped(inputElement, {
+                strings: [
+                    'Search for anything...',
+                    'Type your query here',
+                    'What are you looking for?'
+                ],
+                attr: 'placeholder',
+                typeSpeed: 30,
+                backSpeed: 20,
+                loop: true,
+                showCursor: false
+            });
+
+            // Strings from element example
+            const elementSource = document.getElementById('typed-element-source');
+            const stringsSourceElement = document.getElementById('strings-source');
+            const elementSourceInstance = UltraTyped(elementSource, {
+                stringsElement: stringsSourceElement,
+                typeSpeed: 45,
+                backSpeed: 25,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▌'
+            });
+
+            // Control functions
+            function updateStatus(statusId, message) {
+                const statusElement = document.getElementById(statusId);
+                if (statusElement) {
+                    statusElement.textContent = message;
+                }
+            }
+
+            // Basic example controls
+            document.getElementById('start-basic').addEventListener('click', () => {
+                basicInstance.start();
+            });
+
+            document.getElementById('pause-basic').addEventListener('click', () => {
+                basicInstance.pause();
+            });
+
+            document.getElementById('resume-basic').addEventListener('click', () => {
+                basicInstance.resume();
+            });
+
+            document.getElementById('reset-basic').addEventListener('click', () => {
+                basicInstance.reset();
+            });
+
+            document.getElementById('stop-basic').addEventListener('click', () => {
+                basicInstance.stop();
+            });
+
+            // HTML example controls
+            document.getElementById('start-html').addEventListener('click', () => {
+                htmlInstance.start();
+            });
+
+            document.getElementById('pause-html').addEventListener('click', () => {
+                htmlInstance.pause();
+            });
+
+            document.getElementById('resume-html').addEventListener('click', () => {
+                htmlInstance.resume();
+            });
+
+            document.getElementById('destroy-html').addEventListener('click', () => {
+                htmlInstance.destroy();
+                updateStatus('status-html', 'HTML instance destroyed');
+            });
+
+            // Placeholder controls
+            document.getElementById('start-placeholder').addEventListener('click', () => {
+                placeholderInstance.start();
+            });
+
+            document.getElementById('stop-placeholder').addEventListener('click', () => {
+                placeholderInstance.stop();
+            });
+
+            // Element source controls
+            document.getElementById('start-element-source').addEventListener('click', () => {
+                elementSourceInstance.start();
+            });
+
+            // Text element style inheritance demonstration
+            const inheritanceInstances = [];
+            
+            // Helper function to safely create instances
+            function createInheritanceInstance(elementId, options) {
+                const element = document.getElementById(elementId);
+                if (!element) {
+                    console.error(`Element ${elementId} not found`);
+                    return null;
+                }
+                try {
+                    const instance = UltraTyped(element, options);
+                    console.log(`Created instance for ${elementId}`, instance);
+                    return instance;
+                } catch (error) {
+                    console.error(`Error creating instance for ${elementId}:`, error);
+                    return null;
+                }
+            }
+            
+            const extraLargeInstance = createInheritanceInstance('typed-extra-large', {
+                strings: ['Extra Large Thick Text', 'Bold and Impactful', 'Making a Statement'],
+                typeSpeed: 60,
+                backSpeed: 30,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▋'
+            });
+            if (extraLargeInstance) inheritanceInstances.push(extraLargeInstance);
+
+            const h1Instance = createInheritanceInstance('typed-h1', {
+                strings: ['H1 Heading Style', 'Main Title Text', 'Important Content'],
+                typeSpeed: 55,
+                backSpeed: 28,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▌'
+            });
+            if (h1Instance) inheritanceInstances.push(h1Instance);
+
+            const h2Instance = createInheritanceInstance('typed-h2', {
+                strings: ['H2 Heading Style', 'Subsection Title', 'Secondary Content'],
+                typeSpeed: 50,
+                backSpeed: 25,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▐'
+            });
+            if (h2Instance) inheritanceInstances.push(h2Instance);
+
+            const h3Instance = createInheritanceInstance('typed-h3', {
+                strings: ['H3 Heading Style', 'Minor Heading', 'Tertiary Content'],
+                typeSpeed: 45,
+                backSpeed: 22,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▌'
+            });
+            if (h3Instance) inheritanceInstances.push(h3Instance);
+
+            const normalInstance = createInheritanceInstance('typed-normal', {
+                strings: ['Normal text style', 'Regular paragraph content', 'Standard body text'],
+                typeSpeed: 40,
+                backSpeed: 20,
+                loop: true,
+                showCursor: true,
+                cursorChar: '|'
+            });
+            if (normalInstance) inheritanceInstances.push(normalInstance);
+
+            const preInstance = createInheritanceInstance('typed-pre', {
+                strings: ['Preformatted text style', 'Code block content', 'Monospace font'],
+                typeSpeed: 35,
+                backSpeed: 18,
+                loop: true,
+                showCursor: true,
+                cursorChar: '▋'
+            });
+            if (preInstance) inheritanceInstances.push(preInstance);
+
+            console.log('Total inheritance instances created:', inheritanceInstances.length);
+
+            // Inheritance controls
+            document.getElementById('start-inheritance').addEventListener('click', () => {
+                inheritanceInstances.forEach(instance => instance.start());
+                updateStatus('status-inheritance', 'All instances started');
+            });
+
+            document.getElementById('stop-inheritance').addEventListener('click', () => {
+                inheritanceInstances.forEach(instance => instance.stop());
+                updateStatus('status-inheritance', 'All instances stopped');
+            });
+
+            // Auto-start all demos
+            setTimeout(() => {
+                basicInstance.start();
+                htmlInstance.start();
+                placeholderInstance.start();
+                elementSourceInstance.start();
+                inheritanceInstances.forEach(instance => instance.start());
+                updateStatus('status-inheritance', 'All instances started');
+            }, 500);
+        }); // End DOMContentLoaded
+    </script>
+</body>
+</html>

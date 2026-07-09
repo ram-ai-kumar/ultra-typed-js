@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             background-color: #f5f5f5;
@@ -27,11 +27,12 @@
         }
         
         .typed-element {
-            font-size: 24px;
-            color: #2563eb;
-            min-height: 40px;
+            min-height: 60px;
             margin: 20px 0;
-            font-family: 'Courier New', monospace;
+            display: block;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            background-color: #f9f9f9;
         }
         
         .controls {
@@ -66,7 +67,6 @@
             background-color: #f3f4f6;
             border-radius: 5px;
             margin: 10px 0;
-            font-size: 14px;
         }
         
         .example-section {
@@ -77,10 +77,51 @@
         }
         
         .example-title {
-            font-size: 18px;
-            font-weight: bold;
             margin-bottom: 15px;
-            color: #374151;
+        }
+
+        /* Text element styles for demonstration */
+        .extra-large-thick {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.2;
+            color: #2563eb;
+        }
+
+        .demo-h1 {
+            font-size: 36px;
+            font-weight: bold;
+            line-height: 1.3;
+            color: #dc2626;
+        }
+
+        .demo-h2 {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 1.4;
+            color: #16a34a;
+        }
+
+        .demo-h3 {
+            font-size: 24px;
+            font-weight: bold;
+            line-height: 1.5;
+            color: #9333ea;
+        }
+
+        .demo-normal {
+            font-size: 16px;
+            font-weight: normal;
+            line-height: 1.6;
+            color: #0891b2;
+        }
+
+        .demo-pre {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            color: #ea580c;
         }
     </style>
 </head>
@@ -134,15 +175,63 @@
                 <button id="start-element-source">Start from Element</button>
             </div>
         </div>
+
+        <div class="example-section">
+            <div class="example-title">Text Element Style Inheritance</div>
+            <p style="margin-bottom: 20px;">UltraTyped works with any text element - the typed text inherits styling from its parent:</p>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #2563eb; border-radius: 8px; background-color: #eff6ff;">
+                <strong style="display: block; margin-bottom: 10px; color: #1e40af;">Extra Large Thick Text:</strong>
+                <div id="typed-extra-large" class="typed-element extra-large-thick" style="border: 2px solid #2563eb; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #dc2626; border-radius: 8px; background-color: #fef2f2;">
+                <strong style="display: block; margin-bottom: 10px; color: #991b1b;">H1 Style:</strong>
+                <div id="typed-h1" class="typed-element demo-h1" style="border: 2px solid #dc2626; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #16a34a; border-radius: 8px; background-color: #f0fdf4;">
+                <strong style="display: block; margin-bottom: 10px; color: #166534;">H2 Style:</strong>
+                <div id="typed-h2" class="typed-element demo-h2" style="border: 2px solid #16a34a; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #9333ea; border-radius: 8px; background-color: #faf5ff;">
+                <strong style="display: block; margin-bottom: 10px; color: #6b21a8;">H3 Style:</strong>
+                <div id="typed-h3" class="typed-element demo-h3" style="border: 2px solid #9333ea; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #0891b2; border-radius: 8px; background-color: #ecfeff;">
+                <strong style="display: block; margin-bottom: 10px; color: #155e75;">Normal Text:</strong>
+                <div id="typed-normal" class="typed-element demo-normal" style="border: 2px solid #0891b2; background-color: white;">Loading...</div>
+            </div>
+            
+            <div style="margin-bottom: 25px; padding: 15px; border: 2px solid #ea580c; border-radius: 8px; background-color: #fff7ed;">
+                <strong style="display: block; margin-bottom: 10px; color: #9a3412;">Pre/Code Style:</strong>
+                <div id="typed-pre" class="typed-element demo-pre" style="border: 2px solid #ea580c; background-color: white;">Loading...</div>
+            </div>
+            
+            <div class="controls">
+                <button id="start-inheritance">Start All</button>
+                <button id="stop-inheritance">Stop All</button>
+            </div>
+            <div id="status-inheritance" class="status">Ready to start</div>
+        </div>
     </div>
 
     <!-- Import UltraTyped from local package -->
     <script type="module">
         import UltraTyped from '../../dist/index.mjs';
         
-        // Basic example with all features
-        const basicElement = document.getElementById('typed-basic');
-        const basicInstance = UltraTyped(basicElement, {
+        console.log('UltraTyped loaded:', UltraTyped);
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing instances...');
+            
+            // Basic example with all features
+            const basicElement = document.getElementById('typed-basic');
+            console.log('Basic element found:', basicElement);
+            const basicInstance = UltraTyped(basicElement, {
             strings: [
                 'Welcome to UltraTyped.js!',
                 'Ultra-fast typing animation',
@@ -294,10 +383,106 @@
             elementSourceInstance.start();
         });
 
-        // Auto-start the basic example
+        // Text element style inheritance demonstration
+        const inheritanceInstances = [];
+        
+        // Helper function to safely create instances
+        function createInheritanceInstance(elementId, options) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error(`Element ${elementId} not found`);
+                return null;
+            }
+            try {
+                const instance = UltraTyped(element, options);
+                console.log(`Created instance for ${elementId}`, instance);
+                return instance;
+            } catch (error) {
+                console.error(`Error creating instance for ${elementId}:`, error);
+                return null;
+            }
+        }
+        
+        const extraLargeInstance = createInheritanceInstance('typed-extra-large', {
+            strings: ['Extra Large Thick Text', 'Bold and Impactful', 'Making a Statement'],
+            typeSpeed: 60,
+            backSpeed: 30,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▋'
+        });
+        if (extraLargeInstance) inheritanceInstances.push(extraLargeInstance);
+
+        const h1Instance = createInheritanceInstance('typed-h1', {
+            strings: ['H1 Heading Style', 'Main Title Text', 'Important Content'],
+            typeSpeed: 55,
+            backSpeed: 28,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▌'
+        });
+        if (h1Instance) inheritanceInstances.push(h1Instance);
+
+        const h2Instance = createInheritanceInstance('typed-h2', {
+            strings: ['H2 Heading Style', 'Subsection Title', 'Secondary Content'],
+            typeSpeed: 50,
+            backSpeed: 25,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▐'
+        });
+        if (h2Instance) inheritanceInstances.push(h2Instance);
+
+        const h3Instance = createInheritanceInstance('typed-h3', {
+            strings: ['H3 Heading Style', 'Minor Heading', 'Tertiary Content'],
+            typeSpeed: 45,
+            backSpeed: 22,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▌'
+        });
+        if (h3Instance) inheritanceInstances.push(h3Instance);
+
+        const normalInstance = createInheritanceInstance('typed-normal', {
+            strings: ['Normal text style', 'Regular paragraph content', 'Standard body text'],
+            typeSpeed: 40,
+            backSpeed: 20,
+            loop: true,
+            showCursor: true,
+            cursorChar: '|'
+        });
+        if (normalInstance) inheritanceInstances.push(normalInstance);
+
+        const preInstance = createInheritanceInstance('typed-pre', {
+            strings: ['Preformatted text style', 'Code block content', 'Monospace font'],
+            typeSpeed: 35,
+            backSpeed: 18,
+            loop: true,
+            showCursor: true,
+            cursorChar: '▋'
+        });
+        if (preInstance) inheritanceInstances.push(preInstance);
+
+        console.log('Total inheritance instances created:', inheritanceInstances.length);
+
+        // Inheritance controls
+        document.getElementById('start-inheritance').addEventListener('click', () => {
+            inheritanceInstances.forEach(instance => instance.start());
+            updateStatus('status-inheritance', 'All instances started');
+        });
+
+        document.getElementById('stop-inheritance').addEventListener('click', () => {
+            inheritanceInstances.forEach(instance => instance.stop());
+            updateStatus('status-inheritance', 'All instances stopped');
+        });
+
+        // Auto-start the basic example and inheritance demo
         setTimeout(() => {
             basicInstance.start();
+            inheritanceInstances.forEach(instance => instance.start());
+            updateStatus('status-inheritance', 'All instances started');
         }, 500);
+        }); // End DOMContentLoaded
     </script>
 </body>
 </html>

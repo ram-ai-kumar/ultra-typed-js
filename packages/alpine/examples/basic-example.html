@@ -28,11 +28,8 @@
         }
         
         .typed-element {
-            font-size: 24px;
-            color: #2563eb;
             min-height: 40px;
             margin: 20px 0;
-            font-family: 'Courier New', monospace;
         }
         
         .controls {
@@ -49,7 +46,6 @@
             background-color: #2563eb;
             color: white;
             cursor: pointer;
-            font-size: 14px;
             transition: background-color 0.2s;
         }
         
@@ -67,7 +63,6 @@
             background-color: #f3f4f6;
             border-radius: 5px;
             margin: 10px 0;
-            font-size: 14px;
         }
         
         .example-section {
@@ -78,10 +73,7 @@
         }
         
         .example-title {
-            font-size: 18px;
-            font-weight: bold;
             margin-bottom: 15px;
-            color: #374151;
         }
         
         .input-group {
@@ -91,8 +83,6 @@
         label {
             display: block;
             margin-bottom: 5px;
-            font-weight: bold;
-            color: #374151;
         }
         
         input, select, textarea {
@@ -100,7 +90,6 @@
             padding: 8px;
             border: 1px solid #d1d5db;
             border-radius: 4px;
-            font-size: 14px;
         }
         
         textarea {
@@ -159,9 +148,9 @@
         <!-- Multiple Instances Example -->
         <div class="example-section" x-data="multipleTypingExample()">
             <div class="example-title">Multiple Instances</div>
-            <div x-ref="element1" class="typed-element" style="color: #dc2626;"></div>
-            <div x-ref="element2" class="typed-element" style="color: #16a34a;"></div>
-            <div x-ref="element3" class="typed-element" style="color: #9333ea;"></div>
+            <div x-ref="element1" class="typed-element"></div>
+            <div x-ref="element2" class="typed-element"></div>
+            <div x-ref="element3" class="typed-element"></div>
             <div class="controls">
                 <button @click="startAll()">Start All</button>
                 <button @click="pauseAll()">Pause All</button>
@@ -203,7 +192,7 @@
             <div style="margin-top: 20px; padding: 15px; background-color: #f9fafb; border-radius: 5px;">
                 <h4>Child Component:</h4>
                 <div x-data="childComponent()" x-init="init($refs.parentElement)">
-                    <div x-ref="childElement" class="typed-element" style="color: #059669; font-size: 18px;"></div>
+                    <div x-ref="childElement" class="typed-element"></div>
                     <div class="status" x-text="childStatus"></div>
                 </div>
             </div>

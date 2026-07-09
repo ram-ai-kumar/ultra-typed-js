@@ -137,10 +137,7 @@ const TypingComponent: React.FC = () => {
     >
       <h3
         style={{
-          fontSize: "18px",
-          fontWeight: "bold",
           marginBottom: "15px",
-          color: "#374151",
         }}
       >
         Basic React Component
@@ -149,11 +146,8 @@ const TypingComponent: React.FC = () => {
       <div
         ref={typedRef}
         style={{
-          fontSize: "24px",
-          color: "#2563eb",
           minHeight: "40px",
           margin: "20px 0",
-          fontFamily: "Courier New, monospace",
         }}
       />
 
@@ -199,7 +193,6 @@ const TypingComponent: React.FC = () => {
           backgroundColor: "#f3f4f6",
           borderRadius: "5px",
           margin: "10px 0",
-          fontSize: "14px",
         }}
       >
         {status}
@@ -218,8 +211,6 @@ const TypingComponent: React.FC = () => {
             style={{
               display: "block",
               marginBottom: "5px",
-              fontWeight: "bold",
-              color: "#374151",
             }}
           >
             Strings:
@@ -234,7 +225,6 @@ const TypingComponent: React.FC = () => {
               padding: "8px",
               border: "1px solid #d1d5db",
               borderRadius: "4px",
-              fontSize: "14px",
               height: "80px",
               resize: "vertical",
             }}
@@ -247,8 +237,6 @@ const TypingComponent: React.FC = () => {
             style={{
               display: "block",
               marginBottom: "5px",
-              fontWeight: "bold",
-              color: "#374151",
             }}
           >
             Type Speed (ms):
@@ -264,7 +252,6 @@ const TypingComponent: React.FC = () => {
               padding: "8px",
               border: "1px solid #d1d5db",
               borderRadius: "4px",
-              fontSize: "14px",
             }}
           />
         </div>
@@ -274,8 +261,6 @@ const TypingComponent: React.FC = () => {
             style={{
               display: "block",
               marginBottom: "5px",
-              fontWeight: "bold",
-              color: "#374151",
             }}
           >
             Loop:
@@ -288,7 +273,6 @@ const TypingComponent: React.FC = () => {
               padding: "8px",
               border: "1px solid #d1d5db",
               borderRadius: "4px",
-              fontSize: "14px",
             }}
           >
             <option value="true">Yes</option>
@@ -401,10 +385,7 @@ const HookBasedComponent: React.FC = () => {
     >
       <h3
         style={{
-          fontSize: "18px",
-          fontWeight: "bold",
           marginBottom: "15px",
-          color: "#374151",
         }}
       >
         Custom Hook Component
@@ -413,11 +394,8 @@ const HookBasedComponent: React.FC = () => {
       <div
         ref={typedRef}
         style={{
-          fontSize: "24px",
-          color: "#16a34a",
           minHeight: "40px",
           margin: "20px 0",
-          fontFamily: "Courier New, monospace",
         }}
       />
 
@@ -452,7 +430,6 @@ const HookBasedComponent: React.FC = () => {
           backgroundColor: "#f3f4f6",
           borderRadius: "5px",
           margin: "10px 0",
-          fontSize: "14px",
         }}
       >
         Status: {status}
@@ -535,10 +512,7 @@ const MultipleInstancesComponent: React.FC = () => {
     >
       <h3
         style={{
-          fontSize: "18px",
-          fontWeight: "bold",
           marginBottom: "15px",
-          color: "#374151",
         }}
       >
         Multiple Instances
@@ -547,31 +521,22 @@ const MultipleInstancesComponent: React.FC = () => {
       <div
         ref={(el) => (elementsRef.current[0] = el)}
         style={{
-          fontSize: "24px",
-          color: "#dc2626",
           minHeight: "40px",
           margin: "20px 0",
-          fontFamily: "Courier New, monospace",
         }}
       />
       <div
         ref={(el) => (elementsRef.current[1] = el)}
         style={{
-          fontSize: "24px",
-          color: "#2563eb",
           minHeight: "40px",
           margin: "20px 0",
-          fontFamily: "Courier New, monospace",
         }}
       />
       <div
         ref={(el) => (elementsRef.current[2] = el)}
         style={{
-          fontSize: "24px",
-          color: "#9333ea",
           minHeight: "40px",
           margin: "20px 0",
-          fontFamily: "Courier New, monospace",
         }}
       />
 
@@ -608,7 +573,6 @@ const buttonStyle: React.CSSProperties = {
   backgroundColor: "#2563eb",
   color: "white",
   cursor: "pointer",
-  fontSize: "14px",
   transition: "backgroundColor 0.2s",
 };
 
@@ -633,7 +597,7 @@ const App: React.FC = () => {
         }}
       >
         <h1
-          style={{ color: "#333", textAlign: "center", marginBottom: "30px" }}
+          style={{ textAlign: "center", marginBottom: "30px" }}
         >
           UltraTyped.js - React Example
         </h1>

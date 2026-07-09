@@ -246,11 +246,8 @@
   }
 
   .typed-element {
-    font-size: 24px;
-    color: #2563eb;
     min-height: 40px;
     margin: 20px 0;
-    font-family: 'Courier New', monospace;
   }
 
   .controls {
@@ -267,7 +264,6 @@
     background-color: #2563eb;
     color: white;
     cursor: pointer;
-    font-size: 14px;
     transition: background-color 0.2s;
   }
 
@@ -285,7 +281,6 @@
     background-color: #f3f4f6;
     border-radius: 5px;
     margin: 10px 0;
-    font-size: 14px;
   }
 
   .props-editor {
@@ -306,15 +301,12 @@
 
   label {
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #374151;
   }
 
   input, select, textarea {
     padding: 8px;
     border: 1px solid #d1d5db;
     border-radius: 4px;
-    font-size: 14px;
   }
 
   textarea {
@@ -347,7 +339,6 @@
 
   .string-list li {
     margin: 5px 0;
-    font-family: 'Courier New', monospace;
   }
 
   @media (max-width: 768px) {
