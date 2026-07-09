@@ -196,9 +196,13 @@ export default function U(el, o) {
       }
       style.textContent = `
         .ultratyped-cursor {
-          display: inline;
+          display: inline-block;
           animation: ultratyped-blink 0.7s infinite;
           margin-left: 2px;
+          width: 0.6em;
+          height: 1.2em;
+          background-color: currentColor;
+          vertical-align: text-bottom;
         }
         @keyframes ultratyped-blink {
           0%, 100% { opacity: 1; }
@@ -217,7 +221,6 @@ export default function U(el, o) {
     textNode = document.createTextNode("");
     cursorEl = document.createElement("span");
     cursorEl.className = "ultratyped-cursor";
-    cursorEl.textContent = cursorChar;
     cursorEl.setAttribute("role", "presentation");
     el.appendChild(textNode);
     el.appendChild(cursorEl);
