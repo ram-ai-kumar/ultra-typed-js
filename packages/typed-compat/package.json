@@ -44,7 +44,7 @@
   "author": "ram-ai-kumar",
   "license": "MIT",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c && tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "ultratyped": "workspace:*"
