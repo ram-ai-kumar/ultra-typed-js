@@ -3,7 +3,7 @@
  * This package provides a drop-in replacement for Typed.js using UltraTyped core
  */
 
-import UltraTyped from "@ultratyped/core";
+import UltraTyped from "ultratyped";
 
 /**
  * Typed class - mirrors Typed.js v2 constructor API

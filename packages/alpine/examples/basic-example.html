@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UltraTyped.js - Alpine.js Example</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .typed-element {
+            min-height: 40px;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #2563eb;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #1d4ed8;
+        }
+        
+        button:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            padding: 10px;
+            background-color: #f3f4f6;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .example-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .example-title {
+            margin-bottom: 15px;
+        }
+        
+        .input-group {
+            margin: 15px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+        }
+        
+        textarea {
+            height: 80px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UltraTyped.js - Alpine.js Example</h1>
+        
+        <!-- Basic Alpine.js Example -->
+        <div class="example-section" x-data="typingExample()">
+            <div class="example-title">Basic Alpine.js Integration</div>
+            <div x-ref="typedElement" class="typed-element"></div>
+            <div class="controls">
+                <button @click="start()" :disabled="isRunning">Start</button>
+                <button @click="pause()" :disabled="!isRunning || isPaused">Pause</button>
+                <button @click="resume()" :disabled="!isRunning || !isPaused">Resume</button>
+                <button @click="reset()">Reset</button>
+                <button @click="stop()">Stop</button>
+                <button @click="destroy()">Destroy</button>
+            </div>
+            <div class="status" x-text="status"></div>
+            
+            <div class="input-group">
+                <label for="strings">Strings (one per line):</label>
+                <textarea 
+                    id="strings" 
+                    x-model="stringsText"
+                    @input="updateStrings()"
+                    placeholder="Enter strings to type, one per line..."></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label for="typeSpeed">Type Speed (ms):</label>
+                <input 
+                    type="number" 
+                    id="typeSpeed" 
+                    x-model="typeSpeed"
+                    @input="updateConfig()"
+                    min="10"
+                    max="200">
+            </div>
+            
+            <div class="input-group">
+                <label for="loop">Loop:</label>
+                <select id="loop" x-model="loop" @change="updateConfig()">
+                    <option :value="true">Yes</option>
+                    <option :value="false">No</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Multiple Instances Example -->
+        <div class="example-section" x-data="multipleTypingExample()">
+            <div class="example-title">Multiple Instances</div>
+            <div x-ref="element1" class="typed-element"></div>
+            <div x-ref="element2" class="typed-element"></div>
+            <div x-ref="element3" class="typed-element"></div>
+            <div class="controls">
+                <button @click="startAll()">Start All</button>
+                <button @click="pauseAll()">Pause All</button>
+                <button @click="resumeAll()">Resume All</button>
+                <button @click="stopAll()">Stop All</button>
+            </div>
+            <div class="status" x-text="status"></div>
+        </div>
+
+        <!-- Reactive Data Example -->
+        <div class="example-section" x-data="reactiveTypingExample()">
+            <div class="example-title">Reactive Data Example</div>
+            <div x-ref="typedElement" class="typed-element"></div>
+            <div class="controls">
+                <button @click="addString()">Add String</button>
+                <button @click="removeString()">Remove Last</button>
+                <button @click="shuffleStrings()">Shuffle</button>
+                <button @click="clearStrings()">Clear All</button>
+            </div>
+            <div class="status">
+                <p>Current strings: <span x-text="strings.length"></span></p>
+                <ul>
+                    <template x-for="(str, index) in strings" :key="index">
+                        <li x-text="str"></li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Component Communication Example -->
+        <div class="example-section" x-data="parentComponent()">
+            <div class="example-title">Component Communication</div>
+            <div x-ref="parentElement" class="typed-element"></div>
+            <div class="controls">
+                <button @click="sendMessage()">Send Message to Child</button>
+                <button @click="triggerChildAction()">Trigger Child Action</button>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background-color: #f9fafb; border-radius: 5px;">
+                <h4>Child Component:</h4>
+                <div x-data="childComponent()" x-init="init($refs.parentElement)">
+                    <div x-ref="childElement" class="typed-element"></div>
+                    <div class="status" x-text="childStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import UltraTyped from local package -->
+    <script type="module">
+        import UltraTyped from '../../core/dist/index.mjs';
+        
+        // Basic Alpine.js typing example
+        function typingExample() {
+            return {
+                instance: null,
+                isRunning: false,
+                isPaused: false,
+                status: 'Ready to start',
+                stringsText: 'Welcome to UltraTyped.js!\nAlpine.js integration\nReactive and simple\nModern web development',
+                typeSpeed: 50,
+                loop: true,
+                
+                init() {
+                    // Initialize UltraTyped when component is ready
+                    this.$nextTick(() => {
+                        this.initTyped();
+                    });
+                },
+                
+                initTyped() {
+                    if (this.instance) {
+                        this.instance.destroy();
+                    }
+                    
+                    this.instance = UltraTyped(this.$refs.typedElement, {
+                        strings: this.getStrings(),
+                        typeSpeed: this.typeSpeed,
+                        backSpeed: 30,
+                        backDelay: 1000,
+                        loop: this.loop,
+                        showCursor: true,
+                        cursorChar: '|',
+                        
+                        onBegin: () => {
+                            this.isRunning = true;
+                            this.isPaused = false;
+                            this.status = 'Animation began';
+                        },
+                        onComplete: () => {
+                            this.status = 'All strings completed!';
+                        },
+                        onStringTyped: (arrayPos) => {
+                            this.status = `Finished typing string ${arrayPos + 1}`;
+                        },
+                        onTypingPaused: () => {
+                            this.isPaused = true;
+                            this.status = 'Animation paused';
+                        },
+                        onTypingResumed: () => {
+                            this.isPaused = false;
+                            this.status = 'Animation resumed';
+                        },
+                        onStop: () => {
+                            this.isRunning = false;
+                            this.isPaused = false;
+                            this.status = 'Animation stopped';
+                        },
+                        onDestroy: () => {
+                            this.isRunning = false;
+                            this.isPaused = false;
+                            this.status = 'Animation destroyed';
+                        }
+                    });
+                },
+                
+                getStrings() {
+                    return this.stringsText.split('\n').filter(s => s.trim());
+                },
+                
+                updateStrings() {
+                    if (this.instance) {
+                        this.instance.strings = this.getStrings();
+                        this.instance.reset();
+                    }
+                },
+                
+                updateConfig() {
+                    if (this.instance) {
+                        this.instance.typeSpeed = this.typeSpeed;
+                        this.instance.loop = this.loop;
+                    }
+                },
+                
+                start() {
+                    if (this.instance) {
+                        this.instance.start();
+                    }
+                },
+                
+                pause() {
+                    if (this.instance) {
+                        this.instance.pause();
+                    }
+                },
+                
+                resume() {
+                    if (this.instance) {
+                        this.instance.resume();
+                    }
+                },
+                
+                reset() {
+                    if (this.instance) {
+                        this.instance.reset();
+                    }
+                },
+                
+                stop() {
+                    if (this.instance) {
+                        this.instance.stop();
+                    }
+                },
+                
+                destroy() {
+                    if (this.instance) {
+                        this.instance.destroy();
+                        this.instance = null;
+                    }
+                }
+            }
+        }
+        
+        // Multiple instances example
+        function multipleTypingExample() {
+            return {
+                instances: [],
+                status: 'Ready to start',
+                
+                init() {
+                    this.$nextTick(() => {
+                        this.initInstances();
+                    });
+                },
+                
+                initInstances() {
+                    this.instances = [
+                        UltraTyped(this.$refs.element1, {
+                            strings: ['Red text typing...', 'Fast and furious'],
+                            typeSpeed: 40,
+                            loop: true,
+                            showCursor: true,
+                            cursorChar: '▋'
+                        }),
+                        UltraTyped(this.$refs.element2, {
+                            strings: ['Green text flowing...', 'Smooth and steady'],
+                            typeSpeed: 60,
+                            loop: true,
+                            showCursor: true,
+                            cursorChar: '▌'
+                        }),
+                        UltraTyped(this.$refs.element3, {
+                            strings: ['Purple text dancing...', 'Elegant and graceful'],
+                            typeSpeed: 80,
+                            loop: true,
+                            showCursor: true,
+                            cursorChar: '▐'
+                        })
+                    ];
+                },
+                
+                startAll() {
+                    this.instances.forEach(instance => instance.start());
+                    this.status = 'All instances started';
+                },
+                
+                pauseAll() {
+                    this.instances.forEach(instance => instance.pause());
+                    this.status = 'All instances paused';
+                },
+                
+                resumeAll() {
+                    this.instances.forEach(instance => instance.resume());
+                    this.status = 'All instances resumed';
+                },
+                
+                stopAll() {
+                    this.instances.forEach(instance => instance.stop());
+                    this.status = 'All instances stopped';
+                }
+            }
+        }
+        
+        // Reactive data example
+        function reactiveTypingExample() {
+            return {
+                instance: null,
+                strings: [
+                    'Reactive typing...',
+                    'Dynamic content...',
+                    'Alpine.js power...'
+                ],
+                
+                init() {
+                    this.$nextTick(() => {
+                        this.initTyped();
+                    });
+                },
+                
+                initTyped() {
+                    this.instance = UltraTyped(this.$refs.typedElement, {
+                        strings: this.strings,
+                        typeSpeed: 50,
+                        loop: true,
+                        showCursor: true
+                    });
+                },
+                
+                addString() {
+                    const newString = `New string #${this.strings.length + 1}`;
+                    this.strings.push(newString);
+                    this.updateInstance();
+                },
+                
+                removeString() {
+                    if (this.strings.length > 1) {
+                        this.strings.pop();
+                        this.updateInstance();
+                    }
+                },
+                
+                shuffleStrings() {
+                    this.strings = [...this.strings].sort(() => Math.random() - 0.5);
+                    this.updateInstance();
+                },
+                
+                clearStrings() {
+                    this.strings = ['No strings...'];
+                    this.updateInstance();
+                },
+                
+                updateInstance() {
+                    if (this.instance) {
+                        this.instance.strings = this.strings;
+                        this.instance.reset();
+                    }
+                }
+            }
+        }
+        
+        // Parent component
+        function parentComponent() {
+            return {
+                instance: null,
+                messages: [
+                    'Parent message 1',
+                    'Parent message 2',
+                    'Parent message 3'
+                ],
+                
+                init() {
+                    this.$nextTick(() => {
+                        this.instance = UltraTyped(this.$refs.parentElement, {
+                            strings: this.messages,
+                            typeSpeed: 50,
+                            loop: true,
+                            showCursor: true
+                        });
+                    });
+                },
+                
+                sendMessage() {
+                    if (this.instance) {
+                        const newMessage = `Message sent at ${new Date().toLocaleTimeString()}`;
+                        this.messages.push(newMessage);
+                        this.instance.strings = this.messages;
+                        this.instance.reset();
+                    }
+                },
+                
+                triggerChildAction() {
+                    // Trigger child component action via Alpine.js event system
+                    this.$dispatch('trigger-child', { message: 'Hello from parent!' });
+                }
+            }
+        }
+        
+        // Child component
+        function childComponent() {
+            return {
+                instance: null,
+                childStatus: 'Child ready',
+                parentMessages: [],
+                
+                init(parentElement) {
+                    this.$nextTick(() => {
+                        this.instance = UltraTyped(this.$refs.childElement, {
+                            strings: ['Child component ready...', 'Listening to parent...'],
+                            typeSpeed: 40,
+                            loop: true,
+                            showCursor: true,
+                            cursorChar: '◉'
+                        });
+                        
+                        // Listen for parent events
+                        this.$el.addEventListener('trigger-child', (event) => {
+                            this.handleParentMessage(event.detail.message);
+                        });
+                    });
+                },
+                
+                handleParentMessage(message) {
+                    this.childStatus = `Received: ${message}`;
+                    if (this.instance) {
+                        this.instance.strings = [`Parent says: ${message}`, 'Child responding...'];
+                        this.instance.reset();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -97,20 +97,20 @@ UltraTyped.js is a drop-in replacement for Typed.js v2 with 100% feature parity 
 | ---------------------- | ----------- | ------------- | ------------ |
 | **Bundle Size**        | ~13KB       | ~2KB          | ~2.5KB       |
 | **Dependencies**       | 0           | 0             | 0            |
-| **Cursor**             | ✅           | ✅             | ✅            |
-| **Smart Backspace**    | ✅           | ✅             | ✅            |
-| **Loop**               | ✅           | ✅             | ✅            |
-| **Loop Count**         | ✅           | ✅             | ✅            |
-| **Shuffle**            | ✅           | ✅             | ✅            |
-| **Fade Out**           | ✅           | ✅             | ✅            |
-| **HTML Content**       | ✅           | ✅             | ✅            |
-| **Attribute Typing**   | ✅           | ✅             | ✅            |
-| **Typing Variance**    | ✅           | ✅             | ✅            |
-| **Input Focus Events** | ✅           | ✅             | ✅            |
-| **All Callbacks**      | ✅           | ✅             | ✅            |
-| **Instance Methods**   | ✅           | ✅             | ✅            |
-| **SSR Support**        | ❌           | ✅             | ✅            |
-| **TypeScript**         | ❌           | ✅             | ✅            |
+| **Cursor**             | ✅          | ✅            | ✅           |
+| **Smart Backspace**    | ✅          | ✅            | ✅           |
+| **Loop**               | ✅          | ✅            | ✅           |
+| **Loop Count**         | ✅          | ✅            | ✅           |
+| **Shuffle**            | ✅          | ✅            | ✅           |
+| **Fade Out**           | ✅          | ✅            | ✅           |
+| **HTML Content**       | ✅          | ✅            | ✅           |
+| **Attribute Typing**   | ✅          | ✅            | ✅           |
+| **Typing Variance**    | ✅          | ✅            | ✅           |
+| **Input Focus Events** | ✅          | ✅            | ✅           |
+| **All Callbacks**      | ✅          | ✅            | ✅           |
+| **Instance Methods**   | ✅          | ✅            | ✅           |
+| **SSR Support**        | ❌          | ✅            | ✅           |
+| **TypeScript**         | ❌          | ✅            | ✅           |
 | **Framework Adapters** | Limited     | Full          | Full         |
 
 ### Migration Options
@@ -118,7 +118,7 @@ UltraTyped.js is a drop-in replacement for Typed.js v2 with 100% feature parity 
 **Option 1: Use typed-compat (Zero code changes)**
 
 ```bash
-npm install @ultratyped/typed-compat @ultratyped/core
+pnpm install @ultratyped/typed-compat @ultratyped/core
 ```
 
 ```javascript
@@ -134,7 +134,7 @@ const typed = new Typed("#element", { strings: ["Hello"] });
 **Option 2: Migrate to UltraTyped.js directly**
 
 ```bash
-npm install @ultratyped/core
+pnpm install @ultratyped/core
 ```
 
 ```javascript
@@ -165,22 +165,22 @@ For detailed migration instructions, see the [Migration Guide](docs/MIGRATION.md
 ## Installation
 
 ```bash
-npm install ultratyped
+pnpm install ultratyped
 ```
 
 Or for specific framework adapters:
 
 ```bash
-npm install @ultratyped/react
-npm install @ultratyped/vue
-npm install @ultratyped/svelte
-npm install @ultratyped/typescript
-npm install @ultratyped/angular
-npm install @ultratyped/solid
-npm install @ultratyped/preact
-npm install @ultratyped/alpine
-npm install @ultratyped/lit
-npm install @ultratyped/astro
+pnpm install @ultratyped/react
+pnpm install @ultratyped/vue
+pnpm install @ultratyped/svelte
+pnpm install @ultratyped/typescript
+pnpm install @ultratyped/angular
+pnpm install @ultratyped/solid
+pnpm install @ultratyped/preact
+pnpm install @ultratyped/alpine
+pnpm install @ultratyped/lit
+pnpm install @ultratyped/astro
 ```
 
 ## Quick Start
@@ -580,9 +580,9 @@ UltraTyped.js has comprehensive unit test coverage with 182 tests across all pac
 Run unit tests:
 
 ```bash
-npm test
-npm run test:coverage
-npm run test:ui
+pnpm test
+pnpm test:coverage
+pnpm test:ui
 ```
 
 ### Cross-Browser E2E Tests
@@ -604,11 +604,11 @@ All 6 E2E tests pass on all browsers:
 Run E2E tests:
 
 ```bash
-npm run test:e2e              # Run all browsers
+pnpm test:e2e              # Run all browsers
 npx playwright test --project=chromium   # Chrome/Edge only
 npx playwright test --project=firefox     # Firefox only
 npx playwright test --project=webkit      # Safari only
-npm run test:e2e:ui          # Run with Playwright UI
+pnpm test:e2e:ui          # Run with Playwright UI
 ```
 
 ## Reliability
@@ -639,9 +639,9 @@ npm run test:e2e:ui          # Run with Playwright UI
 Run benchmarks locally:
 
 ```bash
-npm install
-npm run build
-npm run bench
+pnpm install
+pnpm build
+pnpm bench
 ```
 
 View benchmark dashboard at `benchmarks/dashboard.html`
@@ -650,25 +650,25 @@ View benchmark dashboard at `benchmarks/dashboard.html`
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Build all packages
-npm run build
+pnpm build
 
 # Run playground
-npm run dev
+pnpm dev
 
 # Run tests
-npm test
+pnpm test
 
 # Run tests with coverage
-npm run test:coverage
+pnpm test:coverage
 
 # Run benchmarks
-npm run bench
+pnpm bench
 
 # Clean build artifacts
-npm run clean
+pnpm clean
 ```
 
 ## Test Coverage

@@ -198,6 +198,11 @@ export default function U(el, o) {
         .ultratyped-cursor {
           display: inline-block;
           animation: ultratyped-blink 0.7s infinite;
+          margin-left: 2px;
+          width: 0.6em;
+          height: 1.2em;
+          background-color: currentColor;
+          vertical-align: text-bottom;
         }
         @keyframes ultratyped-blink {
           0%, 100% { opacity: 1; }
@@ -208,15 +213,17 @@ export default function U(el, o) {
     }
   }
 
-  // Create cursor element
+  // Create text node and cursor element
+  let textNode = null;
   if (showCursor) {
-    if (el && el.parentNode) {
-      cursorEl = document.createElement("span");
-      cursorEl.className = "ultratyped-cursor";
-      cursorEl.textContent = cursorChar;
-      cursorEl.setAttribute("role", "presentation");
-      el.parentNode.insertBefore(cursorEl, el.nextSibling);
-    }
+    // Clear element content for clean cursor setup
+    el.textContent = "";
+    textNode = document.createTextNode("");
+    cursorEl = document.createElement("span");
+    cursorEl.className = "ultratyped-cursor";
+    cursorEl.setAttribute("role", "presentation");
+    el.appendChild(textNode);
+    el.appendChild(cursorEl);
   }
 
   function startAnimation() {
@@ -278,6 +285,10 @@ export default function U(el, o) {
   }
 
   function step(t) {
+    if (toks.length === 0 || i >= toks.length) {
+      cancelAnimationFrame(raf);
+      return;
+    }
     if (isPaused || manuallyPaused) return;
     let dt = t - last;
 
@@ -420,16 +431,26 @@ export default function U(el, o) {
       if (attr) {
         el.setAttribute(attr, buf);
       } else if (ct === "html") {
-        el.innerHTML = buf;
+        if (showCursor && textNode) {
+          textNode.nodeValue = buf;
+        } else {
+          el.innerHTML = buf;
+        }
       } else {
-        el.textContent = buf;
+        if (showCursor && textNode) {
+          textNode.nodeValue = buf;
+        } else {
+          el.textContent = buf;
+        }
       }
       prevBuf = buf;
     }
     raf = requestAnimationFrame(step);
   }
 
-  startAnimation();
+  if (toks.length > 0) {
+    startAnimation();
+  }
 
   return {
     /**

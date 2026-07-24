@@ -21,7 +21,7 @@
     "vue": "^2.7.0 || ^3.0.0"
   },
   "dependencies": {
-    "ultratyped": "^1.0.0"
+    "ultratyped": "workspace:*"
   },
   "files": [
     "dist"

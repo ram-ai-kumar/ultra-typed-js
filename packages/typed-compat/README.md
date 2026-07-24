@@ -12,7 +12,7 @@ A drop-in compatibility shim for [Typed.js v2](https://github.com/mattboldt/type
 ## Installation
 
 ```bash
-npm install @ultratyped/typed-compat @ultratyped/core
+pnpm install @ultratyped/typed-compat @ultratyped/core
 ```
 
 ## Usage
@@ -20,26 +20,28 @@ npm install @ultratyped/typed-compat @ultratyped/core
 ### From Typed.js to typed-compat
 
 **Before (Typed.js):**
-```javascript
-import Typed from 'typed.js';
 
-const typed = new Typed('#element', {
-  strings: ['Hello, world!', 'Welcome to Typed.js'],
+```javascript
+import Typed from "typed.js";
+
+const typed = new Typed("#element", {
+  strings: ["Hello, world!", "Welcome to Typed.js"],
   typeSpeed: 50,
   backSpeed: 30,
-  loop: true
+  loop: true,
 });
 ```
 
 **After (typed-compat):**
-```javascript
-import Typed from '@ultratyped/typed-compat';
 
-const typed = new Typed('#element', {
-  strings: ['Hello, world!', 'Welcome to UltraTyped'],
+```javascript
+import Typed from "@ultratyped/typed-compat";
+
+const typed = new Typed("#element", {
+  strings: ["Hello, world!", "Welcome to UltraTyped"],
   typeSpeed: 50,
   backSpeed: 30,
-  loop: true
+  loop: true,
 });
 ```
 

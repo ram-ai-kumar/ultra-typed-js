@@ -20,7 +20,7 @@ See [CHANGELOG.md](CHANGELOG.md) for detailed implementation notes on all parity
 Use `@ultratyped/typed-compat` for zero code changes:
 
 ```bash
-npm install @ultratyped/typed-compat @ultratyped/core
+pnpm install @ultratyped/typed-compat @ultratyped/core
 ```
 
 **Before (Typed.js):**
@@ -95,6 +95,8 @@ typed.start();
 typed.reset();
 ```
 
+---
+
 ## Option Comparison
 
 | Aspect            | typed-compat             | Direct UltraTyped.js     |
@@ -111,8 +113,8 @@ typed.reset();
 
 All Typed.js v2 options map directly to UltraTyped.js:
 
-| Typed.js Option        | UltraTyped.js Option   | Notes  |
-| ---------------------- | ---------------------- | ------ |
+| Typed.js Option        | UltraTyped.js Option   | Notes   |
+| ---------------------- | ---------------------- | ------- |
 | `strings`              | `strings`              | ✅ Same |
 | `stringsElement`       | `stringsElement`       | ✅ Same |
 | `typeSpeed`            | `typeSpeed`            | ✅ Same |
@@ -140,8 +142,8 @@ All Typed.js v2 options map directly to UltraTyped.js:
 
 All Typed.js callbacks work identically:
 
-| Typed.js Callback                 | UltraTyped.js Callback                    | Notes            |
-| --------------------------------- | ----------------------------------------- | ---------------- |
+| Typed.js Callback                 | UltraTyped.js Callback                    | Notes             |
+| --------------------------------- | ----------------------------------------- | ----------------- |
 | `onBegin(self)`                   | `onBegin({ el, strings })`                | ✅ Same signature |
 | `onComplete(self)`                | `onComplete({ el, strings })`             | ✅ Same signature |
 | `preStringTyped(arrayPos, self)`  | `preStringTyped(i, { el, strings })`      | ✅ Same signature |
@@ -160,8 +162,8 @@ All Typed.js callbacks work identically:
 
 All Typed.js instance methods work identically:
 
-| Typed.js Method   | UltraTyped.js Method | Notes  |
-| ----------------- | -------------------- | ------ |
+| Typed.js Method   | UltraTyped.js Method | Notes   |
+| ----------------- | -------------------- | ------- |
 | `typed.stop()`    | `typed.stop()`       | ✅ Same |
 | `typed.start()`   | `typed.start()`      | ✅ Same |
 | `typed.reset()`   | `typed.reset()`      | ✅ Same |
@@ -213,8 +215,6 @@ function App() {
 }
 ```
 
----
-
 ### Vue
 
 **Before (Typed.js):**
@@ -259,6 +259,397 @@ useUltraTyped(typedElement, {
   typeSpeed: 50,
 });
 </script>
+```
+
+### Svelte
+
+**Before (Typed.js):**
+
+```svelte
+<script>
+  import Typed from "typed.js";
+  import { onDestroy } from "svelte";
+
+  let typedInstance;
+
+  onMount(() => {
+    typedInstance = new Typed("#element", {
+      strings: ["Hello, world!"],
+      typeSpeed: 50,
+    });
+  });
+
+  onDestroy(() => {
+    typedInstance.destroy();
+  });
+</script>
+
+<span id="element"></span>
+```
+
+**After (UltraTyped.js):**
+
+```svelte
+<script>
+  import { ultratyped } from "@ultratyped/svelte";
+</script>
+
+<span id="element" use:ultratyped={{ strings: ["Hello, world!"], typeSpeed: 50 }}></span>
+```
+
+### Angular
+
+**Before (Typed.js):**
+
+```typescript
+import {
+  AfterViewInit,
+  DestroyRef,
+  Directive,
+  ElementRef,
+} from "@angular/core";
+import Typed from "typed.js";
+
+@Directive({
+  selector: "[typed]",
+})
+export class TypedDirective implements AfterViewInit, OnDestroy {
+  private typedInstance: Typed | null = null;
+
+  constructor(
+    private elementRef: ElementRef,
+    private destroyRef: DestroyRef,
+  ) {}
+
+  ngAfterViewInit() {
+    this.typedInstance = new Typed(this.elementRef.nativeElement, {
+      strings: ["Hello, world!"],
+      typeSpeed: 50,
+    });
+  }
+
+  ngOnDestroy() {
+    this.typedInstance?.destroy();
+  }
+}
+```
+
+**After (UltraTyped.js):**
+
+```typescript
+import {
+  Directive,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from "@angular/core";
+import UltraTyped from "ultratyped";
+
+export interface UltraTypedOptions {
+  strings: string[];
+  typeSpeed?: number;
+  backSpeed?: number;
+  backDelay?: number;
+  loop?: boolean;
+}
+
+@Directive({
+  selector: "[ultratyped]",
+  standalone: true,
+})
+export class UltraTypedDirective implements OnChanges, OnDestroy {
+  private instance: ReturnType<typeof UltraTyped> | null = null;
+
+  @Input() ultratyped: UltraTypedOptions = { strings: [] };
+
+  constructor(private el: ElementRef) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes["ultratyped"]) {
+      this.init();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  private init(): void {
+    this.destroy();
+    if (this.ultratyped.strings.length > 0) {
+      this.instance = UltraTyped(this.el.nativeElement, this.ultratyped);
+    }
+  }
+
+  private destroy(): void {
+    if (this.instance) {
+      this.instance.stop();
+      this.instance = null;
+    }
+  }
+}
+```
+
+### Lit
+
+**Before (Typed.js):**
+
+```javascript
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
+import Typed from "typed.js";
+
+@customElement("typed-element")
+class TypedElement extends LitElement {
+  render() {
+    return html`<span id="typed"></span>`;
+  }
+
+  firstUpdated() {
+    this.typed = new Typed(this.shadowRoot.getElementById("typed"), {
+      strings: ["Hello, world!"],
+      typeSpeed: 50,
+    });
+  }
+
+  disconnectedCallback() {
+    this.typed.destroy();
+  }
+}
+```
+
+**After (UltraTyped.js):**
+
+```javascript
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
+import { UltraTypedController } from "@ultratyped/lit";
+
+@customElement("ultra-typed-element")
+class UltraTypedElement extends LitElement {
+  render() {
+    return html`<span id="typed"></span>`;
+  }
+
+  constructor() {
+    super();
+    this.ultraTyped = new UltraTypedController(
+      this,
+      this.renderRoot.getElementById("typed"),
+      {
+        strings: ["Hello, world!"],
+        typeSpeed: 50,
+      },
+    );
+  }
+}
+```
+
+### Preact
+
+**Before (Typed.js):**
+
+```javascript
+import { h } from "preact";
+import { useEffect, useRef } from "preact/hooks";
+import Typed from "typed.js";
+
+function App() {
+  const el = useRef(null);
+
+  useEffect(() => {
+    const typed = new Typed(el.current, {
+      strings: ["Hello, world!"],
+      typeSpeed: 50,
+    });
+
+    return () => typed.destroy();
+  }, []);
+
+  return <span ref={el} />;
+}
+```
+
+**After (UltraTyped.js):**
+
+```javascript
+import { h } from "preact";
+import { useEffect, useRef } from "preact/hooks";
+import { useUltraTyped } from "@ultratyped/preact";
+
+function App() {
+  const { ref } = useUltraTyped({
+    strings: ["Hello, world!"],
+    typeSpeed: 50,
+  });
+
+  return <span ref={ref} />;
+}
+```
+
+### Solid
+
+**Before (Typed.js):**
+
+```javascript
+import { createEffect, onCleanup } from "solid-js";
+import Typed from "typed.js";
+
+function App() {
+  const el = () => document.getElementById("element");
+
+  createEffect(() => {
+    const typed = new Typed(el(), {
+      strings: ["Hello, world!"],
+      typeSpeed: 50,
+    });
+
+    onCleanup(() => typed.destroy());
+  });
+
+  return <span id="element" />;
+}
+```
+
+**After (UltraTyped.js):**
+
+```javascript
+import { createEffect, onCleanup } from "solid-js";
+import { useUltraTyped } from "@ultratyped/solid";
+
+function App() {
+  const { ref } = useUltraTyped({
+    strings: ["Hello, world!"],
+    typeSpeed: 50,
+  });
+
+  return <span {...ref} />;
+}
+```
+
+### Alpine.js
+
+**Before (Typed.js):**
+
+```html
+<div x-data="typedData()" x-init="initTyped()">
+  <span x-ref="typedElement"></span>
+</div>
+
+<script>
+  function typedData() {
+    return {
+      initTyped() {
+        this.typed = new Typed(this.$refs.typedElement, {
+          strings: ["Hello, world!"],
+          typeSpeed: 50,
+        });
+      },
+    };
+  }
+</script>
+```
+
+**After (UltraTyped.js):**
+
+```html
+<div x-data="typedData()" x-init="initTyped()">
+  <span x-ref="typedElement"></span>
+</div>
+
+<script>
+  import { ultratypedAlpine } from "@ultratyped/alpine";
+
+  function typedData() {
+    return {
+      initTyped() {
+        this.ultraTyped = ultratypedAlpine(this.$refs.typedElement, {
+          strings: ["Hello, world!"],
+          typeSpeed: 50,
+        });
+      },
+    };
+  }
+</script>
+```
+
+### Astro
+
+**Before (Typed.js):**
+
+```astro
+---
+// src/components/TypedComponent.astro
+import Typed from "typed.js";
+---
+
+<span id="typed-element"></span>
+
+<script>
+  const typed = new Typed("#typed-element", {
+    strings: ["Hello, world!"],
+    typeSpeed: 50,
+  });
+</script>
+```
+
+**After (UltraTyped.js):**
+
+```astro
+---
+// src/components/UltraTypedComponent.astro
+import UltraTyped from "@ultratyped/core";
+---
+
+<span id="typed-element"></span>
+
+<script>
+  const typed = UltraTyped("#typed-element", {
+    strings: ["Hello, world!"],
+    typeSpeed: 50,
+  });
+</script>
+```
+
+### TypeScript
+
+**Before (Typed.js):**
+
+```typescript
+import Typed from "typed.js";
+
+const typed = new Typed("#element", {
+  strings: ["Hello, world!"],
+  typeSpeed: 50,
+  backSpeed: 30,
+  loop: true,
+});
+
+// Accessing methods with proper typing
+typed.stop();
+typed.start();
+typed.reset();
+```
+
+**After (UltraTyped.js):**
+
+```typescript
+import UltraTyped from "@ultratyped/core";
+import type { UltraTypedInstance } from "@ultratyped/core";
+
+const typed = UltraTyped("#element", {
+  strings: ["Hello, world!"],
+  typeSpeed: 50,
+  backSpeed: 30,
+  loop: true,
+}) as UltraTypedInstance;
+
+// Accessing methods with proper typing
+typed.stop();
+typed.start();
+typed.reset();
 ```
 
 ---
@@ -399,6 +790,35 @@ const typed = UltraTyped("#element", {
 ```
 
 Then add the CSS manually with your nonce.
+
+---
+
+### Issue: Framework integration not working
+
+**Solution:** Make sure you're importing from the correct framework-specific package:
+
+- React: `@ultratyped/react`
+- Vue: `@ultratyped/vue`
+- Svelte: `@ultratyped/svelte`
+- Angular: `@ultratyped/angular`
+- Lit: `@ultratyped/lit`
+- Preact: `@ultratyped/preact`
+- Solid: `@ultratyped/solid`
+- Alpine.js: `@ultratyped/alpine`
+
+---
+
+### Issue: TypeScript errors with framework integrations
+
+**Solution:** Ensure you have the correct TypeScript definitions installed and that your tsconfig.json includes the appropriate type roots:
+
+```json
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@ultratyped/*/src", "./node_modules/@types"]
+  }
+}
+```
 
 ---
 

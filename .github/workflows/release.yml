@@ -14,67 +14,71 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
           registry-url: "https://registry.npmjs.org"
 
-      - run: npm install
+      - run: pnpm install
 
-      - run: npm run build
+      - run: pnpm build
 
       - name: Publish core package
-        run: npm publish -w packages/core
+        run: pnpm --filter packages/core publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish React adapter
-        run: npm publish -w packages/react
+        run: pnpm --filter packages/react publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Vue adapter
-        run: npm publish -w packages/vue
+        run: pnpm --filter packages/vue publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Svelte adapter
-        run: npm publish -w packages/svelte
+        run: pnpm --filter packages/svelte publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish TypeScript adapter
-        run: npm publish -w packages/typescript
+        run: pnpm --filter packages/typescript publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Angular adapter
-        run: npm publish -w packages/angular
+        run: pnpm --filter packages/angular publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Solid adapter
-        run: npm publish -w packages/solid
+        run: pnpm --filter packages/solid publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Preact adapter
-        run: npm publish -w packages/preact
+        run: pnpm --filter packages/preact publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Alpine adapter
-        run: npm publish -w packages/alpine
+        run: pnpm --filter packages/alpine publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Lit adapter
-        run: npm publish -w packages/lit
+        run: pnpm --filter packages/lit publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Astro adapter
-        run: npm publish -w packages/astro
+        run: pnpm --filter packages/astro publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 

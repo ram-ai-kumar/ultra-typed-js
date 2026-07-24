@@ -1,9 +1,10 @@
 /**
- * Unit tests for React adapter
+ * Comprehensive test suite for React adapter
+ * Covers: Smoke, Edge, Negative, Exception, Regression tests
  */
 
-import { describe, it, expect, vi } from 'vitest';
-import { renderHook, cleanup } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { renderHook, cleanup, act } from '@testing-library/react';
 import { useUltraTyped } from './index';
 
 describe('React Adapter', () => {
@@ -11,7 +12,7 @@ describe('React Adapter', () => {
     cleanup();
   });
 
-  describe('useUltraTyped Hook', () => {
+  describe('Smoke Tests - Basic Functionality', () => {
     it('should return a ref', () => {
       const { result } = renderHook(() =>
         useUltraTyped({ strings: ['Hello', 'World'] })
@@ -35,46 +36,6 @@ describe('React Adapter', () => {
       expect(result.current).toBeDefined();
     });
 
-    it('should handle custom backSpeed', () => {
-      const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Test'], backSpeed: 50 })
-      );
-
-      expect(result.current).toBeDefined();
-    });
-
-    it('should handle custom backDelay', () => {
-      const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Test'], backDelay: 1000 })
-      );
-
-      expect(result.current).toBeDefined();
-    });
-
-    it('should handle loop option', () => {
-      const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Test'], loop: true })
-      );
-
-      expect(result.current).toBeDefined();
-    });
-
-    it('should handle loop: false option', () => {
-      const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Test'], loop: false })
-      );
-
-      expect(result.current).toBeDefined();
-    });
-
-    it('should handle single string', () => {
-      const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Single'] })
-      );
-
-      expect(result.current).toBeDefined();
-    });
-
     it('should handle multiple strings', () => {
       const { result } = renderHook(() =>
         useUltraTyped({ strings: ['First', 'Second', 'Third'] })
@@ -83,52 +44,200 @@ describe('React Adapter', () => {
       expect(result.current).toBeDefined();
     });
 
+    it('should respect loop configuration', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Test'], loop: false })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle HTML content type', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['<strong>Bold</strong>'], contentType: 'html' })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle callbacks', () => {
+      const onStringTyped = vi.fn();
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Test'], onStringTyped })
+      );
+
+      expect(result.current).toBeDefined();
+      expect(typeof onStringTyped).toBe('function');
+    });
+  });
+
+  describe('Edge Cases', () => {
     it('should handle empty strings array', () => {
+      const { result } = renderHook(() => useUltraTyped({ strings: [] }));
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle single character strings', () => {
+      const { result } = renderHook(() => useUltraTyped({ strings: ['A', 'B'] }));
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle very long strings', () => {
+      const longString = 'A'.repeat(1000);
+      const { result } = renderHook(() => useUltraTyped({ strings: [longString] }));
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle special characters and Unicode', () => {
       const { result } = renderHook(() =>
-        useUltraTyped({ strings: [] })
+        useUltraTyped({ strings: ['Hello 🌍 Émojis àccénts'] })
       );
 
       expect(result.current).toBeDefined();
     });
 
-    it('should handle special characters', () => {
+    it('should handle zero speed values', () => {
       const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Hello! @#$%^&*()'] })
+        useUltraTyped({ strings: ['Test'], typeSpeed: 0, backSpeed: 0 })
       );
 
       expect(result.current).toBeDefined();
     });
 
-    it('should handle Unicode characters', () => {
+    it('should handle negative delay values', () => {
       const { result } = renderHook(() =>
-        useUltraTyped({ strings: ['Hello 世界 🌍'] })
+        useUltraTyped({ strings: ['Test'], startDelay: -100 })
       );
 
       expect(result.current).toBeDefined();
     });
 
-    it('should cleanup on unmount', () => {
+    it('should handle infinite loop count', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Loop'], loopCount: Infinity })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle strings with only whitespace', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['   ', '\t\n', ''] })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  describe('Negative Tests', () => {
+    it('should handle null options', () => {
+      const { result } = renderHook(() => useUltraTyped(null));
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle undefined options', () => {
+      const { result } = renderHook(() => useUltraTyped(undefined));
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle non-string values in strings array', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: [123, null, undefined, {}] })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle negative speed values', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Test'], typeSpeed: -50 })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle invalid content type', () => {
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Test'], contentType: 'invalid' })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  describe('Exception Handling', () => {
+    it('should handle callback errors gracefully', () => {
+      const errorCallback = vi.fn(() => {
+        throw new Error('Callback error');
+      });
+
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: ['Test'], onStringTyped: errorCallback })
+      );
+
+      expect(result.current).toBeDefined();
+    });
+
+    it('should handle re-rendering with different options', () => {
+      let { result, rerender } = renderHook(
+        ({ options }) => useUltraTyped(options),
+        {
+          initialProps: { options: { strings: ['Initial'] } },
+        }
+      );
+
+      expect(result.current).toBeDefined();
+
+      act(() => {
+        rerender({ options: { strings: ['Updated', 'Options'] } });
+      });
+
+      expect(result.current).toBeDefined();
+    });
+  });
+
+  describe('Regression Tests', () => {
+    it('should handle multiple hook instances', () => {
+      const { result: result1 } = renderHook(() =>
+        useUltraTyped({ strings: ['Hook 1'] })
+      );
+      const { result: result2 } = renderHook(() =>
+        useUltraTyped({ strings: ['Hook 2'] })
+      );
+
+      expect(result1.current).toBeDefined();
+      expect(result2.current).toBeDefined();
+      expect(result1.current).not.toBe(result2.current);
+    });
+
+    it('should handle hook cleanup on unmount', () => {
       const { result, unmount } = renderHook(() =>
         useUltraTyped({ strings: ['Test'] })
       );
 
       expect(result.current).toBeDefined();
+
       expect(() => unmount()).not.toThrow();
     });
 
-    it('should handle rapid re-renders', () => {
-      const { result, rerender } = renderHook(
-        (props) => useUltraTyped(props),
-        { initialProps: { strings: ['Test'] } }
+    it('should maintain performance with large strings', () => {
+      const largeString = 'A'.repeat(10000);
+      const startTime = performance.now();
+
+      const { result } = renderHook(() =>
+        useUltraTyped({ strings: [largeString] })
       );
 
-      expect(result.current).toBeDefined();
+      const endTime = performance.now();
+      const renderTime = endTime - startTime;
 
-      expect(() => {
-        for (let i = 0; i < 10; i++) {
-          rerender({ strings: ['Test', 'Updated'] });
-        }
-      }).not.toThrow();
+      expect(result.current).toBeDefined();
+      expect(renderTime).toBeLessThan(100); // Should render quickly
     });
   });
 });

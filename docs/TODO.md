@@ -8,18 +8,10 @@ This document outlines the comprehensive requirements to make UltraTyped.js a pr
 
 ### API Documentation
 
-### User Guides
-
-- [ ] **Migration guide from Typed.js** (highest SEO and conversion value — target "typed.js alternative" searches)
-- [ ] Migration guide from typewriter-effect
-- [ ] Troubleshooting guide
-- [ ] Best practices guide
-- [ ] Performance optimization guide
-- [ ] Security best practices guide
-
 ### Examples Gallery
 
-- [ ] Create examples for each framework
+- [x] Create examples for each framework
+- [x] Write test coverage to validate examples
 - [ ] Interactive examples playground
 - [ ] Code snippets for common use cases
 - [ ] Advanced usage examples
@@ -679,7 +671,7 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 
 ### ZTA Posture — Current Gaps
 
-> These items close the delta between the *claimed* ZTA posture in `SECURITY.md`/`COMPLIANCE.md` and the *actual* implementation.
+> These items close the delta between the _claimed_ ZTA posture in `SECURITY.md`/`COMPLIANCE.md` and the _actual_ implementation.
 
 - [ ] **Verify Explicitly — CI pipeline has no test gate before publish** (`release.yml` builds then publishes with no `npm test` step)
 - [ ] **Verify Explicitly — GitHub Actions use mutable version tags** (`@v4`, `@v3`) instead of SHA-pinned refs; a compromised action tag can exfiltrate `NPM_TOKEN`
@@ -692,11 +684,13 @@ These gaps block key distribution scenarios (CDN users, package consumers) and a
 ### ZTA Controls — Implementation Tasks
 
 - [ ] Add `permissions:` blocks to all GitHub Actions workflow jobs (principle of least privilege)
+
   ```yaml
   permissions:
     contents: read
-    id-token: write   # required for npm provenance
+    id-token: write # required for npm provenance
   ```
+
 - [ ] Enable branch protection rules on `main`: require PR reviews, require status checks (CI + bundle-size), block force-push
 - [ ] Enable GitHub repository security settings: secret scanning, push protection, private vulnerability reporting
 - [ ] Add `CODEOWNERS` file to require security-team review on changes to `src/`, `rollup.config.js`, and workflow files

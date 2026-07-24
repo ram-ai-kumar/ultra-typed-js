@@ -15,7 +15,7 @@ Complete API reference for UltraTyped.js - an ultra-fast <2KB typing animation l
 ## Installation
 
 ```bash
-npm install @ultratyped/core
+pnpm install @ultratyped/core
 ```
 
 ```javascript
