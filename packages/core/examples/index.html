@@ -377,13 +377,40 @@
 
     <!-- Import UltraTyped from local package -->
     <script type="module">
-        import UltraTyped from '../../dist/index.mjs';
+        import UltraTyped from '/core/dist/index.mjs';
         
         console.log('UltraTyped loaded:', UltraTyped);
+        console.log('UltraTyped type:', typeof UltraTyped);
+        
+        if (typeof UltraTyped !== 'function') {
+            console.error('UltraTyped is not a function!', UltraTyped);
+            alert('Error: UltraTyped library failed to load. Check console for details.');
+        }
         
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM loaded, initializing instances...');
+            
+            // Check if all required elements exist
+            const requiredElements = [
+                'typed-basic',
+                'typed-html', 
+                'input-placeholder',
+                'typed-element-source',
+                'typed-extra-large',
+                'typed-h1',
+                'typed-h2',
+                'typed-h3',
+                'typed-normal',
+                'typed-pre'
+            ];
+            
+            const missingElements = requiredElements.filter(id => !document.getElementById(id));
+            if (missingElements.length > 0) {
+                console.error('Missing elements:', missingElements);
+            } else {
+                console.log('All required elements found');
+            }
             
             // Basic example with all features
             const basicElement = document.getElementById('typed-basic');

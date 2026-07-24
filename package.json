@@ -8,7 +8,7 @@
     "playground"
   ],
   "scripts": {
-    "build": "pnpm --filter packages/core build && pnpm --filter packages/alpine build && pnpm --filter packages/angular build && pnpm --filter packages/astro build && pnpm --filter packages/lit build && pnpm --filter packages/preact build && pnpm --filter packages/react build && pnpm --filter packages/solid build && pnpm --filter packages/svelte build && pnpm --filter packages/typescript build && pnpm --filter packages/vue build && pnpm --filter playground build",
+    "build": "pnpm --filter './packages/*' --filter playground build",
     "build:docs": "node scripts/build-docs.js",
     "dev": "pnpm --filter playground dev",
     "bench": "node benchmarks/compare.js",
@@ -37,6 +37,7 @@
     "@testing-library/react": "^16.1.0",
     "@vitest/coverage-v8": "^2.1.8",
     "@vitest/ui": "^2.1.8",
+    "@types/react": "^19.0.0",
     "@vue/test-utils": "^2.4.6",
     "gzip-size": "^7.0.0",
     "happy-dom": "^15.11.6",

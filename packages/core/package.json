@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rollup -c && tsc --emitDeclarationOnly",
+    "build": "rollup -c && cp src/index.d.ts dist/index.d.ts",
     "size": "gzip-size dist/index.mjs"
   },
   "files": [
