@@ -1,21 +1,26 @@
 {
   "name": "@ultratyped/angular",
   "version": "1.0.0",
-  "description": "Angular adapter for UltraTyped",
+  "description": "Angular adapter for UltraTyped — typing animation / typewriter",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c && node ../../scripts/cts-types.js"
   },
   "peerDependencies": {
     "@angular/core": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0"
@@ -26,11 +31,27 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "typing",
     "animation",
     "angular",
     "directive"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ram-ai-kumar/ultra-typed-js.git",
+    "directory": "packages/angular"
+  },
+  "homepage": "https://github.com/ram-ai-kumar/ultra-typed-js#readme",
+  "bugs": {
+    "url": "https://github.com/ram-ai-kumar/ultra-typed-js/issues"
+  },
+  "author": "ram-ai-kumar",
   "license": "MIT"
 }

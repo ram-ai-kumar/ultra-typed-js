@@ -1,21 +1,26 @@
 {
   "name": "@ultratyped/typescript",
   "version": "1.0.0",
-  "description": "TypeScript adapter for UltraTyped with enhanced type safety",
+  "description": "TypeScript typing animation adapter for UltraTyped with enhanced type safety",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "sideEffects": false,
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c && node ../../scripts/cts-types.js"
   },
   "dependencies": {
     "ultratyped": "workspace:*"
@@ -23,11 +28,27 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "keywords": [
     "typing",
     "animation",
     "typescript",
     "adapter"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ram-ai-kumar/ultra-typed-js.git",
+    "directory": "packages/typescript"
+  },
+  "homepage": "https://github.com/ram-ai-kumar/ultra-typed-js#readme",
+  "bugs": {
+    "url": "https://github.com/ram-ai-kumar/ultra-typed-js/issues"
+  },
+  "author": "ram-ai-kumar",
   "license": "MIT"
 }
